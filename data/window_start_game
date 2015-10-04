@@ -1,12 +1,12 @@
 <window>
 	name:start_game
 	starting_position:-1,-1
-	width:218
-	height:62
+	width:340
+	height:107
 	title:Start Game
 
 	<button>
-		location:-1,18
+		location:-1,36
 		text:Singleplayer
 		event:start_game
 		sound_moused:moused_1
@@ -14,7 +14,7 @@
 	</button>
 
 	<button>
-		location:-1,32
+		location:-1,58
 		text:Start Multiplayer Server
 		event:start_server_window
 		sound_moused:moused_1
@@ -22,7 +22,7 @@
 	</button>
 
 	<button>
-		location:-1,46
+		location:-1,80
 		text:Connect to Multiplayer Server
 		event:lan_server_list_window
 		sound_moused:moused_1

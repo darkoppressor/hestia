@@ -1,13 +1,13 @@
 <window>
 	name:server_list
 	starting_position:-1,-1
-	width:256
-	height:144
+	width:800
+	height:480
 	title:Saved Servers
 	scrolling_buttons:server_list
 
 	<button>
-		location:48,18
+		location:270,36
 		text:Add
 		event:add_server_window
 		sound_moused:moused_1
@@ -15,7 +15,7 @@
 	</button>
 
 	<button>
-		location:76,18
+		location:314,36
 		text:Edit
 		event:server_list_edit_window
 		sound_moused:moused_1
@@ -23,7 +23,7 @@
 	</button>
 
 	<button>
-		location:111,18
+		location:369,36
 		text:Delete
 		event:server_list_delete_window
 		sound_moused:moused_1
@@ -31,7 +31,7 @@
 	</button>
 
 	<button>
-		location:160,18
+		location:446,36
 		text:Refresh
 		event:refresh_server_list
 		sound_moused:moused_1

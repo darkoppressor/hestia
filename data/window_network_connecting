@@ -1,18 +1,18 @@
 <window>
 	name:network_connecting
 	starting_position:-1,-1
-	width:244
-	height:48
+	width:382
+	height:85
 	disallow_closing:true
 	exclusive:true
 
 	<info>
-		location:2,18
+		location:2,36
 		text:Attempting to connect to server...
 	</info>
 
 	<button>
-		location:-1,32
+		location:-1,58
 		text:Cancel
 		event:stop_game
 		sound_moused:moused_1

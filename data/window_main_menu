@@ -1,20 +1,20 @@
 <window>
 	name:main_menu
 	starting_position:-1,-1
-	width:100
-	height:62
+	width:180
+	height:107
 	title:Main Menu
 
 	<button>
-		location:-1,18
+		location:-1,36
 		text:Play
-		event:start_game
+		event:start_game_window
 		sound_moused:moused_1
 		sound_click:click_1
 	</button>
 
 	<button>
-		location:-1,32
+		location:-1,58
 		text:Options
 		event:options_window
 		sound_moused:moused_1
@@ -22,7 +22,7 @@
 	</button>
 
 	<button>
-		location:-1,46
+		location:-1,80
 		text:Quit
 		event:quit
 		sound_moused:moused_1

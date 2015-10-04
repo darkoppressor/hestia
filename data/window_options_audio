@@ -1,116 +1,101 @@
 <window>
 	name:options_audio
 	starting_position:-1,-1
-	width:256
-	height:118
+	width:704
+	height:195
 	title:Audio Options
 
 	<info>
-		location:-1,18
+		location:-1,36
 		text:Global
-		font:small
 	</info>
 
 	<info>
-		location:82,32
+		location:226,58
 		text:Volume:
-		font:small
 	</info>
 
 	<button>
-		location:113,32
+		location:311,58
 		states:Low,Medium,High
-		font:small
 		sound_moused:moused_1
 		sound_click:click_1
 	</button>
 
 	<button>
-		location:145,32
+		location:399,58
 		states:Unmuted,Muted
-		font:small
 		sound_moused:moused_1
 		sound_click:click_1
 	</button>
 
 	<info>
-		location:-1,46
+		location:-1,80
 		text:Sound Effects
-		font:small
 	</info>
 
 	<info>
-		location:82,60
+		location:226,102
 		text:Volume:
-		font:small
 	</info>
 
 	<button>
-		location:113,60
+		location:311,102
 		states:Low,Medium,High
-		font:small
 		sound_moused:moused_1
 		sound_click:click_1
 	</button>
 
 	<button>
-		location:145,60
+		location:399,102
 		states:Unmuted,Muted
-		font:small
 		sound_moused:moused_1
 		sound_click:click_1
 	</button>
 
 	<info>
-		location:-1,74
+		location:-1,124
 		text:Music
-		font:small
 	</info>
 
 	<info>
-		location:82,88
+		location:226,146
 		text:Volume:
-		font:small
 	</info>
 
 	<button>
-		location:113,88
+		location:311,146
 		states:Low,Medium,High
-		font:small
 		sound_moused:moused_1
 		sound_click:click_1
 	</button>
 
 	<button>
-		location:145,88
+		location:399,146
 		states:Unmuted,Muted
-		font:small
 		sound_moused:moused_1
 		sound_click:click_1
 	</button>
 
 	<button>
-		location:100,102
+		location:265,168
 		text:OK
-		font:small
 		event:options_audio
 		sound_moused:moused_1
 		sound_click:click_1
 	</button>
 
 	<button>
-		location:111,102
+		location:300,168
 		text:Apply
-		font:small
 		event:options_audio_apply
 		sound_moused:moused_1
 		sound_click:click_1
 	</button>
 
 	<button>
-		location:134,102
+		location:368,168
 		text:Cancel
-		font:small
 		event:close_window
 		sound_moused:moused_1
 		sound_click:click_1

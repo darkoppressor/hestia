@@ -1,13 +1,13 @@
 <window>
 	name:configure_commands
 	starting_position:-1,-1
-	width:256
-	height:144
+	width:800
+	height:480
 	title:Configure Commands
 	scrolling_buttons:configure_commands
 
 	<button>
-		location:-1,18
+		location:-1,36
 		text:Reset Defaults
 		event:reset_default_commands
 		sound_moused:moused_1

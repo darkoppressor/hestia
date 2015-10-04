@@ -1,11 +1,11 @@
 <window>
 	name:notice
 	starting_position:-1,-1
-	starting_size:4,24
+	starting_size:4,40
 	fit_content:true
 
 	<info>
-		location:2,18
+		location:2,36
 		font:small
 	</info>
 
