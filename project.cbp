@@ -374,6 +374,12 @@
 			<Add option="-Wall" />
 		</Compiler>
 		<Unit filename="button_events_game.cpp" />
+		<Unit filename="chunk.cpp" />
+		<Unit filename="chunk.h" />
+		<Unit filename="city.cpp" />
+		<Unit filename="city.h" />
+		<Unit filename="civilization.cpp" />
+		<Unit filename="civilization.h" />
 		<Unit filename="console_commands_defs.cpp" />
 		<Unit filename="data_manager_defs.cpp" />
 		<Unit filename="dev_info.cpp" />
@@ -391,11 +397,19 @@
 		<Unit filename="game_manager_defs.cpp" />
 		<Unit filename="game_options.cpp" />
 		<Unit filename="game_options.h" />
+		<Unit filename="leader.cpp" />
+		<Unit filename="leader.h" />
 		<Unit filename="main.cpp" />
 		<Unit filename="main.h" />
 		<Unit filename="network_game.cpp" />
 		<Unit filename="network_game.h" />
+		<Unit filename="person.cpp" />
+		<Unit filename="person.h" />
+		<Unit filename="region.cpp" />
+		<Unit filename="region.h" />
 		<Unit filename="special_info.cpp" />
+		<Unit filename="tile.cpp" />
+		<Unit filename="tile.h" />
 		<Unit filename="version.cpp" />
 		<Unit filename="window_close_function.cpp" />
 		<Unit filename="window_scrolling_buttons.cpp" />
