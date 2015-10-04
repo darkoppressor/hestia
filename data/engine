@@ -7,6 +7,7 @@
 	resolution_mode:scaling
 	logic_update_rate:30
 	frame_rate_max:200
+	network_lockstep:true
 	axis_scroll_rate:5
 	cursor_width:2
 	cursor_height:2
@@ -40,7 +41,7 @@
 	chat_line_timeout:10000
 	gui_selector_style:standard
 	controller_dead_zone:8000
-	cursor_render_always:false
+	cursor_render_always:true
 	cursor:standard
 	cursor_mouse_over:mouse_over
 	color_theme:standard
