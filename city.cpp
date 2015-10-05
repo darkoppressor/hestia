@@ -6,4 +6,5 @@
 
 using namespace std;
 
-
+City::City(){
+}

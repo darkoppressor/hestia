@@ -36,7 +36,7 @@
 	<button>
 		location:130,102
 		text:OK
-		event:start_server
+		event:lobby_window
 		sound_moused:moused_1
 		sound_click:click_1
 	</button>

@@ -5,10 +5,14 @@
 #ifndef game_constants_h
 #define game_constants_h
 
+#include <cstdint>
+
 class Game_Constants{
 public:
 
-    ///static double EXAMPLE_CONSTANT;
+    static std::uint32_t TILE_SIZE;
+    static std::uint32_t CHUNK_SIZE;
+    static std::uint32_t BUILDING_SIZE;
 };
 
 #endif

@@ -8,7 +8,7 @@
 class City{
 public:
 
-    ///
+    City();
 };
 
 #endif

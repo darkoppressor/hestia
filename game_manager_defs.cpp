@@ -2,6 +2,8 @@
 /* This file is licensed under the MIT License. */
 /* See the file docs/LICENSE.txt for the full license text. */
 
+#include "game.h"
+
 #include <game_manager.h>
 #include <options.h>
 #include <music_manager.h>
@@ -98,14 +100,14 @@ void Game_Manager::set_camera(){
     if(camera.x<0.0){
         camera.x=0.0;
     }
-    if(camera.x+camera.w>0/**World size x*/*camera_zoom){
-        camera.x=0/**World size x*/*camera_zoom-camera.w;
+    if(camera.x+camera.w>(double)Game::get_world_width()*camera_zoom){
+        camera.x=(double)Game::get_world_width()*camera_zoom-camera.w;
     }
     if(camera.y<0.0){
         camera.y=0.0;
     }
-    if(camera.y+camera.h>0/**World size y*/*camera_zoom){
-        camera.y=0/**World size y*/*camera_zoom-camera.h;
+    if(camera.y+camera.h>(double)Game::get_world_height()*camera_zoom){
+        camera.y=(double)Game::get_world_height()*camera_zoom-camera.h;
     }
 
     Screen_Shake::update_camera_after(camera);
@@ -137,7 +139,7 @@ void Game_Manager::render_scoreboard(){
 void Game_Manager::render_title_background(){
     Bitmap_Font* font=Object_Manager::get_font("small");
 
-    Render::render_rectangle(0,0,Game_Window::width(),Game_Window::height(),1.0,"ui_black");
+    Render::render_rectangle(0,0,Game_Window::width(),Game_Window::height(),1.0,"title_background");
 
     font->show(0,Game_Window::height()-font->spacing_y*2.0,"Version: "+Engine_Version::get_version()+" "+Engine_Version::get_status()+"\nChecksum: "+Engine::CHECKSUM,"ui_white");
 

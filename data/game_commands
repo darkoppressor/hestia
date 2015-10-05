@@ -27,3 +27,63 @@
 	controller_button:
 	controller_axis:
 </game_command>
+
+<game_command>
+	name:up
+	title:Up
+	description:Move the camera up
+	developer:false
+	key:Up
+	controller_button:dpup
+	controller_axis:
+</game_command>
+
+<game_command>
+	name:down
+	title:Down
+	description:Move the camera down
+	developer:false
+	key:Down
+	controller_button:dpdown
+	controller_axis:
+</game_command>
+
+<game_command>
+	name:left
+	title:Left
+	description:Move the camera left
+	developer:false
+	key:Left
+	controller_button:dpleft
+	controller_axis:
+</game_command>
+
+<game_command>
+	name:right
+	title:Right
+	description:Move the camera right
+	developer:false
+	key:Right
+	controller_button:dpright
+	controller_axis:
+</game_command>
+
+<game_command>
+	name:move_stick_vertical
+	title:Vertical Stick
+	description:Move the camera vertically via joystick
+	developer:false
+	key:
+	controller_button:
+	controller_axis:lefty
+</game_command>
+
+<game_command>
+	name:move_stick_horizontal
+	title:Horizontal Stick
+	description:Move the camera horizontally via joystick
+	developer:false
+	key:
+	controller_button:
+	controller_axis:leftx
+</game_command>

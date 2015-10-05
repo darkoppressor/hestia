@@ -1,6 +1,9 @@
 //** Game Colors **//
 
-
+<color>
+	name:title_background
+	rgb:21,158,204
+</color>
 
 //** Engine Colors **//
 
@@ -26,17 +29,17 @@
 
 <color>
 	name:ui_1
-	rgb:204,107,10
+	rgb:230,161,23
 </color>
 
 <color>
 	name:ui_2
-	rgb:166,87,8
+	rgb:140,119,14
 </color>
 
 <color>
 	name:ui_3
-	rgb:128,67,6
+	rgb:89,89,9
 </color>
 
 <color>

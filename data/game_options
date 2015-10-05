@@ -30,7 +30,7 @@
 
 <game_option>
 	name:cl_camera_zoom
-	default:1.0
+	default:2.0
 	description:the starting zoom level of the camera
 </game_option>
 
@@ -66,13 +66,13 @@
 
 <game_option>
 	name:sv_max_players
-	default:4
+	default:32
 	description:the maximum allowed number of players
 </game_option>
 
 <game_option>
 	name:sv_network_max_clients
-	default:3
+	default:31
 	description:the maximum allowed number of connected clients
 </game_option>
 

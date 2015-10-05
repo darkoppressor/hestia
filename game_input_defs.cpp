@@ -2,6 +2,8 @@
 /* This file is licensed under the MIT License. */
 /* See the file docs/LICENSE.txt for the full license text. */
 
+#include "game.h"
+
 #include <game_manager.h>
 #include <network_engine.h>
 #include <network_server.h>
@@ -17,7 +19,7 @@ void Game_Manager::handle_drag_and_drop(string file){
 }
 
 void Game_Manager::handle_command_states_multiplayer(){
-    if(in_progress){
+    if(in_progress && Game::started){
         if(Network_Engine::status=="server"){
             Network_Server::prepare_server_input_states();
 
@@ -34,7 +36,7 @@ void Game_Manager::handle_command_states_multiplayer(){
 }
 
 void Game_Manager::handle_game_commands_multiplayer(){
-    if(in_progress){
+    if(in_progress && Game::started){
         if(Network_Engine::status=="server"){
             for(size_t i=0;i<Network_Engine::clients.size();i++){
                 for(size_t j=0;j<Network_Engine::clients[i].command_buffer.size();j++){
@@ -59,9 +61,59 @@ void Game_Manager::handle_input_states_gui(){
     int mouse_y=0;
     Engine::get_mouse_state(&mouse_x,&mouse_y);
 
-    if(in_progress){
+    if(in_progress && Game::started){
         if(Object_Manager::game_command_state("scoreboard")){
             display_scoreboard=true;
+        }
+
+        //Move the camera
+        if(Game::move_input_state("left")){
+            cam_state="left";
+        }
+        if(Game::move_input_state("up")){
+            cam_state="up";
+        }
+        if(Game::move_input_state("right")){
+            cam_state="right";
+        }
+        if(Game::move_input_state("down")){
+            cam_state="down";
+        }
+        if(Game::move_input_state("left") && Game::move_input_state("up")){
+            cam_state="left_up";
+        }
+        if(Game::move_input_state("up") && Game::move_input_state("right")){
+            cam_state="right_up";
+        }
+        if(Game::move_input_state("right") && Game::move_input_state("down")){
+            cam_state="right_down";
+        }
+        if(Game::move_input_state("down") && Game::move_input_state("left")){
+            cam_state="left_down";
+        }
+        if(Game::move_input_state("left") && Game::move_input_state("right")){
+            cam_state="left";
+        }
+        if(Game::move_input_state("up") && Game::move_input_state("down")){
+            cam_state="up";
+        }
+        if(Game::move_input_state("left") && Game::move_input_state("up") && Game::move_input_state("right")){
+            cam_state="left_up";
+        }
+        if(Game::move_input_state("left") && Game::move_input_state("down") && Game::move_input_state("right")){
+            cam_state="left_down";
+        }
+        if(Game::move_input_state("left") && Game::move_input_state("up") && Game::move_input_state("down")){
+            cam_state="left_up";
+        }
+        if(Game::move_input_state("up") && Game::move_input_state("right") && Game::move_input_state("down")){
+            cam_state="right_up";
+        }
+        if(Game::move_input_state("left") && Game::move_input_state("up") && Game::move_input_state("right") && Game::move_input_state("down")){
+            cam_state="left_up";
+        }
+        if(!Game::move_input_state("left") && !Game::move_input_state("up") && !Game::move_input_state("right") && !Game::move_input_state("down")){
+            cam_state="none";
         }
     }
 }
@@ -71,7 +123,7 @@ void Game_Manager::handle_input_states(){
     int mouse_y=0;
     Engine::get_mouse_state(&mouse_x,&mouse_y);
 
-    if(in_progress){
+    if(in_progress && Game::started){
         if(!paused){
             //Example multiplayer command state
             /**if(Object_Manager::game_command_state("some_command")){
@@ -82,26 +134,21 @@ void Game_Manager::handle_input_states(){
 }
 
 bool Game_Manager::handle_game_command_gui(string command_name){
-    //Pause the game
-    if(command_name=="pause"){
-        toggle_pause();
+    if(Game::started){
+        //Multiplayer pause
+        if(command_name=="pause"){
+            if(Network_Engine::status=="server"){
+                toggle_pause();
 
-        return true;
+                Network_Server::send_paused();
+            }
+
+            return true;
+        }
     }
 
-    //Example multiplayer pause
-    /**if(command_name=="pause"){
-        if(Network_Engine::status=="server"){
-            toggle_pause();
-
-            Network_Server::send_paused();
-        }
-
-        return true;
-    }*/
-
     //Toggle chat box
-    else if(command_name=="chat"){
+    if(command_name=="chat"){
         Engine::chat.toggle_on();
 
         return true;
@@ -155,6 +202,19 @@ bool Game_Manager::handle_input_events_gui(){
                 event_consumed=handle_game_command_gui(game_commands[i].name);
             }
         }
+
+        if(Engine_Input::event.type==SDL_MOUSEWHEEL){
+            if(!event_consumed && Engine_Input::event.wheel.y>0){
+                zoom_camera_in(camera);
+
+                event_consumed=true;
+            }
+            else if(!event_consumed && Engine_Input::event.wheel.y<0){
+                zoom_camera_out(camera);
+
+                event_consumed=true;
+            }
+        }
     }
 
     return event_consumed;
@@ -163,7 +223,7 @@ bool Game_Manager::handle_input_events_gui(){
 bool Game_Manager::handle_input_events(){
     bool event_consumed=false;
 
-    if(in_progress){
+    if(in_progress && Game::started){
         const vector<Game_Command>& game_commands=Object_Manager::get_game_commands();
 
         for(size_t i=0;i<game_commands.size() && !event_consumed;i++){

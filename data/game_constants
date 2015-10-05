@@ -5,10 +5,28 @@
 
 <game_constant>
 	name:zoom_min
-	value:0.5
+	value:1.0
 </game_constant>
 
 <game_constant>
 	name:zoom_max
-	value:2.0
+	value:4.0
+</game_constant>
+
+<game_constant>
+	//pixels
+	name:tile_size
+	value:16
+</game_constant>
+
+<game_constant>
+	//tiles
+	name:chunk_size
+	value:64
+</game_constant>
+
+<game_constant>
+	//tiles
+	name:building_size
+	value:2
 </game_constant>

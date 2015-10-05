@@ -12,11 +12,11 @@
 #include "raknet/Source/BitStream.h"
 
 enum{
-    ///ID_GAME_EXAMPLE=ID_GAME_PACKET_ENUM
+    ID_GAME_START=ID_GAME_PACKET_ENUM
 };
 
 enum{
-    ///ORDERING_CHANNEL_EXAMPLE=ORDERING_CHANNEL_GAME_PACKET_ENUM
+    ORDERING_CHANNEL_GAME_START=ORDERING_CHANNEL_GAME_PACKET_ENUM
 };
 
 class Network_Game{
@@ -37,6 +37,9 @@ public:
     //These are used in the lockstep networking model
     static void write_server_ready(RakNet::BitStream* bitstream);
     static void read_server_ready(RakNet::BitStream* bitstream);
+
+    static void send_game_start_data();
+    static void receive_game_start_data();
 };
 
 #endif

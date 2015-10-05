@@ -8,7 +8,7 @@
 class Person{
 public:
 
-    ///
+    Person();
 };
 
 #endif
