@@ -5,7 +5,7 @@
 
 <game_constant>
 	name:zoom_min
-	value:1.0
+	value:0.5
 </game_constant>
 
 <game_constant>
@@ -35,6 +35,12 @@
 	//pixels
 	name:person_size
 	value:16
+</game_constant>
+
+<game_constant>
+	//seconds
+	name:day_length
+	value:4
 </game_constant>
 
 <game_constant>
