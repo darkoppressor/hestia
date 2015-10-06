@@ -189,7 +189,7 @@ void Game_Manager::render_loading_screen(const Progress_Bar& bar,string message)
             Render::render_rectangle(screen_width/2.0-max_bar_width/2.0,screen_height-offset,bar_width,bar_height,1.0,"ui_1");
 
             if(Data_Manager::are_fonts_loaded()){
-                Bitmap_Font* font=Object_Manager::get_font("small");
+                Bitmap_Font* font=Object_Manager::get_font("standard");
 
                 string msg=Strings::num_to_string((int)(percentage*100.0))+"%";
 
