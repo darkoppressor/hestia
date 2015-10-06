@@ -17,6 +17,12 @@ Tile::Tile(){
     type=Type::WHEAT;
 }
 
+Tile::Tile(Type new_type){
+    parent=0;
+
+    type=new_type;
+}
+
 Tile::Tile(uint32_t new_parent,Type new_type){
     parent=new_parent;
 

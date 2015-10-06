@@ -29,6 +29,7 @@ private:
 public:
 
     Tile();
+    Tile(Type new_type);
     Tile(std::uint32_t new_parent,Type new_type);
 
     std::uint32_t get_parent();

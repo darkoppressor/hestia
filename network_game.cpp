@@ -74,6 +74,7 @@ void Network_Game::send_game_start_data(){
         bitstream.WriteCompressed(Game::option_world_height);
         bitstream.WriteCompressed(Game::option_region_min);
         bitstream.WriteCompressed(Game::option_region_max);
+        bitstream.WriteCompressed(Game::option_initial_tile_growth);
 
         bitstream.WriteCompressed((uint32_t)Game::leaders.size());
         for(size_t i=0;i<Game::leaders.size();i++){
@@ -93,6 +94,8 @@ void Network_Game::send_game_start_data(){
 }
 
 void Network_Game::receive_game_start_data(){
+    Game_World::clear_world();
+
     RakNet::BitStream bitstream(Network_Engine::packet->data,Network_Engine::packet->length,false);
     Network_Engine::stat_counter_bytes_received+=bitstream.GetNumberOfBytesUsed();
 
@@ -104,6 +107,7 @@ void Network_Game::receive_game_start_data(){
     bitstream.ReadCompressed(Game::option_world_height);
     bitstream.ReadCompressed(Game::option_region_min);
     bitstream.ReadCompressed(Game::option_region_max);
+    bitstream.ReadCompressed(Game::option_initial_tile_growth);
 
     uint32_t leaders_size=0;
     bitstream.ReadCompressed(leaders_size);

@@ -30,6 +30,8 @@ bool Button_Events::handle_button_event_game(string button_event,Window* parent_
         if(Network_Engine::status=="server"){
             Window_Manager::close_all_windows();
 
+            Game_World::clear_world();
+
             Game::setup_leaders();
 
             Network_Game::send_game_start_data();

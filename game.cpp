@@ -25,9 +25,12 @@ uint32_t Game::option_world_width=0;
 uint32_t Game::option_world_height=0;
 uint32_t Game::option_region_min=0;
 uint32_t Game::option_region_max=0;
+uint32_t Game::option_initial_tile_growth=0;
 uint32_t Game::option_max_leaders=0;
 
 RNG Game::rng;
+
+Calendar Game::calendar;
 
 vector<Region> Game::regions;
 vector<vector<Chunk>> Game::chunks;
@@ -40,13 +43,18 @@ map<Coords<uint32_t>,Tile,Game::tile_compare> Game::tiles;
 void Game::clear_world(){
     started=false;
 
-    option_rng_seed=0;
+    calendar.reset();
+
+    RNG rng_seeder;
+    option_rng_seed=rng_seeder.random_range(0,UINT32_MAX);
+
     option_world_width=5;
     option_world_height=5;
     option_region_min=4;
     option_region_max=8;
+    option_initial_tile_growth=720;
 
-    option_max_leaders=2;
+    option_max_leaders=8;
 
     regions.clear();
     chunks.clear();
@@ -65,13 +73,18 @@ void Game::setup_leaders(){
     for(uint32_t i=0;i<option_max_leaders;i++){
         if(i<player_count){
             leaders.push_back(Leader(i));
-            leaders.back().set_color(Color(rng_color.random_range(0,255),rng_color.random_range(0,255),rng_color.random_range(0,255),255));
         }
+        else{
+            leaders.push_back(Leader());
+        }
+
+        leaders.back().set_color(Color(rng_color.random_range(0,255),rng_color.random_range(0,255),rng_color.random_range(0,255),255));
     }
 }
 
 void Game::generate_world(){
-    clear_world();
+    ///QQQ - Note that I have removed the usual call to clear_world()
+    ///This would be a problem if the standard singleplayer start function was used
 
     rng.seed(option_rng_seed);
 
@@ -202,7 +215,7 @@ void Game::generate_world(){
     }
 
     //pixels
-    //We square this value, so it can be directory compared to distances returned by Int_Math::distance_between_points_no_sqrt
+    //We square this value, so it can be directly compared to distances returned by Int_Math::distance_between_points_no_sqrt
     uint64_t desired_distance_between_cities=((get_world_width()+get_world_height())/2)/4;
     desired_distance_between_cities*=desired_distance_between_cities;
 
@@ -225,9 +238,12 @@ void Game::generate_world(){
             Coords<int32_t> coords(Tile::get_x(tile_x)+Tile::get_tile_type_size(Tile::Type::BUILDING_CITY)/2,Tile::get_y(tile_y)+Tile::get_tile_type_size(Tile::Type::BUILDING_CITY)/2);
 
             if(tile_coords_are_valid(Tile::Type::BUILDING_CITY,tile_coords)){
-                if(attempts>=max_attempts || distance_to_nearest_city(coords)<=desired_distance_between_cities){
-                    tiles.emplace(tile_coords,Tile::Type::BUILDING_CITY,city);
+                if(attempts>=max_attempts || distance_to_nearest_city(coords)>=desired_distance_between_cities){
+                    tiles.emplace(std::piecewise_construct,
+                                  std::forward_as_tuple(tile_coords),std::forward_as_tuple(city,Tile::Type::BUILDING_CITY));
                     cities.back().set_tile(tile_coords);
+
+                    break;
                 }
             }
         }
@@ -260,7 +276,11 @@ void Game::generate_world(){
         }
     }
 
-    ///Generate wheat/tree tiles
+    for(size_t i=0;i<regions.size();i++){
+        for(uint32_t attempts=0;attempts<option_initial_tile_growth;attempts++){
+            regions[i].tile_growth(rng);
+        }
+    }
 
     //If we are a player, center the camera on our starting city
     int player_number=Network_Engine::get_our_player_number();
@@ -370,6 +390,8 @@ uint64_t Game::distance_to_nearest_city(const Coords<int32_t>& coords){
         uint64_t distance=Int_Math::distance_between_points_no_sqrt(coords.x,coords.y,cities[i].get_center_x(),cities[i].get_center_y());
 
         if(no_city_found || distance<nearest){
+            no_city_found=false;
+
             nearest=distance;
         }
     }
@@ -379,6 +401,29 @@ uint64_t Game::distance_to_nearest_city(const Coords<int32_t>& coords){
 
 void Game::tick(){
     if(started){
+        Calendar::Change change=calendar.increment();
+
+        //If the day changed
+        if(change!=Calendar::Change::NONE){
+            for(size_t i=0;i<regions.size();i++){
+                regions[i].tile_growth(rng);
+            }
+
+            //If the week changed
+            if(change!=Calendar::Change::DAY){
+                ///Do weekly stuff
+
+                //If the month changed
+                if(change!=Calendar::Change::WEEK){
+                    ///Do monthly stuff
+
+                    //If the year changed
+                    if(change!=Calendar::Change::MONTH){
+                        ///Do yearly stuff
+                    }
+                }
+            }
+        }
     }
 }
 

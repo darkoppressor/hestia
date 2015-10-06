@@ -12,6 +12,7 @@
 #include "city.h"
 #include "person.h"
 #include "tile.h"
+#include "calendar.h"
 
 #include <rng.h>
 #include <coords.h>
@@ -47,10 +48,13 @@ public:
 
     static std::uint32_t option_region_min;
     static std::uint32_t option_region_max;
+    static std::uint32_t option_initial_tile_growth;
 
     static std::uint32_t option_max_leaders;
 
     static RNG rng;
+
+    static Calendar calendar;
 
     static std::vector<Region> regions;
     static std::vector<std::vector<Chunk>> chunks;
