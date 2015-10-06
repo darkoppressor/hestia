@@ -13,6 +13,10 @@ public:
     static std::uint32_t TILE_SIZE;
     static std::uint32_t CHUNK_SIZE;
     static std::uint32_t BUILDING_SIZE;
+    static std::uint32_t PERSON_SIZE;
+
+    static std::uint32_t CITY_POPULATION_MAX;
+    static std::uint32_t CITY_POPULATION_START;
 };
 
 #endif

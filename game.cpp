@@ -4,6 +4,7 @@
 
 #include "game.h"
 #include "game_constants.h"
+#include "int_math.h"
 
 #include <render.h>
 #include <game_window.h>
@@ -13,6 +14,7 @@
 #include <object_manager.h>
 #include <engine_data.h>
 #include <network_engine.h>
+#include <collision.h>
 
 using namespace std;
 
@@ -33,15 +35,7 @@ vector<Leader> Game::leaders;
 vector<Civilization> Game::civilizations;
 vector<City> Game::cities;
 vector<Person> Game::people;
-map<Coords<uint32_t>,Tile> Game::tiles;
-
-uint32_t Game::get_world_width(){
-    return option_world_width*Game_Constants::CHUNK_SIZE*Game_Constants::TILE_SIZE;
-}
-
-uint32_t Game::get_world_height(){
-    return option_world_height*Game_Constants::CHUNK_SIZE*Game_Constants::TILE_SIZE;
-}
+map<Coords<uint32_t>,Tile,Game::tile_compare> Game::tiles;
 
 void Game::clear_world(){
     started=false;
@@ -69,14 +63,10 @@ void Game::setup_leaders(){
     uint32_t player_count=Network_Engine::get_player_count();
 
     for(uint32_t i=0;i<option_max_leaders;i++){
-        int32_t parent_player=-1;
-
         if(i<player_count){
-            parent_player=i;
+            leaders.push_back(Leader(i));
+            leaders.back().set_color(Color(rng_color.random_range(0,255),rng_color.random_range(0,255),rng_color.random_range(0,255),255));
         }
-
-        leaders.push_back(Leader(parent_player));
-        leaders.back().set_color(Color(rng_color.random_range(0,255),rng_color.random_range(0,255),rng_color.random_range(0,255),255));
     }
 }
 
@@ -211,29 +201,180 @@ void Game::generate_world(){
         }
     }
 
-    for(size_t i=0;i<leaders.size();i++){
-        civilizations.push_back(Civilization());
+    //pixels
+    //We square this value, so it can be directory compared to distances returned by Int_Math::distance_between_points_no_sqrt
+    uint64_t desired_distance_between_cities=((get_world_width()+get_world_height())/2)/4;
+    desired_distance_between_cities*=desired_distance_between_cities;
 
-        ///for(uint32_t attempt=0;attempt<20000;attempt++){
-            cities.push_back(City(i));
-            uint32_t city=cities.size()-1;
-            civs[i].add_child_city(city);
+    for(uint32_t leader=0;leader<leaders.size();leader++){
+        civilizations.push_back(Civilization(leader));
+        uint32_t civilization=civilizations.size()-1;
+        leaders.back().set_civilization(civilization);
 
-            int x=rng.random_range(0,option_world_size_x*CHUNK_SIZE-BUILDING_SIZE);
-            int y=rng.random_range(0,option_world_size_y*CHUNK_SIZE-BUILDING_SIZE);
+        cities.push_back(City(civilization));
+        uint32_t city=cities.size()-1;
+        civilizations.back().add_city(city);
 
-            buildings.push_back(Building(city,x,y));
-            cities[city].add_child_building(buildings.size()-1);
+        const uint32_t max_attempts=10000;
 
-            people.push_back(Person(city,x,y));
-            cities[city].add_child_person(people.size()-1);
-        ///}
+        for(uint32_t attempts=0;;attempts++){
+            //tiles
+            uint32_t tile_x=rng.random_range(0,get_world_width_tiles()-Game_Constants::BUILDING_SIZE);
+            uint32_t tile_y=rng.random_range(0,get_world_height_tiles()-Game_Constants::BUILDING_SIZE);
+            Coords<uint32_t> tile_coords(tile_x,tile_y);
+            Coords<int32_t> coords(Tile::get_x(tile_x)+Tile::get_tile_type_size(Tile::Type::BUILDING_CITY)/2,Tile::get_y(tile_y)+Tile::get_tile_type_size(Tile::Type::BUILDING_CITY)/2);
+
+            if(tile_coords_are_valid(Tile::Type::BUILDING_CITY,tile_coords)){
+                if(attempts>=max_attempts || distance_to_nearest_city(coords)<=desired_distance_between_cities){
+                    tiles.emplace(tile_coords,Tile::Type::BUILDING_CITY,city);
+                    cities.back().set_tile(tile_coords);
+                }
+            }
+        }
+
+        //pixels
+        int32_t city_spawn_zone_left=cities.back().get_center_x()-cities.back().get_size()*4;
+        int32_t city_spawn_zone_top=cities.back().get_center_y()-cities.back().get_size()*4;
+        int32_t city_spawn_zone_right=city_spawn_zone_left+cities.back().get_size()*8;
+        int32_t city_spawn_zone_bottom=city_spawn_zone_top+cities.back().get_size()*8;
+
+        if(city_spawn_zone_left<0){
+            city_spawn_zone_left=0;
+        }
+        if(city_spawn_zone_top<0){
+            city_spawn_zone_top=0;
+        }
+        if(city_spawn_zone_right+Game_Constants::PERSON_SIZE>=get_world_width()){
+            city_spawn_zone_right=get_world_width()-1-Game_Constants::PERSON_SIZE;
+        }
+        if(city_spawn_zone_bottom+Game_Constants::PERSON_SIZE>=get_world_height()){
+            city_spawn_zone_bottom=get_world_height()-1-Game_Constants::PERSON_SIZE;
+        }
+
+        for(uint32_t person=0;person<Game_Constants::CITY_POPULATION_START;person++){
+            int32_t x=(int32_t)rng.random_range((uint32_t)city_spawn_zone_left,(uint32_t)city_spawn_zone_right);
+            int32_t y=(int32_t)rng.random_range((uint32_t)city_spawn_zone_top,(uint32_t)city_spawn_zone_bottom);
+
+            people.push_back(Person(city,Collision_Rect<int32_t>(x,y,Game_Constants::PERSON_SIZE,Game_Constants::PERSON_SIZE)));
+            cities.back().add_person(people.size()-1);
+        }
+    }
+
+    ///Generate wheat/tree tiles
+
+    //If we are a player, center the camera on our starting city
+    int player_number=Network_Engine::get_our_player_number();
+    if(player_number>=0){
+        int32_t leader=get_player_leader(player_number);
+
+        if(leader>=0){
+            uint32_t civilization=leaders[leader].get_civilization();
+
+            vector<uint32_t> civ_cities=civilizations[civilization].get_cities();
+
+            City* city_ptr=&cities[civ_cities[0]];
+
+            Game_Manager::center_camera(Collision_Rect<double>((double)city_ptr->get_center_x(),(double)city_ptr->get_center_y(),0.0,0.0));
+        }
     }
 
     started=true;
 
     //Begin the network turn timer
     Network_Lockstep::start();
+}
+
+int32_t Game::get_player_leader(int player_number){
+    if(player_number>=0 && player_number<Network_Engine::get_player_count()){
+        for(size_t i=0;i<leaders.size();i++){
+            if(leaders[i].is_player_controlled() && leaders[i].get_parent_player()==player_number){
+                return (int32_t)i;
+            }
+        }
+    }
+
+    return -1;
+}
+
+uint32_t Game::get_world_width(){
+    return option_world_width*Game_Constants::CHUNK_SIZE*Game_Constants::TILE_SIZE;
+}
+
+uint32_t Game::get_world_height(){
+    return option_world_height*Game_Constants::CHUNK_SIZE*Game_Constants::TILE_SIZE;
+}
+
+uint32_t Game::get_world_width_tiles(){
+    return option_world_width*Game_Constants::CHUNK_SIZE;
+}
+
+uint32_t Game::get_world_height_tiles(){
+    return option_world_height*Game_Constants::CHUNK_SIZE;
+}
+
+bool Game::tile_exists(const Coords<uint32_t>& tile_coords){
+    if(tiles.count(tile_coords)){
+        return true;
+    }
+    else{
+        return false;
+    }
+}
+
+bool Game::tile_coords_are_valid(Tile::Type type,const Coords<uint32_t>& tile_coords){
+    //tiles
+    uint32_t tile_size=1;
+    if(Tile::tile_type_is_building(type)){
+        tile_size=Game_Constants::BUILDING_SIZE;
+    }
+
+    if(tile_coords.x+(tile_size-1)>=get_world_width_tiles() || tile_coords.y+(tile_size-1)>=get_world_height_tiles()){
+        return false;
+    }
+
+    uint32_t x=tile_coords.x;
+    uint32_t y=tile_coords.y;
+
+    if(x>=Game_Constants::BUILDING_SIZE-1){
+        x-=Game_Constants::BUILDING_SIZE-1;
+    }
+    else{
+        x=0;
+    }
+    if(y>=Game_Constants::BUILDING_SIZE-1){
+        y-=Game_Constants::BUILDING_SIZE-1;
+    }
+    else{
+        y=0;
+    }
+
+    uint32_t x_end=tile_coords.x+tile_size-1;
+    uint32_t y_end=tile_coords.y+tile_size-1;
+
+    for(;x<=x_end;x++){
+        for(;y<=y_end;y++){
+            if(tile_exists(Coords<uint32_t>(x,y))){
+                return false;
+            }
+        }
+    }
+
+    return true;
+}
+
+uint64_t Game::distance_to_nearest_city(const Coords<int32_t>& coords){
+    bool no_city_found=true;
+    uint64_t nearest=0;
+
+    for(size_t i=0;i<cities.size();i++){
+        uint64_t distance=Int_Math::distance_between_points_no_sqrt(coords.x,coords.y,cities[i].get_center_x(),cities[i].get_center_y());
+
+        if(no_city_found || distance<nearest){
+            nearest=distance;
+        }
+    }
+
+    return nearest;
 }
 
 void Game::tick(){
@@ -264,18 +405,40 @@ void Game::animate(){
 
 void Game::render(){
     if(started){
-        uint32_t camera_x=(uint32_t)(Game_Manager::camera.x/((double)Game_Constants::CHUNK_SIZE*(double)Game_Constants::TILE_SIZE*Game_Manager::camera_zoom));
-        uint32_t camera_y=(uint32_t)(Game_Manager::camera.y/((double)Game_Constants::CHUNK_SIZE*(double)Game_Constants::TILE_SIZE*Game_Manager::camera_zoom));
-        uint32_t end_x=camera_x+(uint32_t)(Game_Manager::camera.w/((double)Game_Constants::CHUNK_SIZE*(double)Game_Constants::TILE_SIZE*Game_Manager::camera_zoom))+2;
-        uint32_t end_y=camera_y+(uint32_t)(Game_Manager::camera.h/((double)Game_Constants::CHUNK_SIZE*(double)Game_Constants::TILE_SIZE*Game_Manager::camera_zoom))+2;
+        uint32_t camera_chunk_x=(uint32_t)(Game_Manager::camera.x/((double)Game_Constants::CHUNK_SIZE*(double)Game_Constants::TILE_SIZE*Game_Manager::camera_zoom));
+        uint32_t camera_chunk_y=(uint32_t)(Game_Manager::camera.y/((double)Game_Constants::CHUNK_SIZE*(double)Game_Constants::TILE_SIZE*Game_Manager::camera_zoom));
+        uint32_t end_chunk_x=camera_chunk_x+(uint32_t)(Game_Manager::camera.w/((double)Game_Constants::CHUNK_SIZE*(double)Game_Constants::TILE_SIZE*Game_Manager::camera_zoom))+2;
+        uint32_t end_chunk_y=camera_chunk_y+(uint32_t)(Game_Manager::camera.h/((double)Game_Constants::CHUNK_SIZE*(double)Game_Constants::TILE_SIZE*Game_Manager::camera_zoom))+2;
 
-        //Render each onscreen chunk's ground
-        for(uint32_t x=camera_x;x<end_x;x++){
-            for(uint32_t y=camera_y;y<end_y;y++){
+        //Render each on-screen chunk's ground
+        for(uint32_t x=camera_chunk_x;x<end_chunk_x;x++){
+            for(uint32_t y=camera_chunk_y;y<end_chunk_y;y++){
                 if(x<option_world_width && y<option_world_height){
                     chunks[x][y].render_ground(x,y);
                 }
             }
+        }
+
+        uint32_t camera_tile_x=(uint32_t)(Game_Manager::camera.x/((double)Game_Constants::TILE_SIZE*Game_Manager::camera_zoom));
+        uint32_t camera_tile_y=(uint32_t)(Game_Manager::camera.y/((double)Game_Constants::TILE_SIZE*Game_Manager::camera_zoom));
+        uint32_t end_tile_x=camera_tile_x+(uint32_t)(Game_Manager::camera.w/((double)Game_Constants::TILE_SIZE*Game_Manager::camera_zoom))+2;
+        uint32_t end_tile_y=camera_tile_y+(uint32_t)(Game_Manager::camera.h/((double)Game_Constants::TILE_SIZE*Game_Manager::camera_zoom))+2;
+
+        //Render each on-screen tile
+        for(uint32_t x=camera_tile_x;x<end_tile_x;x++){
+            for(uint32_t y=camera_tile_y;y<end_tile_y;y++){
+                if(x<get_world_width_tiles() && y<get_world_height_tiles()){
+                    Coords<uint32_t> tile_coords(x,y);
+
+                    if(tile_exists(tile_coords)){
+                        tiles.at(tile_coords).render(x,y);
+                    }
+                }
+            }
+        }
+
+        for(size_t i=0;i<people.size();i++){
+            people[i].render();
         }
     }
 }

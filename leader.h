@@ -12,8 +12,9 @@
 class Leader{
 private:
 
-    //If -1, this Leader is controlled by the AI instead of a player
-    std::int32_t parent_player;
+    //If player_controlled is false, this Leader is controlled by the AI instead of a player
+    bool player_controlled;
+    std::uint32_t parent_player;
 
     std::uint32_t civilization;
 
@@ -22,10 +23,12 @@ private:
 public:
 
     Leader();
-    Leader(std::int32_t new_parent_player);
+    Leader(std::uint32_t new_parent);
 
-    std::int32_t get_parent_player();
-    void set_parent_player(std::int32_t new_parent_player);
+    bool is_player_controlled();
+    std::uint32_t get_parent_player();
+    void set_parent_player(std::uint32_t new_parent);
+    void set_parent_to_ai();
 
     std::uint32_t get_civilization();
     void set_civilization(std::uint32_t new_civilization);

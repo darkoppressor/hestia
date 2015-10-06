@@ -22,6 +22,19 @@
 #include <map>
 
 class Game{
+private:
+
+    struct tile_compare{
+        bool operator()(const Coords<std::uint32_t>& a,const Coords<std::uint32_t>& b) const{
+            if(a.x!=b.x){
+                return a.x<b.x;
+            }
+            else{
+                return a.y<b.y;
+            }
+        }
+    };
+
 public:
 
     static bool started;
@@ -45,15 +58,29 @@ public:
     static std::vector<Civilization> civilizations;
     static std::vector<City> cities;
     static std::vector<Person> people;
-    static std::map<Coords<std::uint32_t>,Tile> tiles;
+    static std::map<Coords<std::uint32_t>,Tile,tile_compare> tiles;
+
+    static void clear_world();
+    static void setup_leaders();
+    static void generate_world();
+
+    //Returns the index for the leader associated with the passed player number,
+    //or -1 if the passed player number is invalid
+    static std::int32_t get_player_leader(int player_number);
 
     //pixels
     static std::uint32_t get_world_width();
     static std::uint32_t get_world_height();
 
-    static void clear_world();
-    static void setup_leaders();
-    static void generate_world();
+    //tiles
+    static std::uint32_t get_world_width_tiles();
+    static std::uint32_t get_world_height_tiles();
+
+    static bool tile_exists(const Coords<std::uint32_t>& tile_coords);
+    static bool tile_coords_are_valid(Tile::Type type,const Coords<std::uint32_t>& tile_coords);
+
+    //Note that this distance is actually the distance^2, as the sqrt operation is skipped
+    static uint64_t distance_to_nearest_city(const Coords<std::int32_t>& coords);
 
     static void tick();
     static void ai();

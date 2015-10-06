@@ -13,6 +13,10 @@ using namespace std;
 uint32_t Game_Constants::TILE_SIZE=0;
 uint32_t Game_Constants::CHUNK_SIZE=0;
 uint32_t Game_Constants::BUILDING_SIZE=0;
+uint32_t Game_Constants::PERSON_SIZE=0;
+
+uint32_t Game_Constants::CITY_POPULATION_MAX=0;
+uint32_t Game_Constants::CITY_POPULATION_START=0;
 
 void Game_Constants_Loader::set_game_constant(string name,string value){
     if(name=="zoom_rate"){
@@ -33,5 +37,15 @@ void Game_Constants_Loader::set_game_constant(string name,string value){
     }
     else if(name=="building_size"){
         Game_Constants::BUILDING_SIZE=Strings::string_to_unsigned_long(value);
+    }
+    else if(name=="person_size"){
+        Game_Constants::PERSON_SIZE=Strings::string_to_unsigned_long(value);
+    }
+
+    else if(name=="city_population_max"){
+        Game_Constants::CITY_POPULATION_MAX=Strings::string_to_unsigned_long(value);
+    }
+    else if(name=="city_population_start"){
+        Game_Constants::CITY_POPULATION_START=Strings::string_to_unsigned_long(value);
     }
 }

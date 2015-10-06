@@ -77,6 +77,7 @@ void Network_Game::send_game_start_data(){
 
         bitstream.WriteCompressed((uint32_t)Game::leaders.size());
         for(size_t i=0;i<Game::leaders.size();i++){
+            bitstream.WriteCompressed(Game::leaders[i].is_player_controlled());
             bitstream.WriteCompressed(Game::leaders[i].get_parent_player());
 
             Color color=Game::leaders[i].get_color();
@@ -107,10 +108,18 @@ void Network_Game::receive_game_start_data(){
     uint32_t leaders_size=0;
     bitstream.ReadCompressed(leaders_size);
     for(uint32_t i=0;i<leaders_size;i++){
-        int32_t parent_player=0;
+        bool player_controlled=false;
+        bitstream.ReadCompressed(player_controlled);
+
+        uint32_t parent_player=0;
         bitstream.ReadCompressed(parent_player);
 
-        Game::leaders.push_back(Leader(parent_player));
+        if(player_controlled){
+            Game::leaders.push_back(Leader(parent_player));
+        }
+        else{
+            Game::leaders.push_back(Leader());
+        }
 
         int16_t red=0;
         int16_t green=0;

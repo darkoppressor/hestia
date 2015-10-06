@@ -19,15 +19,17 @@ public:
 
     Chunk();
 
-    //pixels
-    std::int32_t get_x(std::uint32_t chunk_x);
-    std::int32_t get_y(std::uint32_t chunk_y);
-
     Region* get_parent_region();
+    void set_parent_region(std::uint32_t new_parent);
 
     std::string get_ground_string();
 
-    void set_parent_region(std::uint32_t new_parent_region);
+    //pixels
+    std::int32_t get_size();
+
+    //pixels
+    static std::int32_t get_x(std::uint32_t chunk_x);
+    static std::int32_t get_y(std::uint32_t chunk_y);
 
     void render_ground(std::uint32_t chunk_x,std::uint32_t chunk_y);
 };

@@ -7,23 +7,35 @@
 using namespace std;
 
 Leader::Leader(){
-    parent_player=-1;
+    player_controlled=false;
+    parent_player=0;
 
     civilization=0;
 }
 
-Leader::Leader(int32_t new_parent_player){
-    parent_player=new_parent_player;
+Leader::Leader(uint32_t new_parent){
+    player_controlled=true;
+    parent_player=new_parent;
 
     civilization=0;
 }
 
-int32_t Leader::get_parent_player(){
+bool Leader::is_player_controlled(){
+    return player_controlled;
+}
+
+uint32_t Leader::get_parent_player(){
     return parent_player;
 }
 
-void Leader::set_parent_player(int32_t new_parent_player){
-    parent_player=new_parent_player;
+void Leader::set_parent_player(uint32_t new_parent){
+    player_controlled=true;
+    parent_player=new_parent;
+}
+
+void Leader::set_parent_to_ai(){
+    player_controlled=false;
+    parent_player=0;
 }
 
 uint32_t Leader::get_civilization(){

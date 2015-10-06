@@ -69,6 +69,10 @@ string Region::get_ground_string(Ground ground){
     }
 }
 
+Region::Biome Region::get_biome(){
+    return biome;
+}
+
 void Region::set_biome(Biome new_biome){
     biome=new_biome;
 }

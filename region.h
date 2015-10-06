@@ -45,9 +45,9 @@ public:
     Region();
 
     Ground get_ground();
-
     std::string get_ground_string(Ground ground);
 
+    Biome get_biome();
     void set_biome(Biome new_biome);
 
     void add_chunk(const Coords<std::uint32_t>& coords);
