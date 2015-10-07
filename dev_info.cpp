@@ -2,6 +2,8 @@
 /* This file is licensed under the MIT License. */
 /* See the file docs/LICENSE.txt for the full license text. */
 
+#include "game.h"
+
 #include <engine.h>
 #include <game_manager.h>
 #include <font.h>
@@ -20,6 +22,13 @@ void Engine::render_dev_info(){
         msg+="Camera Position: "+Strings::num_to_string(Game_Manager::camera.x)+","+Strings::num_to_string(Game_Manager::camera.y)+"\n";
         msg+="Camera Size: "+Strings::num_to_string(Game_Manager::camera.w/Game_Manager::camera_zoom)+","+Strings::num_to_string(Game_Manager::camera.h/Game_Manager::camera_zoom)+"\n";
         msg+="Camera Zoom: "+Strings::num_to_string(Game_Manager::camera_zoom)+"\n";
+
+        msg+="\n";
+
+        msg+="Day: "+Strings::num_to_string(Game::calendar.get_day())+"\n";
+        msg+="Week: "+Strings::num_to_string(Game::calendar.get_week())+"\n";
+        msg+="Month: "+Strings::num_to_string(Game::calendar.get_month())+"\n";
+        msg+="Year: "+Strings::num_to_string(Game::calendar.get_year())+"\n";
     }
 
     if(msg.length()>0){
