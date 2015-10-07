@@ -52,3 +52,31 @@
 	name:city_population_start
 	value:5
 </game_constant>
+
+<game_constant>
+	//days
+	name:breeding_rate
+	value:15
+</game_constant>
+
+<game_constant>
+	//kilograms
+	name:person_mass
+	value:80
+</game_constant>
+
+<game_constant>
+	//meters/second
+	name:person_max_speed
+	//Note that this needs to be >= the logic update rate,
+	//because speeds below it are rounded down to 0
+	value:160
+</game_constant>
+
+<game_constant>
+	//newtons
+	name:person_move_force
+	//Note that this should be > person_mass,
+	//because a force smaller than mass will be rounded down to 0 acceleration
+	value:320
+</game_constant>

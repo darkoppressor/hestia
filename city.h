@@ -8,6 +8,8 @@
 #include "tile.h"
 
 #include <coords.h>
+#include <rng.h>
+#include <collision.h>
 
 #include <cstdint>
 #include <vector>
@@ -21,6 +23,8 @@ private:
 
     std::vector<std::uint32_t> people;
 
+    std::uint32_t breeding_counter;
+
     ///Tile* get_tile_ptr();
 
 public:
@@ -28,26 +32,32 @@ public:
     City();
     City(std::uint32_t new_parent);
 
-    std::uint32_t get_parent_civilization();
+    std::uint32_t get_parent_civilization() const;
     void set_parent_civilization(std::uint32_t new_parent);
 
-    Coords<std::uint32_t> get_tile();
+    Coords<std::uint32_t> get_tile() const;
     void set_tile(const Coords<std::uint32_t>& new_tile);
 
-    const std::vector<std::uint32_t>& get_people();
+    const std::vector<std::uint32_t>& get_people() const;
     void add_person(std::uint32_t person);
     void remove_person(std::uint32_t person);
 
     //pixels
-    std::int32_t get_size();
+    std::int32_t get_size() const;
 
     //pixels
-    std::int32_t get_x();
-    std::int32_t get_y();
+    std::int32_t get_x() const;
+    std::int32_t get_y() const;
 
     //pixels
-    std::int32_t get_center_x();
-    std::int32_t get_center_y();
+    std::int32_t get_center_x() const;
+    std::int32_t get_center_y() const;
+
+    Collision_Rect<int32_t> get_spawn_zone() const;
+
+    std::uint32_t get_population() const;
+
+    void breed(std::uint32_t index,RNG& rng);
 };
 
 #endif

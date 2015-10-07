@@ -19,6 +19,11 @@ public:
 
     static std::uint32_t CITY_POPULATION_MAX;
     static std::uint32_t CITY_POPULATION_START;
+    static std::uint32_t BREEDING_RATE;
+
+    static std::uint32_t PERSON_MASS;
+    static std::uint32_t PERSON_MAX_SPEED;
+    static std::uint32_t PERSON_MOVE_FORCE;
 };
 
 #endif
