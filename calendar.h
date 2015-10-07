@@ -30,6 +30,11 @@ public:
 
     void reset();
 
+    std::uint32_t get_day() const;
+    std::uint32_t get_week() const;
+    std::uint32_t get_month() const;
+    std::uint64_t get_year() const;
+
     Change increment();
 };
 

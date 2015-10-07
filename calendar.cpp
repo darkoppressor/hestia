@@ -21,6 +21,22 @@ void Calendar::reset(){
     year=0;
 }
 
+uint32_t Calendar::get_day() const{
+    return day;
+}
+
+uint32_t Calendar::get_week() const{
+    return week;
+}
+
+uint32_t Calendar::get_month() const{
+    return month;
+}
+
+uint64_t Calendar::get_year() const{
+    return year;
+}
+
 Calendar::Change Calendar::increment(){
     if(++frame==Engine::UPDATE_RATE*Game_Constants::DAY_LENGTH){
         frame=0;
