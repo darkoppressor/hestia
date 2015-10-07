@@ -16,6 +16,7 @@
 
 #include <rng.h>
 #include <coords.h>
+#include <color.h>
 
 #include <vector>
 #include <string>
@@ -35,6 +36,14 @@ private:
             }
         }
     };
+
+    static std::vector<Region> regions;
+    static std::vector<std::vector<Chunk>> chunks;
+    static std::vector<Leader> leaders;
+    static std::vector<Civilization> civilizations;
+    static std::vector<City> cities;
+    static std::vector<Person> people;
+    static std::map<Coords<std::uint32_t>,Tile,tile_compare> tiles;
 
 public:
 
@@ -56,17 +65,24 @@ public:
 
     static Calendar calendar;
 
-    static std::vector<Region> regions;
-    static std::vector<std::vector<Chunk>> chunks;
-    static std::vector<Leader> leaders;
-    static std::vector<Civilization> civilizations;
-    static std::vector<City> cities;
-    static std::vector<Person> people;
-    static std::map<Coords<std::uint32_t>,Tile,tile_compare> tiles;
+    static std::vector<City> new_cities;
+    static std::vector<Person> new_people;
+    static std::map<Coords<std::uint32_t>,Tile,tile_compare> new_tiles;
 
     static void clear_world();
     static void setup_leaders();
     static void generate_world();
+
+    static const Region& get_region(std::uint32_t index);
+    static const Chunk& get_chunk(const Coords<std::uint32_t>& coords);
+    static const Leader& get_leader(std::uint32_t index);
+    static const Civilization& get_civilization(std::uint32_t index);
+    static const City& get_city(std::uint32_t index);
+    static const Person& get_person(std::uint32_t index);
+    static const Tile& get_tile(const Coords<std::uint32_t>& coords);
+
+    static std::uint32_t get_leader_count();
+    static void add_leader(bool player_controlled,std::uint32_t parent_player,const Color& color);
 
     //Returns the index for the leader associated with the passed player number,
     //or -1 if the passed player number is invalid

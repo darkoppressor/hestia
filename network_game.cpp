@@ -76,12 +76,14 @@ void Network_Game::send_game_start_data(){
         bitstream.WriteCompressed(Game::option_region_max);
         bitstream.WriteCompressed(Game::option_initial_tile_growth);
 
-        bitstream.WriteCompressed((uint32_t)Game::leaders.size());
-        for(size_t i=0;i<Game::leaders.size();i++){
-            bitstream.WriteCompressed(Game::leaders[i].is_player_controlled());
-            bitstream.WriteCompressed(Game::leaders[i].get_parent_player());
+        bitstream.WriteCompressed(Game::get_leader_count());
+        for(uint32_t i=0;i<Game::get_leader_count();i++){
+            const Leader& leader=Game::get_leader(i);
 
-            Color color=Game::leaders[i].get_color();
+            bitstream.WriteCompressed(leader.is_player_controlled());
+            bitstream.WriteCompressed(leader.get_parent_player());
+
+            Color color=leader.get_color();
             bitstream.WriteCompressed((int16_t)color.get_red());
             bitstream.WriteCompressed((int16_t)color.get_green());
             bitstream.WriteCompressed((int16_t)color.get_blue());
@@ -118,13 +120,6 @@ void Network_Game::receive_game_start_data(){
         uint32_t parent_player=0;
         bitstream.ReadCompressed(parent_player);
 
-        if(player_controlled){
-            Game::leaders.push_back(Leader(parent_player));
-        }
-        else{
-            Game::leaders.push_back(Leader());
-        }
-
         int16_t red=0;
         int16_t green=0;
         int16_t blue=0;
@@ -135,7 +130,8 @@ void Network_Game::receive_game_start_data(){
         bitstream.ReadCompressed(alpha);
 
         Color color(red,green,blue,alpha);
-        Game::leaders.back().set_color(color);
+
+        Game::add_leader(player_controlled,parent_player,color);
     }
 
     Game_World::generate_world();

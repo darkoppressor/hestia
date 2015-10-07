@@ -14,11 +14,7 @@
 
 using namespace std;
 
-Chunk::Chunk(){
-    parent_region=0;
-}
-
-Region* Chunk::get_parent_region(){
+/**Region* Chunk::get_parent_region_ptr(){
     if(parent_region>=Game::regions.size()){
         Log::add_error("Error in Chunk::get_parent_region()");
 
@@ -27,24 +23,27 @@ Region* Chunk::get_parent_region(){
     else{
         return &Game::regions[parent_region];
     }
+}*/
+
+Chunk::Chunk(){
+    parent_region=0;
+}
+
+uint32_t Chunk::get_parent_region() const{
+    return parent_region;
 }
 
 void Chunk::set_parent_region(uint32_t new_parent){
     parent_region=new_parent;
 }
 
-string Chunk::get_ground_string(){
-    Region* region=get_parent_region();
+string Chunk::get_ground_string() const{
+    const Region& region=Game::get_region(get_parent_region());
 
-    if(region!=0){
-        return region->get_ground_string(region->get_ground());
-    }
-    else{
-        return "stone";
-    }
+    return region.get_ground_string(region.get_ground());
 }
 
-int32_t Chunk::get_size(){
+int32_t Chunk::get_size() const{
     return Game_Constants::CHUNK_SIZE*Game_Constants::TILE_SIZE;
 }
 
@@ -56,7 +55,7 @@ int32_t Chunk::get_y(uint32_t chunk_y){
     return int32_t(chunk_y*Game_Constants::CHUNK_SIZE*Game_Constants::TILE_SIZE);
 }
 
-void Chunk::render_ground(uint32_t chunk_x,uint32_t chunk_y){
+void Chunk::render_ground(uint32_t chunk_x,uint32_t chunk_y) const{
     double x=get_x(chunk_x);
     double y=get_y(chunk_y);
 

@@ -15,8 +15,19 @@
 #include <engine_data.h>
 #include <network_engine.h>
 #include <collision.h>
+#include <log.h>
+#include <engine_strings.h>
+#include <engine.h>
 
 using namespace std;
+
+vector<Region> Game::regions;
+vector<vector<Chunk>> Game::chunks;
+vector<Leader> Game::leaders;
+vector<Civilization> Game::civilizations;
+vector<City> Game::cities;
+vector<Person> Game::people;
+map<Coords<uint32_t>,Tile,Game::tile_compare> Game::tiles;
 
 bool Game::started=false;
 
@@ -32,13 +43,9 @@ RNG Game::rng;
 
 Calendar Game::calendar;
 
-vector<Region> Game::regions;
-vector<vector<Chunk>> Game::chunks;
-vector<Leader> Game::leaders;
-vector<Civilization> Game::civilizations;
-vector<City> Game::cities;
-vector<Person> Game::people;
-map<Coords<uint32_t>,Tile,Game::tile_compare> Game::tiles;
+vector<City> Game::new_cities;
+vector<Person> Game::new_people;
+map<Coords<uint32_t>,Tile,Game::tile_compare> Game::new_tiles;
 
 void Game::clear_world(){
     started=false;
@@ -52,7 +59,7 @@ void Game::clear_world(){
     option_world_height=5;
     option_region_min=4;
     option_region_max=8;
-    option_initial_tile_growth=720;
+    option_initial_tile_growth=1440;
 
     option_max_leaders=8;
 
@@ -63,6 +70,10 @@ void Game::clear_world(){
     cities.clear();
     people.clear();
     tiles.clear();
+
+    new_cities.clear();
+    new_people.clear();
+    new_tiles.clear();
 }
 
 void Game::setup_leaders(){
@@ -248,28 +259,11 @@ void Game::generate_world(){
             }
         }
 
-        //pixels
-        int32_t city_spawn_zone_left=cities.back().get_center_x()-cities.back().get_size()*4;
-        int32_t city_spawn_zone_top=cities.back().get_center_y()-cities.back().get_size()*4;
-        int32_t city_spawn_zone_right=city_spawn_zone_left+cities.back().get_size()*8;
-        int32_t city_spawn_zone_bottom=city_spawn_zone_top+cities.back().get_size()*8;
-
-        if(city_spawn_zone_left<0){
-            city_spawn_zone_left=0;
-        }
-        if(city_spawn_zone_top<0){
-            city_spawn_zone_top=0;
-        }
-        if(city_spawn_zone_right+Game_Constants::PERSON_SIZE>=get_world_width()){
-            city_spawn_zone_right=get_world_width()-1-Game_Constants::PERSON_SIZE;
-        }
-        if(city_spawn_zone_bottom+Game_Constants::PERSON_SIZE>=get_world_height()){
-            city_spawn_zone_bottom=get_world_height()-1-Game_Constants::PERSON_SIZE;
-        }
+        Collision_Rect<int32_t> box_city_spawn_zone=cities.back().get_spawn_zone();
 
         for(uint32_t person=0;person<Game_Constants::CITY_POPULATION_START;person++){
-            int32_t x=(int32_t)rng.random_range((uint32_t)city_spawn_zone_left,(uint32_t)city_spawn_zone_right);
-            int32_t y=(int32_t)rng.random_range((uint32_t)city_spawn_zone_top,(uint32_t)city_spawn_zone_bottom);
+            int32_t x=(int32_t)rng.random_range((uint32_t)box_city_spawn_zone.x,(uint32_t)(box_city_spawn_zone.x+box_city_spawn_zone.w));
+            int32_t y=(int32_t)rng.random_range((uint32_t)box_city_spawn_zone.y,(uint32_t)(box_city_spawn_zone.y+box_city_spawn_zone.h));
 
             people.push_back(Person(city,Collision_Rect<int32_t>(x,y,Game_Constants::PERSON_SIZE,Game_Constants::PERSON_SIZE)));
             cities.back().add_person(people.size()-1);
@@ -302,6 +296,100 @@ void Game::generate_world(){
 
     //Begin the network turn timer
     Network_Lockstep::start();
+}
+
+const Region& Game::get_region(uint32_t index){
+    if(index<regions.size()){
+        return regions[index];
+    }
+    else{
+        Log::add_error("Error accessing region '"+Strings::num_to_string(index)+"'");
+
+        Engine::quit();
+    }
+}
+
+const Chunk& Game::get_chunk(const Coords<uint32_t>& coords){
+    if(coords.x<chunks.size() && coords.y<chunks[coords.x].size()){
+        return chunks[coords.x][coords.y];
+    }
+    else{
+        Log::add_error("Error accessing chunk '"+Strings::num_to_string(coords.x)+","+Strings::num_to_string(coords.y)+"'");
+
+        Engine::quit();
+    }
+}
+
+const Leader& Game::get_leader(uint32_t index){
+    if(index<leaders.size()){
+        return leaders[index];
+    }
+    else{
+        Log::add_error("Error accessing leader '"+Strings::num_to_string(index)+"'");
+
+        Engine::quit();
+    }
+}
+
+const Civilization& Game::get_civilization(uint32_t index){
+    if(index<civilizations.size()){
+        return civilizations[index];
+    }
+    else{
+        Log::add_error("Error accessing civilization '"+Strings::num_to_string(index)+"'");
+
+        Engine::quit();
+    }
+}
+
+const City& Game::get_city(uint32_t index){
+    if(index<cities.size()){
+        return cities[index];
+    }
+    else{
+        Log::add_error("Error accessing city '"+Strings::num_to_string(index)+"'");
+
+        Engine::quit();
+    }
+}
+
+const Person& Game::get_person(uint32_t index){
+    if(index<people.size()){
+        return people[index];
+    }
+    else{
+        Log::add_error("Error accessing person '"+Strings::num_to_string(index)+"'");
+
+        Engine::quit();
+    }
+}
+
+const Tile& Game::get_tile(const Coords<uint32_t>& coords){
+    if(tile_exists(coords)){
+        return tiles.at(coords);
+    }
+    else{
+        Log::add_error("Error accessing tile '"+Strings::num_to_string(coords.x)+","+Strings::num_to_string(coords.y)+"'");
+
+        Engine::quit();
+    }
+}
+
+uint32_t Game::get_leader_count(){
+    return leaders.size();
+}
+
+void Game::add_leader(bool player_controlled,uint32_t parent_player,const Color& color){
+    if(!started){
+        if(player_controlled){
+            leaders.push_back(Leader(parent_player));
+        }
+        else{
+            leaders.push_back(Leader());
+        }
+
+        leaders.back().set_color(color);
+    }
 }
 
 int32_t Game::get_player_leader(int player_number){
@@ -409,6 +497,10 @@ void Game::tick(){
                 regions[i].tile_growth(rng);
             }
 
+            for(uint32_t i=0;i<cities.size();i++){
+                cities[i].breed(i,rng);
+            }
+
             //If the week changed
             if(change!=Calendar::Change::DAY){
                 ///Do weekly stuff
@@ -429,17 +521,46 @@ void Game::tick(){
 
 void Game::ai(){
     if(started){
+        for(size_t i=0;i<people.size();i++){
+            people[i].ai();
+        }
     }
 }
 
 void Game::movement(){
     if(started){
+        for(size_t i=0;i<people.size();i++){
+            people[i].accelerate();
+        }
+
+        for(size_t i=0;i<people.size();i++){
+            people[i].movement();
+        }
     }
 }
 
 void Game::events(){
     if(started){
         Sound_Manager::set_listener(Game_Manager::camera.center_x(),Game_Manager::camera.center_y(),Game_Manager::camera_zoom);
+
+        for(size_t i=0;i<new_cities.size();i++){
+            cities.push_back(new_cities[i]);
+        }
+        new_cities.clear();
+
+        for(size_t i=0;i<new_people.size();i++){
+            people.push_back(new_people[i]);
+
+            uint32_t parent_city=people.back().get_parent_city();
+
+            cities[parent_city].add_person(people.size()-1);
+        }
+        new_people.clear();
+
+        for(const auto& it : new_tiles){
+            tiles.emplace(it.first,it.second);
+        }
+        new_tiles.clear();
     }
 }
 
