@@ -14,7 +14,7 @@ Civilization::Civilization(uint32_t new_parent){
     parent_leader=new_parent;
 }
 
-uint32_t Civilization::get_parent_leader(){
+uint32_t Civilization::get_parent_leader() const{
     return parent_leader;
 }
 
@@ -22,7 +22,7 @@ void Civilization::set_parent_leader(uint32_t new_parent){
     parent_leader=new_parent;
 }
 
-const vector<uint32_t>& Civilization::get_cities(){
+const vector<uint32_t>& Civilization::get_cities() const{
     return cities;
 }
 

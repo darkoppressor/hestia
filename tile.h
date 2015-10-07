@@ -32,25 +32,25 @@ public:
     Tile(Type new_type);
     Tile(std::uint32_t new_parent,Type new_type);
 
-    std::uint32_t get_parent();
+    std::uint32_t get_parent() const;
     void set_parent(std::uint32_t new_parent);
 
     static bool tile_type_is_building(Type type_to_check);
-    bool is_building();
+    bool is_building() const;
 
     //pixels
     static std::int32_t get_tile_type_size(Type type_to_check);
-    std::int32_t get_size();
+    std::int32_t get_size() const;
 
     //pixels
     static std::int32_t get_x(std::uint32_t tile_x);
     static std::int32_t get_y(std::uint32_t tile_y);
 
     //pixels
-    std::int32_t get_center_x(std::uint32_t tile_x);
-    std::int32_t get_center_y(std::uint32_t tile_y);
+    std::int32_t get_center_x(std::uint32_t tile_x) const;
+    std::int32_t get_center_y(std::uint32_t tile_y) const;
 
-    void render(std::uint32_t tile_x,std::uint32_t tile_y);
+    void render(std::uint32_t tile_x,std::uint32_t tile_y) const;
 };
 
 #endif

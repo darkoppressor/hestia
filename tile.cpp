@@ -29,7 +29,7 @@ Tile::Tile(uint32_t new_parent,Type new_type){
     type=new_type;
 }
 
-uint32_t Tile::get_parent(){
+uint32_t Tile::get_parent() const{
     return parent;
 }
 
@@ -46,7 +46,7 @@ bool Tile::tile_type_is_building(Type type_to_check){
     }
 }
 
-bool Tile::is_building(){
+bool Tile::is_building() const{
     if(tile_type_is_building(type)){
         return true;
     }
@@ -64,7 +64,7 @@ int32_t Tile::get_tile_type_size(Type type_to_check){
     }
 }
 
-int32_t Tile::get_size(){
+int32_t Tile::get_size() const{
     return get_tile_type_size(type);
 }
 
@@ -76,15 +76,15 @@ int32_t Tile::get_y(uint32_t tile_y){
     return int32_t(tile_y*Game_Constants::TILE_SIZE);
 }
 
-int32_t Tile::get_center_x(uint32_t tile_x){
+int32_t Tile::get_center_x(uint32_t tile_x) const{
     return int32_t(tile_x*Game_Constants::TILE_SIZE)+get_size()/2;
 }
 
-int32_t Tile::get_center_y(uint32_t tile_y){
+int32_t Tile::get_center_y(uint32_t tile_y) const{
     return int32_t(tile_y*Game_Constants::TILE_SIZE)+get_size()/2;
 }
 
-void Tile::render(uint32_t tile_x,uint32_t tile_y){
+void Tile::render(uint32_t tile_x,uint32_t tile_y) const{
     double x=get_x(tile_x);
     double y=get_y(tile_y);
 

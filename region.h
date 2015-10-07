@@ -47,14 +47,14 @@ public:
 
     void add_chunk(const Coords<std::uint32_t>& coords);
 
-    Biome get_biome();
+    Biome get_biome() const;
     void set_biome(Biome new_biome);
 
-    Ground get_ground();
-    std::string get_ground_string(Ground ground);
+    Ground get_ground() const;
+    std::string get_ground_string(Ground ground) const;
 
-    uint32_t get_tile_growth_chance();
-    uint32_t get_tile_growth_tree_chance();
+    uint32_t get_tile_growth_chance() const;
+    uint32_t get_tile_growth_tree_chance() const;
     void tile_growth(RNG& rng);
 };
 

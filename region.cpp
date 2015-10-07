@@ -20,7 +20,7 @@ void Region::add_chunk(const Coords<uint32_t>& coords){
     chunks.push_back(coords);
 }
 
-Region::Biome Region::get_biome(){
+Region::Biome Region::get_biome() const{
     return biome;
 }
 
@@ -28,7 +28,7 @@ void Region::set_biome(Biome new_biome){
     biome=new_biome;
 }
 
-Region::Ground Region::get_ground(){
+Region::Ground Region::get_ground() const{
     if(biome==Biome::FREEZING_GRASSLAND){
         return Ground::DIRT;
     }
@@ -63,7 +63,7 @@ Region::Ground Region::get_ground(){
     }
 }
 
-string Region::get_ground_string(Ground ground){
+string Region::get_ground_string(Ground ground) const{
     if(ground==Ground::DIRT){
         return "dirt";
     }
@@ -84,7 +84,7 @@ string Region::get_ground_string(Ground ground){
     }
 }
 
-uint32_t Region::get_tile_growth_chance(){
+uint32_t Region::get_tile_growth_chance() const{
     if(biome==Biome::FREEZING_GRASSLAND){
         return 5;
     }
@@ -119,7 +119,7 @@ uint32_t Region::get_tile_growth_chance(){
     }
 }
 
-uint32_t Region::get_tile_growth_tree_chance(){
+uint32_t Region::get_tile_growth_tree_chance() const{
     if(biome==Biome::FREEZING_GRASSLAND){
         return 20;
     }
@@ -174,7 +174,7 @@ void Region::tile_growth(RNG& rng){
                 tile_type=Tile::Type::TREE;
             }
 
-            Game::tiles.emplace(std::piecewise_construct,
+            Game::new_tiles.emplace(std::piecewise_construct,
                                 std::forward_as_tuple(tile_coords),std::forward_as_tuple(tile_type));
         }
     }

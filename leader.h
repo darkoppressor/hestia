@@ -25,15 +25,15 @@ public:
     Leader();
     Leader(std::uint32_t new_parent);
 
-    bool is_player_controlled();
-    std::uint32_t get_parent_player();
+    bool is_player_controlled() const;
+    std::uint32_t get_parent_player() const;
     void set_parent_player(std::uint32_t new_parent);
     void set_parent_to_ai();
 
-    std::uint32_t get_civilization();
+    std::uint32_t get_civilization() const;
     void set_civilization(std::uint32_t new_civilization);
 
-    Color get_color();
+    Color get_color() const;
     void set_color(const Color& new_color);
 };
 

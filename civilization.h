@@ -15,15 +15,17 @@ private:
 
     std::vector<std::uint32_t> cities;
 
+    ///QQQ Inventory
+
 public:
 
     Civilization();
     Civilization(std::uint32_t new_parent);
 
-    std::uint32_t get_parent_leader();
+    std::uint32_t get_parent_leader() const;
     void set_parent_leader(std::uint32_t new_parent);
 
-    const std::vector<std::uint32_t>& get_cities();
+    const std::vector<std::uint32_t>& get_cities() const;
     void add_city(std::uint32_t city);
     void remove_city(std::uint32_t city);
 };

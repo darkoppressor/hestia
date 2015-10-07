@@ -20,11 +20,11 @@ Leader::Leader(uint32_t new_parent){
     civilization=0;
 }
 
-bool Leader::is_player_controlled(){
+bool Leader::is_player_controlled() const{
     return player_controlled;
 }
 
-uint32_t Leader::get_parent_player(){
+uint32_t Leader::get_parent_player() const{
     return parent_player;
 }
 
@@ -38,7 +38,7 @@ void Leader::set_parent_to_ai(){
     parent_player=0;
 }
 
-uint32_t Leader::get_civilization(){
+uint32_t Leader::get_civilization() const{
     return civilization;
 }
 
@@ -46,7 +46,7 @@ void Leader::set_civilization(uint32_t new_civilization){
     civilization=new_civilization;
 }
 
-Color Leader::get_color(){
+Color Leader::get_color() const{
     return color;
 }
 
