@@ -522,7 +522,7 @@ void Game::tick(){
 void Game::ai(){
     if(started){
         for(size_t i=0;i<people.size();i++){
-            people[i].ai();
+            people[i].ai(rng);
         }
     }
 }

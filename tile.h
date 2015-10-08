@@ -35,6 +35,8 @@ public:
     std::uint32_t get_parent() const;
     void set_parent(std::uint32_t new_parent);
 
+    Type get_type() const;
+
     static bool tile_type_is_building(Type type_to_check);
     bool is_building() const;
 

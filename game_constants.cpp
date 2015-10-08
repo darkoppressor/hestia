@@ -21,9 +21,12 @@ uint32_t Game_Constants::CITY_POPULATION_MAX=0;
 uint32_t Game_Constants::CITY_POPULATION_START=0;
 uint32_t Game_Constants::BREEDING_RATE=0;
 
-uint32_t Game_Constants::PERSON_MASS=0;
-uint32_t Game_Constants::PERSON_MAX_SPEED=0;
-uint32_t Game_Constants::PERSON_MOVE_FORCE=0;
+int32_t Game_Constants::PERSON_MASS=0;
+int32_t Game_Constants::PERSON_MAX_SPEED=0;
+int32_t Game_Constants::PERSON_MOVE_FORCE=0;
+
+uint32_t Game_Constants::GATHER_ZONE_RANGE=0;
+uint32_t Game_Constants::GATHER_RANGE=0;
 
 void Game_Constants_Loader::set_game_constant(string name,string value){
     if(name=="zoom_rate"){
@@ -64,12 +67,19 @@ void Game_Constants_Loader::set_game_constant(string name,string value){
     }
 
     else if(name=="person_mass"){
-        Game_Constants::PERSON_MASS=Strings::string_to_unsigned_long(value);
+        Game_Constants::PERSON_MASS=Strings::string_to_long(value);
     }
     else if(name=="person_max_speed"){
-        Game_Constants::PERSON_MAX_SPEED=Strings::string_to_unsigned_long(value);
+        Game_Constants::PERSON_MAX_SPEED=Strings::string_to_long(value);
     }
     else if(name=="person_move_force"){
-        Game_Constants::PERSON_MOVE_FORCE=Strings::string_to_unsigned_long(value);
+        Game_Constants::PERSON_MOVE_FORCE=Strings::string_to_long(value);
+    }
+
+    else if(name=="gather_zone_range"){
+        Game_Constants::GATHER_ZONE_RANGE=Strings::string_to_unsigned_long(value);
+    }
+    else if(name=="gather_range"){
+        Game_Constants::GATHER_RANGE=Strings::string_to_unsigned_long(value);
     }
 }

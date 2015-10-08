@@ -373,6 +373,8 @@
 		<Compiler>
 			<Add option="-Wall" />
 		</Compiler>
+		<Unit filename="ai.cpp" />
+		<Unit filename="ai.h" />
 		<Unit filename="button_events_game.cpp" />
 		<Unit filename="calendar.cpp" />
 		<Unit filename="calendar.h" />

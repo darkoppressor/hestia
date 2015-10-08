@@ -9,6 +9,12 @@
 #include <render.h>
 #include <game_manager.h>
 
+///QQQ
+#include <object_manager.h>
+#include <font.h>
+#include <engine_strings.h>
+///
+
 using namespace std;
 
 Tile::Tile(){
@@ -35,6 +41,10 @@ uint32_t Tile::get_parent() const{
 
 void Tile::set_parent(uint32_t new_parent){
     parent=new_parent;
+}
+
+Tile::Type Tile::get_type() const{
+    return type;
 }
 
 bool Tile::tile_type_is_building(Type type_to_check){
@@ -93,5 +103,10 @@ void Tile::render(uint32_t tile_x,uint32_t tile_y) const{
     if(Collision::check_rect(box_render*Game_Manager::camera_zoom,Game_Manager::camera)){
         Render::render_rectangle(x*Game_Manager::camera_zoom-Game_Manager::camera.x,y*Game_Manager::camera_zoom-Game_Manager::camera.y,
                                  (double)get_size()*Game_Manager::camera_zoom,(double)get_size()*Game_Manager::camera_zoom,1.0,"white");
+
+        ///QQQ
+        ///Bitmap_Font* font=Object_Manager::get_font("small");
+        ///font->show(x*Game_Manager::camera_zoom-Game_Manager::camera.x,y*Game_Manager::camera_zoom-Game_Manager::camera.y,Strings::num_to_string(tile_x)+","+Strings::num_to_string(tile_y),"red");
+        ///
     }
 }
