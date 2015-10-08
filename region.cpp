@@ -167,13 +167,13 @@ void Region::tile_growth(RNG& rng){
         uint32_t tile_bottom=tile_top+Game_Constants::CHUNK_SIZE-1;
         Coords<uint32_t> tile_coords(rng.random_range(tile_left,tile_right),rng.random_range(tile_top,tile_bottom));
 
-        if(!Game::tile_exists(tile_coords)){
-            Tile::Type tile_type=Tile::Type::WHEAT;
+        Tile::Type tile_type=Tile::Type::WHEAT;
 
-            if(rng.random_range(0,99)<get_tile_growth_tree_chance()){
-                tile_type=Tile::Type::TREE;
-            }
+        if(rng.random_range(0,99)<get_tile_growth_tree_chance()){
+            tile_type=Tile::Type::TREE;
+        }
 
+        if(Game::tile_coords_are_valid(tile_type,tile_coords)){
             Game::new_tiles.emplace(std::piecewise_construct,
                                 std::forward_as_tuple(tile_coords),std::forward_as_tuple(tile_type));
         }
