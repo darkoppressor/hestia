@@ -44,35 +44,12 @@ public:
 class Int_Collision{
 public:
 
-    static int32_t get_angle_to_rect(Collision_Rect<int32_t> box_a,Collision_Rect<int32_t> box_b,Collision_Rect<int32_t> camera){
-        int32_t x1=box_a.center_x()-camera.x;
-        int32_t y1=box_a.center_y()-camera.y;
+    static int32_t get_angle_to_rect(Collision_Rect<int32_t> box_a,Collision_Rect<int32_t> box_b){
+        int32_t x1=box_a.center_x();
+        int32_t y1=box_a.center_y();
 
-        int32_t x2=box_b.center_x()-camera.x;
-        int32_t y2=box_b.center_y()-camera.y;
-
-        int32_t x_component=Math::abs(x2,x1);
-        int32_t y_component=Math::abs(y2,y1);
-
-        if(x2<x1){
-            x_component=-x_component;
-        }
-
-        int32_t angle=Int_Math::atan2(y_component,x_component);
-
-        if(y2>y1){
-            angle=360-angle;
-        }
-
-        return angle;
-    }
-
-    static int32_t get_angle_to_rect(Collision_Circ<int32_t> circle,Collision_Rect<int32_t> box,Collision_Rect<int32_t> camera){
-        int32_t x1=circle.x-camera.x;
-        int32_t y1=circle.y-camera.y;
-
-        int32_t x2=box.center_x()-camera.x;
-        int32_t y2=box.center_y()-camera.y;
+        int32_t x2=box_b.center_x();
+        int32_t y2=box_b.center_y();
 
         int32_t x_component=Math::abs(x2,x1);
         int32_t y_component=Math::abs(y2,y1);
@@ -90,12 +67,12 @@ public:
         return angle;
     }
 
-    static int32_t get_angle_to_circ(Collision_Circ<int32_t> circle_a,Collision_Circ<int32_t> circle_b,Collision_Rect<int32_t> camera){
-        int32_t x1=circle_a.x-camera.x;
-        int32_t y1=circle_a.y-camera.y;
+    static int32_t get_angle_to_rect(Collision_Circ<int32_t> circle,Collision_Rect<int32_t> box){
+        int32_t x1=circle.x;
+        int32_t y1=circle.y;
 
-        int32_t x2=circle_b.x-camera.x;
-        int32_t y2=circle_b.y-camera.y;
+        int32_t x2=box.center_x();
+        int32_t y2=box.center_y();
 
         int32_t x_component=Math::abs(x2,x1);
         int32_t y_component=Math::abs(y2,y1);
@@ -113,12 +90,35 @@ public:
         return angle;
     }
 
-    static int32_t get_angle_to_circ(Collision_Rect<int32_t> box,Collision_Circ<int32_t> circle,Collision_Rect<int32_t> camera){
-        int32_t x1=box.center_x()-camera.x;
-        int32_t y1=box.center_y()-camera.y;
+    static int32_t get_angle_to_circ(Collision_Circ<int32_t> circle_a,Collision_Circ<int32_t> circle_b){
+        int32_t x1=circle_a.x;
+        int32_t y1=circle_a.y;
 
-        int32_t x2=circle.x-camera.x;
-        int32_t y2=circle.y-camera.y;
+        int32_t x2=circle_b.x;
+        int32_t y2=circle_b.y;
+
+        int32_t x_component=Math::abs(x2,x1);
+        int32_t y_component=Math::abs(y2,y1);
+
+        if(x2<x1){
+            x_component=-x_component;
+        }
+
+        int32_t angle=Int_Math::atan2(y_component,x_component);
+
+        if(y2>y1){
+            angle=360-angle;
+        }
+
+        return angle;
+    }
+
+    static int32_t get_angle_to_circ(Collision_Rect<int32_t> box,Collision_Circ<int32_t> circle){
+        int32_t x1=box.center_x();
+        int32_t y1=box.center_y();
+
+        int32_t x2=circle.x;
+        int32_t y2=circle.y;
 
         int32_t x_component=Math::abs(x2,x1);
         int32_t y_component=Math::abs(y2,y1);
