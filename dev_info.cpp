@@ -23,12 +23,28 @@ void Engine::render_dev_info(){
         msg+="Camera Size: "+Strings::num_to_string(Game_Manager::camera.w/Game_Manager::camera_zoom)+","+Strings::num_to_string(Game_Manager::camera.h/Game_Manager::camera_zoom)+"\n";
         msg+="Camera Zoom: "+Strings::num_to_string(Game_Manager::camera_zoom)+"\n";
 
-        msg+="\n";
+        if(Game::started){
+            msg+="\n";
 
-        msg+="Day: "+Strings::num_to_string(Game::calendar.get_day())+"\n";
-        msg+="Week: "+Strings::num_to_string(Game::calendar.get_week())+"\n";
-        msg+="Month: "+Strings::num_to_string(Game::calendar.get_month())+"\n";
-        msg+="Year: "+Strings::num_to_string(Game::calendar.get_year())+"\n";
+            msg+="Day: "+Strings::num_to_string(Game::calendar.get_day())+"\n";
+            msg+="Week: "+Strings::num_to_string(Game::calendar.get_week())+"\n";
+            msg+="Month: "+Strings::num_to_string(Game::calendar.get_month())+"\n";
+            msg+="Year: "+Strings::num_to_string(Game::calendar.get_year())+"\n";
+
+            int player_number=Network_Engine::get_our_player_number();
+            if(player_number>=0){
+                int32_t leader_index=Game::get_player_leader(player_number);
+
+                if(leader_index>=0){
+                    const Leader& leader=Game::get_leader((uint32_t)leader_index);
+                    const Civilization& civilization=Game::get_civilization(leader.get_civilization());
+
+                    msg+="\nCivilization:\n";
+                    msg+="Wheat: "+Strings::num_to_string(civilization.get_item_count(Inventory::Item_Type::WHEAT))+"\n";
+                    msg+="Tree: "+Strings::num_to_string(civilization.get_item_count(Inventory::Item_Type::TREE))+"\n";
+                }
+            }
+        }
     }
 
     if(msg.length()>0){

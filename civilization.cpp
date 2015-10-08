@@ -46,3 +46,19 @@ void Civilization::remove_city(uint32_t city){
         }
     }
 }
+
+uint32_t Civilization::get_item_count() const{
+    return inventory.get_item_count();
+}
+
+uint32_t Civilization::get_item_count(Inventory::Item_Type item_type) const{
+    return inventory.get_item_count(item_type);
+}
+
+uint32_t Civilization::add_item(Inventory::Item_Type item_type,uint32_t amount){
+    return inventory.add_item(item_type,amount);
+}
+
+void Civilization::remove_item(Inventory::Item_Type item_type,uint32_t amount){
+    inventory.remove_item(item_type,amount);
+}

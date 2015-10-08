@@ -25,6 +25,9 @@ private:
 
     std::uint32_t breeding_counter;
 
+    std::uint32_t gather_zone_wheat;
+    std::uint32_t gather_zone_tree;
+
 public:
 
     City();
@@ -60,6 +63,11 @@ public:
     std::uint32_t get_population() const;
 
     void breed(std::uint32_t index,RNG& rng);
+
+    std::uint32_t get_gather_zone_tile_count(Tile::Type tile_type) const;
+    std::vector<Coords<std::uint32_t>> get_gather_zone_chunk_coords() const;
+    bool allowed_to_update_gather_zone(std::uint32_t frame,std::uint32_t index) const;
+    void update_gather_zone(std::uint32_t frame,std::uint32_t index);
 };
 
 #endif

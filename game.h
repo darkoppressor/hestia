@@ -13,6 +13,7 @@
 #include "person.h"
 #include "tile.h"
 #include "calendar.h"
+#include "inventory.h"
 
 #include <rng.h>
 #include <coords.h>
@@ -45,9 +46,15 @@ private:
     static std::vector<Person> people;
     static std::map<Coords<std::uint32_t>,Tile,tile_compare> tiles;
 
+    static void add_remove_objects();
+
 public:
 
     static bool started;
+
+    //Keeps track of the current logic update frame
+    //Valid values: 0 to UPDATE_RATE-1
+    static std::uint32_t frame;
 
     static std::uint32_t option_rng_seed;
 
@@ -98,6 +105,10 @@ public:
 
     static bool tile_exists(const Coords<std::uint32_t>& tile_coords);
     static bool tile_coords_are_valid(Tile::Type type,const Coords<std::uint32_t>& tile_coords);
+    static void kill_tile(const Coords<std::uint32_t>& tile_coords);
+
+    static std::uint32_t add_civilization_item(std::uint32_t index,Inventory::Item_Type item_type,std::uint32_t amount);
+    static void remove_civilization_item(std::uint32_t index,Inventory::Item_Type item_type,std::uint32_t amount);
 
     //Note that this distance is actually the distance^2, as the sqrt operation is skipped
     static uint64_t distance_to_nearest_city(const Coords<std::int32_t>& coords);

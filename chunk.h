@@ -6,14 +6,36 @@
 #define chunk_h
 
 #include "region.h"
+#include "tile.h"
 
 #include <string>
 #include <cstdint>
+
+class Tile_Counts{
+private:
+
+    std::uint32_t wheat;
+    std::uint32_t tree;
+    std::uint32_t building_unfinished;
+    std::uint32_t building_city;
+
+    std::uint32_t& get_tile_reference(Tile::Type tile_type);
+
+public:
+
+    Tile_Counts();
+
+    std::uint32_t get(Tile::Type tile_type) const;
+    void increment(Tile::Type tile_type);
+    void decrement(Tile::Type tile_type);
+};
 
 class Chunk{
 private:
 
     std::uint32_t parent_region;
+
+    Tile_Counts tile_counts;
 
 public:
 
@@ -21,6 +43,10 @@ public:
 
     std::uint32_t get_parent_region() const;
     void set_parent_region(std::uint32_t new_parent);
+
+    std::uint32_t get_tile_count(Tile::Type tile_type) const;
+    void increment_tile_count(Tile::Type tile_type);
+    void decrement_tile_count(Tile::Type tile_type);
 
     std::string get_ground_string() const;
 

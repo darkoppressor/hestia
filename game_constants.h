@@ -15,6 +15,9 @@ public:
     static std::uint32_t BUILDING_SIZE;
     static std::uint32_t PERSON_SIZE;
 
+    static std::uint32_t AI_GOAL_SELECTION_PERIOD;
+    static std::uint32_t CITY_GATHER_ZONE_UPDATE_PERIOD;
+
     static std::uint32_t DAY_LENGTH;
 
     static std::uint32_t CITY_POPULATION_MAX;
@@ -25,8 +28,14 @@ public:
     static std::int32_t PERSON_MAX_SPEED;
     static std::int32_t PERSON_MOVE_FORCE;
 
+    static std::uint32_t INVENTORY_MAX;
+
     static std::uint32_t GATHER_ZONE_RANGE;
-    static std::uint32_t GATHER_RANGE;
+
+    static std::uint32_t INTERACTION_RANGE;
+
+    static std::uint32_t GATHER_RATE;
+    static std::uint32_t EMPTY_INVENTORY_RATE;
 };
 
 #endif

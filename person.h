@@ -7,6 +7,7 @@
 
 #include "int_math.h"
 #include "ai.h"
+#include "inventory.h"
 
 #include <collision.h>
 #include <rng.h>
@@ -25,9 +26,9 @@ private:
     Int_Vector acceleration;
     Int_Vector force;
 
-    AI_Goal goal;
+    Inventory inventory;
 
-    ///QQQ Inventory
+    AI_Goal goal;
 
 public:
 
@@ -37,7 +38,20 @@ public:
     std::uint32_t get_parent_city() const;
     void set_parent_city(std::uint32_t new_parent);
 
+    std::uint32_t get_parent_civilization() const;
+
+    std::uint32_t get_item_count() const;
+    std::uint32_t get_item_count(Inventory::Item_Type item_type) const;
+    bool has_inventory_space(std::uint32_t amount=1) const;
+    std::uint32_t add_item(Inventory::Item_Type item_type,std::uint32_t amount);
+    void remove_item(Inventory::Item_Type item_type,std::uint32_t amount);
+
     bool has_goal() const;
+    bool is_goal_valid() const;
+
+    //chunks
+    std::uint32_t get_chunk_x() const;
+    std::uint32_t get_chunk_y() const;
 
     //pixels
     //Returns the range^2
@@ -48,10 +62,14 @@ public:
     bool goal_within_range() const;
     std::int32_t get_angle_to_goal() const;
 
-    Collision_Rect<std::uint32_t> get_gather_zone() const;
     void find_gather_tile(RNG& rng);
 
-    void ai(RNG& rng);
+    void abandon_goal();
+    void complete_goal();
+
+    bool allowed_to_select_ai_goal(std::uint32_t frame,std::uint32_t index) const;
+
+    void ai(RNG& rng,std::uint32_t frame,std::uint32_t index);
 
     void brake();
     void accelerate();

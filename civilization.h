@@ -5,6 +5,8 @@
 #ifndef civilization_h
 #define civilization_h
 
+#include "inventory.h"
+
 #include <cstdint>
 #include <vector>
 
@@ -15,7 +17,7 @@ private:
 
     std::vector<std::uint32_t> cities;
 
-    ///QQQ Inventory
+    Inventory inventory;
 
 public:
 
@@ -28,6 +30,11 @@ public:
     const std::vector<std::uint32_t>& get_cities() const;
     void add_city(std::uint32_t city);
     void remove_city(std::uint32_t city);
+
+    std::uint32_t get_item_count() const;
+    std::uint32_t get_item_count(Inventory::Item_Type item_type) const;
+    std::uint32_t add_item(Inventory::Item_Type item_type,std::uint32_t amount);
+    void remove_item(Inventory::Item_Type item_type,std::uint32_t amount);
 };
 
 #endif

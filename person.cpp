@@ -18,6 +18,7 @@
 ///
 
 #include <vector>
+#include <utility>
 
 using namespace std;
 
@@ -39,19 +40,76 @@ void Person::set_parent_city(uint32_t new_parent){
     parent_city=new_parent;
 }
 
+uint32_t Person::get_parent_civilization() const{
+    const City& city=Game::get_city(get_parent_city());
+
+    return city.get_parent_civilization();
+}
+
+uint32_t Person::get_item_count() const{
+    return inventory.get_item_count();
+}
+
+uint32_t Person::get_item_count(Inventory::Item_Type item_type) const{
+    return inventory.get_item_count(item_type);
+}
+
+bool Person::has_inventory_space(uint32_t amount) const{
+    if(get_item_count()>=Game_Constants::INVENTORY_MAX){
+        return false;
+    }
+
+    if(Game_Constants::INVENTORY_MAX-get_item_count()>=amount){
+        return true;
+    }
+    else{
+        return false;
+    }
+}
+
+uint32_t Person::add_item(Inventory::Item_Type item_type,uint32_t amount){
+    return inventory.add_item(item_type,amount);
+}
+
+void Person::remove_item(Inventory::Item_Type item_type,uint32_t amount){
+    inventory.remove_item(item_type,amount);
+}
+
 bool Person::has_goal() const{
-    return goal.type!=AI_Goal::Type::NONE;
+    return goal.is_in_progress();
+}
+
+bool Person::is_goal_valid() const{
+    if(goal.is_gather() && has_inventory_space() && Game::tile_exists(goal.coords)){
+        const Tile& tile=Game::get_tile(goal.coords);
+
+        if(tile.is_alive() && tile.is_gatherable()){
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
+    else if(goal.is_empty_inventory() && get_item_count()>0){
+        return true;
+    }
+    else{
+        return false;
+    }
+}
+
+uint32_t Person::get_chunk_x() const{
+    return (uint32_t)box.center_x()/(Game_Constants::CHUNK_SIZE*Game_Constants::TILE_SIZE);
+}
+
+uint32_t Person::get_chunk_y() const{
+    return (uint32_t)box.center_y()/(Game_Constants::CHUNK_SIZE*Game_Constants::TILE_SIZE);
 }
 
 uint64_t Person::get_goal_range() const{
-    if(goal.type==AI_Goal::Type::GATHER_WHEAT || goal.type==AI_Goal::Type::GATHER_TREE){
-        uint64_t range=Game_Constants::GATHER_RANGE*Game_Constants::TILE_SIZE;
+    uint64_t range=Game_Constants::INTERACTION_RANGE*Game_Constants::TILE_SIZE;
 
-        return range*range;
-    }
-    else{
-        return 0;
-    }
+    return range*range;
 }
 
 Coords<int32_t> Person::get_goal_coords() const{
@@ -59,13 +117,13 @@ Coords<int32_t> Person::get_goal_coords() const{
     int32_t goal_x=-1;
     int32_t goal_y=-1;
 
-    if(goal.type==AI_Goal::Type::GATHER_WHEAT || goal.type==AI_Goal::Type::GATHER_TREE){
-        if(Game::tile_exists(goal.coords)){
-            const Tile& tile=Game::get_tile(goal.coords);
-
-            goal_x=tile.get_center_x(goal.coords.x);
-            goal_y=tile.get_center_y(goal.coords.y);
-        }
+    if(goal.is_gather()){
+        goal_x=Tile::get_center_x(goal.coords.x,Tile::get_tile_type_size(goal.get_gather_tile_type()));
+        goal_y=Tile::get_center_y(goal.coords.y,Tile::get_tile_type_size(goal.get_gather_tile_type()));
+    }
+    else if(goal.is_empty_inventory()){
+        goal_x=(int32_t)goal.coords.x;
+        goal_y=(int32_t)goal.coords.y;
     }
 
     return Coords<int32_t>(goal_x,goal_y);
@@ -95,99 +153,135 @@ int32_t Person::get_angle_to_goal() const{
     }
 }
 
-Collision_Rect<uint32_t> Person::get_gather_zone() const{
+void Person::find_gather_tile(RNG& rng){
     const City& city=Game::get_city(parent_city);
 
-    //chunks
-    uint32_t gather_zone_x=city.get_chunk_x();
-    uint32_t gather_zone_y=city.get_chunk_y();
-    uint32_t gather_zone_width=Game_Constants::GATHER_ZONE_RANGE*2;
-    uint32_t gather_zone_height=Game_Constants::GATHER_ZONE_RANGE*2;
+    if(city.get_gather_zone_tile_count(goal.get_gather_tile_type())>0){
+        vector<Coords<uint32_t>> chunk_coords=city.get_gather_zone_chunk_coords();
 
-    if(gather_zone_x>=Game_Constants::GATHER_ZONE_RANGE){
-        gather_zone_x-=Game_Constants::GATHER_ZONE_RANGE;
-    }
-    else{
-        gather_zone_x=0;
-    }
+        Sorting::shuffle(rng,chunk_coords);
 
-    if(gather_zone_y>=Game_Constants::GATHER_ZONE_RANGE){
-        gather_zone_y-=Game_Constants::GATHER_ZONE_RANGE;
-    }
-    else{
-        gather_zone_y=0;
-    }
+        Coords<uint32_t> our_chunk_coords(get_chunk_x(),get_chunk_y());
 
-    if(gather_zone_x+gather_zone_width>=Game::option_world_width){
-        gather_zone_width=Game::option_world_width-1-gather_zone_x;
-    }
-    if(gather_zone_y+gather_zone_height>=Game::option_world_height){
-        gather_zone_height=Game::option_world_height-1-gather_zone_y;
-    }
-
-    return Collision_Rect<uint32_t>(gather_zone_x,gather_zone_y,gather_zone_width,gather_zone_height);
-}
-
-void Person::find_gather_tile(RNG& rng){
-    Tile::Type tile_type_desired=Tile::Type::WHEAT;
-    if(goal.type==AI_Goal::Type::GATHER_TREE){
-        tile_type_desired=Tile::Type::TREE;
-    }
-
-    Collision_Rect<uint32_t> gather_zone=get_gather_zone();
-
-    //A list of chunk coordinates within the gather zone
-    vector<Coords<uint32_t>> chunk_coords;
-
-    for(uint32_t x=gather_zone.x;x<gather_zone.x+gather_zone.w;x++){
-        for(uint32_t y=gather_zone.y;y<gather_zone.y+gather_zone.h;y++){
-            chunk_coords.push_back(Coords<uint32_t>(x,y));
-        }
-    }
-
-    Sorting::shuffle(rng,chunk_coords);
-
-    for(size_t i=0;i<chunk_coords.size();i++){
-        uint32_t tile_x=chunk_coords[i].x*Game_Constants::CHUNK_SIZE;
-        uint32_t tile_y=chunk_coords[i].y*Game_Constants::CHUNK_SIZE;
-
-        //A list of valid tile coordinates within the chunk
-        vector<Coords<uint32_t>> tile_coords;
-
-        for(uint32_t x=tile_x;x<tile_x+Game_Constants::CHUNK_SIZE;x++){
-            for(uint32_t y=tile_y;y<tile_y+Game_Constants::CHUNK_SIZE;y++){
-                Coords<uint32_t> tile_check_coords(x,y);
-
-                if(Game::tile_exists(tile_check_coords)){
-                    const Tile& tile=Game::get_tile(tile_check_coords);
-
-                    if(tile.get_type()==tile_type_desired){
-                        tile_coords.push_back(tile_check_coords);
-                    }
+        for(size_t i=0;i<chunk_coords.size();i++){
+            if(chunk_coords[i]==our_chunk_coords){
+                if(i>0){
+                    swap(chunk_coords[i],chunk_coords[0]);
                 }
+
+                break;
             }
         }
 
-        if(tile_coords.size()>0){
-            uint32_t random_tile=rng.random_range(0,tile_coords.size()-1);
+        for(size_t i=0;i<chunk_coords.size();i++){
+            uint32_t tile_x=chunk_coords[i].x*Game_Constants::CHUNK_SIZE;
+            uint32_t tile_y=chunk_coords[i].y*Game_Constants::CHUNK_SIZE;
 
-            goal.coords.x=tile_coords[random_tile].x;
-            goal.coords.y=tile_coords[random_tile].y;
+            //A list of valid tile coordinates within the chunk
+            vector<Coords<uint32_t>> tile_coords;
 
-            return;
+            for(uint32_t x=tile_x;x<tile_x+Game_Constants::CHUNK_SIZE;x++){
+                for(uint32_t y=tile_y;y<tile_y+Game_Constants::CHUNK_SIZE;y++){
+                    Coords<uint32_t> tile_check_coords(x,y);
+
+                    if(Game::tile_exists(tile_check_coords)){
+                        const Tile& tile=Game::get_tile(tile_check_coords);
+
+                        if(tile.is_alive() && tile.get_type()==goal.get_gather_tile_type()){
+                            tile_coords.push_back(tile_check_coords);
+                        }
+                    }
+                }
+            }
+
+            if(tile_coords.size()>0){
+                uint32_t random_tile=rng.random_range(0,tile_coords.size()-1);
+
+                goal.coords.x=tile_coords[random_tile].x;
+                goal.coords.y=tile_coords[random_tile].y;
+
+                return;
+            }
         }
     }
 
     //If we did not find a valid gather tile
-    goal.type=AI_Goal::Type::NONE;
+    abandon_goal();
 }
 
-void Person::ai(RNG& rng){
-    if(!has_goal()){
-        goal.type=AI_Goal::Type::GATHER_WHEAT;
+void Person::abandon_goal(){
+    goal.set_type(AI_Goal::Type::NONE);
 
-        if(goal.type==AI_Goal::Type::GATHER_WHEAT || goal.type==AI_Goal::Type::GATHER_TREE){
+    goal.coords.x=0;
+    goal.coords.y=0;
+}
+
+void Person::complete_goal(){
+    if(is_goal_valid()){
+        if(goal.is_gather()){
+            const Tile& tile=Game::get_tile(goal.coords);
+
+            if(tile.get_type()==Tile::Type::WHEAT){
+                add_item(Inventory::Item_Type::WHEAT,1);
+            }
+            else if(tile.get_type()==Tile::Type::TREE){
+                add_item(Inventory::Item_Type::TREE,1);
+            }
+
+            Game::kill_tile(goal.coords);
+        }
+        else if(goal.is_empty_inventory()){
+            vector<Inventory::Item_Type> item_types=Inventory::get_item_types();
+
+            for(size_t i=0;i<item_types.size();i++){
+                Inventory::Item_Type item_type=item_types[i];
+                uint32_t item_count=get_item_count(item_type);
+                uint32_t item_minimum=0;
+
+                //Keep 1 piece of wheat if possible
+                if(item_type==Inventory::Item_Type::WHEAT){
+                    item_minimum=1;
+                }
+
+                if(item_count>item_minimum){
+                    uint32_t item_exchange=item_count-item_minimum;
+
+                    Game::add_civilization_item(get_parent_civilization(),item_type,item_exchange);
+                    remove_item(item_type,item_exchange);
+                }
+            }
+        }
+    }
+
+    abandon_goal();
+}
+
+bool Person::allowed_to_select_ai_goal(uint32_t frame,uint32_t index) const{
+    if((frame+(index%Engine::UPDATE_RATE))%Game_Constants::AI_GOAL_SELECTION_PERIOD==0){
+        return true;
+    }
+    else{
+        return false;
+    }
+}
+
+void Person::ai(RNG& rng,uint32_t frame,uint32_t index){
+    if(!has_goal() && allowed_to_select_ai_goal(frame,index)){
+        if(has_inventory_space()){
+            goal.set_type(AI_Goal::Type::GATHER_WHEAT);
+        }
+        else{
+            goal.set_type(AI_Goal::Type::EMPTY_INVENTORY);
+        }
+
+        if(goal.is_gather()){
             find_gather_tile(rng);
+        }
+        else if(goal.is_empty_inventory()){
+            const City& city=Game::get_city(get_parent_city());
+
+            goal.coords.x=city.get_center_x();
+            goal.coords.y=city.get_center_y();
         }
     }
 
@@ -195,7 +289,14 @@ void Person::ai(RNG& rng){
         if(goal_within_range()){
             brake();
 
-            ///
+            if(goal.is_first_count() && !is_goal_valid()){
+                abandon_goal();
+            }
+            else{
+                if(goal.countdown()){
+                    complete_goal();
+                }
+            }
         }
         else{
             force+=Int_Vector(Game_Constants::PERSON_MOVE_FORCE,get_angle_to_goal());
@@ -264,8 +365,19 @@ void Person::render() const{
                                  (double)box.w*Game_Manager::camera_zoom,(double)box.h*Game_Manager::camera_zoom,1.0,"red");
 
         ///QQQ
-        ///Bitmap_Font* font=Object_Manager::get_font("small");
-        ///font->show(x*Game_Manager::camera_zoom-Game_Manager::camera.x,y*Game_Manager::camera_zoom-Game_Manager::camera.y,Strings::num_to_string(goal.coords.x)+","+Strings::num_to_string(goal.coords.y),"white");
+        /**Bitmap_Font* font=Object_Manager::get_font("small");
+        string msg="";
+        if(goal.type==AI_Goal::Type::GATHER_WHEAT){
+            msg="Gather wheat\n";
+        }
+        else if(goal.type==AI_Goal::Type::GATHER_TREE){
+            msg="Gather tree\n";
+        }
+        else if(goal.type==AI_Goal::Type::EMPTY_INVENTORY){
+            msg="Empty inventory\n";
+        }
+        msg+=Strings::num_to_string(goal.coords.x)+","+Strings::num_to_string(goal.coords.y);
+        font->show(x*Game_Manager::camera_zoom-Game_Manager::camera.x,y*Game_Manager::camera_zoom-Game_Manager::camera.y,msg,"white");*/
         ///
     }
 }

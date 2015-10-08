@@ -26,6 +26,8 @@ private:
 
     Type type;
 
+    bool alive;
+
 public:
 
     Tile();
@@ -36,6 +38,10 @@ public:
     void set_parent(std::uint32_t new_parent);
 
     Type get_type() const;
+    bool is_gatherable() const;
+
+    bool is_alive() const;
+    void kill();
 
     static bool tile_type_is_building(Type type_to_check);
     bool is_building() const;
@@ -49,8 +55,16 @@ public:
     static std::int32_t get_y(std::uint32_t tile_y);
 
     //pixels
+    static std::int32_t get_center_x(std::uint32_t tile_x,std::int32_t tile_size);
+    static std::int32_t get_center_y(std::uint32_t tile_y,std::int32_t tile_size);
+
+    //pixels
     std::int32_t get_center_x(std::uint32_t tile_x) const;
     std::int32_t get_center_y(std::uint32_t tile_y) const;
+
+    //chunks
+    static std::uint32_t get_chunk_x(std::uint32_t tile_x);
+    static std::uint32_t get_chunk_y(std::uint32_t tile_y);
 
     void render(std::uint32_t tile_x,std::uint32_t tile_y) const;
 };

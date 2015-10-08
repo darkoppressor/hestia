@@ -403,6 +403,8 @@
 		<Unit filename="game_options.h" />
 		<Unit filename="int_math.cpp" />
 		<Unit filename="int_math.h" />
+		<Unit filename="inventory.cpp" />
+		<Unit filename="inventory.h" />
 		<Unit filename="leader.cpp" />
 		<Unit filename="leader.h" />
 		<Unit filename="main.cpp" />

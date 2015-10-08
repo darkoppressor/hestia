@@ -38,6 +38,22 @@
 </game_constant>
 
 <game_constant>
+	//Valid range: [1,logic update rate]
+	//There will be ai_goal_selection_period - 1 frames in between each AI goal selection opportunity
+	//AI goal selection is additionally staggered among the people
+	name:ai_goal_selection_period
+	value:30
+</game_constant>
+
+<game_constant>
+	//Valid range: [1,logic update rate]
+	//There will be city_gather_zone_update_period - 1 frames in between each city gather zone update
+	//City gather zone updating is additionally staggered among the cities
+	name:city_gather_zone_update_period
+	value:30
+</game_constant>
+
+<game_constant>
 	//seconds
 	name:day_length
 	value:4
@@ -82,6 +98,11 @@
 </game_constant>
 
 <game_constant>
+	name:inventory_max
+	value:6
+</game_constant>
+
+<game_constant>
 	//chunks
 	name:gather_zone_range
 	value:3
@@ -89,6 +110,18 @@
 
 <game_constant>
 	//tiles
-	name:gather_range
+	name:interaction_range
 	value:1
+</game_constant>
+
+<game_constant>
+	//seconds
+	name:gather_rate
+	value:1
+</game_constant>
+
+<game_constant>
+	//seconds
+	name:empty_inventory_rate
+	value:0
 </game_constant>
