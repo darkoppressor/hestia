@@ -14,17 +14,6 @@
 
 using namespace std;
 
-/**Region* Chunk::get_parent_region_ptr(){
-    if(parent_region>=Game::regions.size()){
-        Log::add_error("Error in Chunk::get_parent_region()");
-
-        return 0;
-    }
-    else{
-        return &Game::regions[parent_region];
-    }
-}*/
-
 Chunk::Chunk(){
     parent_region=0;
 }

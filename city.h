@@ -25,8 +25,6 @@ private:
 
     std::uint32_t breeding_counter;
 
-    ///Tile* get_tile_ptr();
-
 public:
 
     City();
@@ -53,7 +51,11 @@ public:
     std::int32_t get_center_x() const;
     std::int32_t get_center_y() const;
 
-    Collision_Rect<int32_t> get_spawn_zone() const;
+    //chunks
+    std::uint32_t get_chunk_x() const;
+    std::uint32_t get_chunk_y() const;
+
+    Collision_Rect<std::int32_t> get_spawn_zone() const;
 
     std::uint32_t get_population() const;
 

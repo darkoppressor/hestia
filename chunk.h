@@ -15,8 +15,6 @@ private:
 
     std::uint32_t parent_region;
 
-    ///Region* get_parent_region_ptr();
-
 public:
 
     Chunk();

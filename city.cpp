@@ -8,15 +8,6 @@
 
 using namespace std;
 
-/**Tile* City::get_tile_ptr(){
-    if(Game::tile_exists(tile)){
-        return &Game::tiles[tile];
-    }
-    else{
-        return 0;
-    }
-}*/
-
 City::City(){
     parent_civilization=0;
 
@@ -88,6 +79,14 @@ int32_t City::get_center_x() const{
 
 int32_t City::get_center_y() const{
     return int32_t(tile.y*Game_Constants::TILE_SIZE)+get_size()/2;
+}
+
+uint32_t City::get_chunk_x() const{
+    return tile.x/Game_Constants::CHUNK_SIZE;
+}
+
+uint32_t City::get_chunk_y() const{
+    return tile.y/Game_Constants::CHUNK_SIZE;
 }
 
 Collision_Rect<int32_t> City::get_spawn_zone() const{
