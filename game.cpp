@@ -481,9 +481,9 @@ void Game::add_leader(bool player_controlled,uint32_t parent_player,const Color&
 }
 
 int32_t Game::get_player_leader(int player_number){
-    if(player_number>=0 && player_number<Network_Engine::get_player_count()){
+    if(player_number>=0 && (uint32_t)player_number<Network_Engine::get_player_count()){
         for(size_t i=0;i<leaders.size();i++){
-            if(leaders[i].is_player_controlled() && leaders[i].get_parent_player()==player_number){
+            if(leaders[i].is_player_controlled() && leaders[i].get_parent_player()==(uint32_t)player_number){
                 return (int32_t)i;
             }
         }
@@ -566,7 +566,10 @@ void Game::kill_tile(const Coords<uint32_t>& tile_coords){
 
 uint32_t Game::add_civilization_item(uint32_t index,Inventory::Item_Type item_type,uint32_t amount){
     if(index<civilizations.size()){
-        civilizations[index].add_item(item_type,amount);
+        return civilizations[index].add_item(item_type,amount);
+    }
+    else{
+        return 0;
     }
 }
 
