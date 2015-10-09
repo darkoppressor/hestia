@@ -97,6 +97,14 @@ uint32_t City::get_chunk_y() const{
     return tile.y/Game_Constants::CHUNK_SIZE;
 }
 
+uint32_t City::get_tile_x() const{
+    return tile.x;
+}
+
+uint32_t City::get_tile_y() const{
+    return tile.y;
+}
+
 Collision_Rect<int32_t> City::get_spawn_zone() const{
     //pixels
     int32_t spawn_zone_x=get_center_x()-get_size()*4;
@@ -151,48 +159,6 @@ uint32_t City::get_gather_zone_tile_count(Tile::Type tile_type) const{
     }
 }
 
-vector<Coords<uint32_t>> City::get_gather_zone_chunk_coords() const{
-    //chunks
-    uint32_t gather_zone_x=get_chunk_x();
-    uint32_t gather_zone_y=get_chunk_y();
-    uint32_t gather_zone_width=Game_Constants::GATHER_ZONE_RANGE*2;
-    uint32_t gather_zone_height=Game_Constants::GATHER_ZONE_RANGE*2;
-
-    if(gather_zone_x>=Game_Constants::GATHER_ZONE_RANGE){
-        gather_zone_x-=Game_Constants::GATHER_ZONE_RANGE;
-    }
-    else{
-        gather_zone_x=0;
-    }
-
-    if(gather_zone_y>=Game_Constants::GATHER_ZONE_RANGE){
-        gather_zone_y-=Game_Constants::GATHER_ZONE_RANGE;
-    }
-    else{
-        gather_zone_y=0;
-    }
-
-    if(gather_zone_x+gather_zone_width>=Game::option_world_width){
-        gather_zone_width=Game::option_world_width-1-gather_zone_x;
-    }
-    if(gather_zone_y+gather_zone_height>=Game::option_world_height){
-        gather_zone_height=Game::option_world_height-1-gather_zone_y;
-    }
-
-    Collision_Rect<uint32_t> gather_zone(gather_zone_x,gather_zone_y,gather_zone_width,gather_zone_height);
-
-    //A list of chunk coordinates within the gather zone
-    vector<Coords<uint32_t>> chunk_coords;
-
-    for(uint32_t x=gather_zone.x;x<gather_zone.x+gather_zone.w;x++){
-        for(uint32_t y=gather_zone.y;y<gather_zone.y+gather_zone.h;y++){
-            chunk_coords.push_back(Coords<uint32_t>(x,y));
-        }
-    }
-
-    return chunk_coords;
-}
-
 bool City::allowed_to_update_gather_zone(uint32_t frame,uint32_t index) const{
     if((frame+(index%Engine::UPDATE_RATE))%Game_Constants::CITY_GATHER_ZONE_UPDATE_PERIOD==0){
         return true;
@@ -207,7 +173,7 @@ void City::update_gather_zone(uint32_t frame,uint32_t index){
         gather_zone_wheat=0;
         gather_zone_tree=0;
 
-        vector<Coords<uint32_t>> chunk_coords=get_gather_zone_chunk_coords();
+        vector<Coords<uint32_t>> chunk_coords=Chunk::get_zone_chunk_coords(get_chunk_x(),get_chunk_y(),Game_Constants::GATHER_ZONE_RANGE);
 
         for(size_t i=0;i<chunk_coords.size();i++){
             const Chunk& chunk=Game::get_chunk(chunk_coords[i]);

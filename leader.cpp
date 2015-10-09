@@ -4,6 +4,8 @@
 
 #include "leader.h"
 
+#include <engine_strings.h>
+
 using namespace std;
 
 Leader::Leader(){
@@ -48,6 +50,10 @@ void Leader::set_civilization(uint32_t new_civilization){
 
 Color Leader::get_color() const{
     return color;
+}
+
+string Leader::get_color(uint32_t index){
+    return "leader_"+Strings::num_to_string(index);
 }
 
 void Leader::set_color(const Color& new_color){

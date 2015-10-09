@@ -9,6 +9,7 @@
 
 #include <cstdint>
 #include <vector>
+#include <string>
 
 class Civilization{
 private:
@@ -33,8 +34,11 @@ public:
 
     std::uint32_t get_item_count() const;
     std::uint32_t get_item_count(Inventory::Item_Type item_type) const;
+    bool has_food() const;
     std::uint32_t add_item(Inventory::Item_Type item_type,std::uint32_t amount);
     void remove_item(Inventory::Item_Type item_type,std::uint32_t amount);
+
+    std::string get_color() const;
 };
 
 #endif

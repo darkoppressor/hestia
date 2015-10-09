@@ -10,6 +10,7 @@
 #include <game_manager.h>
 
 ///QQQ
+#include "game.h"
 #include <object_manager.h>
 #include <font.h>
 #include <engine_strings.h>
@@ -57,11 +58,15 @@ bool Tile::is_gatherable() const{
     return type==Type::WHEAT || type==Type::TREE;
 }
 
+bool Tile::is_food() const{
+    return type==Type::WHEAT;
+}
+
 bool Tile::is_alive() const{
     return alive;
 }
 
-void Tile::kill(){
+void Tile::die(){
     alive=false;
 }
 
@@ -129,15 +134,31 @@ uint32_t Tile::get_chunk_y(uint32_t tile_y){
 }
 
 void Tile::render(uint32_t tile_x,uint32_t tile_y) const{
-    if(alive){
+    if(is_alive()){
         double x=get_x(tile_x);
         double y=get_y(tile_y);
 
         Collision_Rect<double> box_render(x,y,(double)get_size(),(double)get_size());
 
         if(Collision::check_rect(box_render*Game_Manager::camera_zoom,Game_Manager::camera)){
+            ///QQQ - This is temporary
+            string color="white";
+            if(type==Type::BUILDING_UNFINISHED){
+                const Civilization& civilization=Game::get_civilization(get_parent());
+
+                color=civilization.get_color();
+            }
+            else if(type==Type::BUILDING_CITY){
+                const City& city=Game::get_city(get_parent());
+
+                const Civilization& civilization=Game::get_civilization(city.get_parent_civilization());
+
+                color=civilization.get_color();
+            }
+            ///
+
             Render::render_rectangle(x*Game_Manager::camera_zoom-Game_Manager::camera.x,y*Game_Manager::camera_zoom-Game_Manager::camera.y,
-                                     (double)get_size()*Game_Manager::camera_zoom,(double)get_size()*Game_Manager::camera_zoom,1.0,"white");
+                                     (double)get_size()*Game_Manager::camera_zoom,(double)get_size()*Game_Manager::camera_zoom,1.0,color);
 
             ///QQQ
             ///Bitmap_Font* font=Object_Manager::get_font("small");

@@ -8,6 +8,7 @@
 #include <color.h>
 
 #include <cstdint>
+#include <string>
 
 class Leader{
 private:
@@ -34,6 +35,7 @@ public:
     void set_civilization(std::uint32_t new_civilization);
 
     Color get_color() const;
+    static std::string get_color(std::uint32_t index);
     void set_color(const Color& new_color);
 };
 

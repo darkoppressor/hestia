@@ -29,28 +29,28 @@ vector<City> Game::cities;
 vector<Person> Game::people;
 map<Coords<uint32_t>,Tile,Game::tile_compare> Game::tiles;
 
+queue<uint32_t> Game::dead_people;
+
+Quadtree<int32_t,uint32_t> Game::quadtree;
+
 void Game::add_remove_objects(){
-    for(size_t i=0;i<new_cities.size();i++){
-        cities.push_back(new_cities[i]);
+    for(size_t i=0;i<people.size();i++){
+        if(people[i].get_exists() && !people[i].is_alive()){
+            uint32_t parent_city=people[i].get_parent_city();
+
+            cities[parent_city].remove_person((uint32_t)i);
+
+            for(size_t n=0;n<people.size();n++){
+                if(n!=i && people[n].is_alive()){
+                    people[n].notify_of_person_death((uint32_t)i);
+                }
+            }
+
+            people[i].set_exists(false);
+
+            dead_people.push((uint32_t)i);
+        }
     }
-    new_cities.clear();
-
-    for(size_t i=0;i<new_people.size();i++){
-        people.push_back(new_people[i]);
-
-        uint32_t parent_city=people.back().get_parent_city();
-
-        cities[parent_city].add_person(people.size()-1);
-    }
-    new_people.clear();
-
-    for(const auto& it : new_tiles){
-        tiles.emplace(it.first,it.second);
-
-        //Let the parent chunk know it has a new tile in it
-        chunks[Tile::get_chunk_x(it.first.x)][Tile::get_chunk_y(it.first.y)].increment_tile_count(it.second.get_type());
-    }
-    new_tiles.clear();
 
     for(auto it=tiles.cbegin();it!=tiles.cend();){
         if(!it->second.is_alive()){
@@ -63,6 +63,41 @@ void Game::add_remove_objects(){
             it++;
         }
     }
+
+    for(size_t i=0;i<new_cities.size();i++){
+        cities.push_back(new_cities[i]);
+    }
+    new_cities.clear();
+
+    for(size_t i=0;i<new_people.size();i++){
+        uint32_t person_index=0;
+
+        if(dead_people.empty()){
+            people.push_back(new_people[i]);
+
+            person_index=people.size()-1;
+        }
+        else{
+            person_index=dead_people.front();
+
+            dead_people.pop();
+
+            people[person_index]=new_people[i];
+        }
+
+        uint32_t parent_city=people[person_index].get_parent_city();
+
+        cities[parent_city].add_person(person_index);
+    }
+    new_people.clear();
+
+    for(const auto& it : new_tiles){
+        tiles.emplace(it.first,it.second);
+
+        //Let the parent chunk know it has a new tile in it
+        chunks[Tile::get_chunk_x(it.first.x)][Tile::get_chunk_y(it.first.y)].increment_tile_count(it.second.get_type());
+    }
+    new_tiles.clear();
 }
 
 bool Game::started=false;
@@ -95,13 +130,17 @@ void Game::clear_world(){
     RNG rng_seeder;
     option_rng_seed=rng_seeder.random_range(0,UINT32_MAX);
 
-    option_world_width=50;
-    option_world_height=50;
+    option_world_width=5;
+    option_world_height=5;
     option_region_min=4;
     option_region_max=8;
     option_initial_tile_growth=1440;
 
     option_max_leaders=8;
+
+    for(size_t i=0;i<leaders.size();i++){
+        Object_Manager::remove_color(Leader::get_color((uint32_t)i));
+    }
 
     regions.clear();
     chunks.clear();
@@ -110,6 +149,10 @@ void Game::clear_world(){
     cities.clear();
     people.clear();
     tiles.clear();
+
+    dead_people={};
+
+    quadtree.clear_tree();
 
     new_cities.clear();
     new_people.clear();
@@ -315,6 +358,12 @@ void Game::generate_world(){
         }
     }
 
+    quadtree.setup(10,5,0,Quadtree_Rect(0,0,get_world_width(),get_world_height()));
+
+    for(size_t i=0;i<leaders.size();i++){
+        Object_Manager::add_color(Leader::get_color((uint32_t)i),leaders[i].get_color());
+    }
+
     //If we are a player, center the camera on our starting city
     int player_number=Network_Engine::get_our_player_number();
     if(player_number>=0){
@@ -511,7 +560,7 @@ bool Game::tile_coords_are_valid(Tile::Type type,const Coords<uint32_t>& tile_co
 
 void Game::kill_tile(const Coords<uint32_t>& tile_coords){
     if(tile_exists(tile_coords)){
-        tiles.at(tile_coords).kill();
+        tiles.at(tile_coords).die();
     }
 }
 
@@ -524,6 +573,12 @@ uint32_t Game::add_civilization_item(uint32_t index,Inventory::Item_Type item_ty
 void Game::remove_civilization_item(uint32_t index,Inventory::Item_Type item_type,uint32_t amount){
     if(index<civilizations.size()){
         civilizations[index].remove_item(item_type,amount);
+    }
+}
+
+void Game::damage_person(uint32_t index,int16_t attack){
+    if(index<people.size()){
+        people[index].damage(attack);
     }
 }
 
@@ -554,8 +609,12 @@ void Game::tick(){
                 regions[i].tile_growth(rng);
             }
 
-            for(uint32_t i=0;i<cities.size();i++){
-                cities[i].breed(i,rng);
+            for(size_t i=0;i<cities.size();i++){
+                cities[i].breed((uint32_t)i,rng);
+            }
+
+            for(size_t i=0;i<people.size();i++){
+                people[i].process_biology();
             }
 
             //If the week changed
@@ -578,8 +637,15 @@ void Game::tick(){
 
 void Game::ai(){
     if(started){
+        quadtree.clear_tree();
         for(size_t i=0;i<people.size();i++){
-            people[i].ai(rng,frame,(uint32_t)i);
+            if(people[i].is_alive()){
+                quadtree.insert_object(people[i].get_box(),(uint32_t)i);
+            }
+        }
+
+        for(size_t i=0;i<people.size();i++){
+            people[i].ai(rng,quadtree,frame,(uint32_t)i);
         }
     }
 }

@@ -39,6 +39,14 @@
 
 <game_constant>
 	//Valid range: [1,logic update rate]
+	//There will be ai_target_scan_period - 1 frames in between each AI target scan
+	//AI target scan is additionally staggered among the people
+	name:ai_target_scan_period
+	value:30
+</game_constant>
+
+<game_constant>
+	//Valid range: [1,logic update rate]
 	//There will be ai_goal_selection_period - 1 frames in between each AI goal selection opportunity
 	//AI goal selection is additionally staggered among the people
 	name:ai_goal_selection_period
@@ -103,9 +111,54 @@
 </game_constant>
 
 <game_constant>
+	name:person_health_max
+	value:10
+</game_constant>
+
+<game_constant>
+	//health per day
+	name:person_health_change_rate
+	value:1
+</game_constant>
+
+<game_constant>
+	name:person_attack
+	value:3
+</game_constant>
+
+<game_constant>
+	name:person_defense
+	value:0
+</game_constant>
+
+<game_constant>
+	//days to 0 hunger rating
+	name:hunger_full
+	value:20
+</game_constant>
+
+<game_constant>
+	//days to 0 hunger rating
+	name:hunger_hungry
+	value:10
+</game_constant>
+
+<game_constant>
+	//days to 0 hunger rating
+	name:hunger_starving
+	value:5
+</game_constant>
+
+<game_constant>
 	//chunks
 	name:gather_zone_range
 	value:3
+</game_constant>
+
+<game_constant>
+	//chunks
+	name:forage_zone_range
+	value:1
 </game_constant>
 
 <game_constant>
@@ -115,13 +168,85 @@
 </game_constant>
 
 <game_constant>
-	//seconds
-	name:gather_rate
-	value:1
+	//tiles
+	name:sight_range
+	value:32
 </game_constant>
 
 <game_constant>
-	//seconds
+	//tiles^2
+	name:home_defense_range
+	value:4096
+</game_constant>
+
+<game_constant>
+	name:attack_person_melee_priority
+	value:10
+</game_constant>
+
+<game_constant>
+	name:attack_person_melee_with_advantage_priority
+	value:10
+</game_constant>
+
+<game_constant>
+	name:attack_person_melee_without_advantage_priority
+	value:5
+</game_constant>
+
+<game_constant>
+	name:retreat_with_disadvantage_priority
+	value:20
+</game_constant>
+
+<game_constant>
+	name:retreat_with_low_health_priority
+	value:10
+</game_constant>
+
+<game_constant>
+	name:ignore_priority
+	value:5
+</game_constant>
+
+<game_constant>
+	//milliseconds
+	name:gather_rate
+	value:1000
+</game_constant>
+
+<game_constant>
+	//milliseconds
 	name:empty_inventory_rate
 	value:0
+</game_constant>
+
+<game_constant>
+	//milliseconds
+	name:eat_rate
+	value:0
+</game_constant>
+
+<game_constant>
+	//milliseconds
+	name:eat_at_home_rate
+	value:0
+</game_constant>
+
+<game_constant>
+	//milliseconds
+	name:forage_rate
+	value:1000
+</game_constant>
+
+<game_constant>
+	//milliseconds
+	name:retreat_rate
+	value:0
+</game_constant>
+
+<game_constant>
+	//milliseconds
+	name:attack_person_melee_rate
+	value:250
 </game_constant>

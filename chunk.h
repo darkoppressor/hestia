@@ -8,8 +8,11 @@
 #include "region.h"
 #include "tile.h"
 
+#include <coords.h>
+
 #include <string>
 #include <cstdint>
+#include <vector>
 
 class Tile_Counts{
 private:
@@ -48,6 +51,8 @@ public:
     void increment_tile_count(Tile::Type tile_type);
     void decrement_tile_count(Tile::Type tile_type);
 
+    bool has_food() const;
+
     std::string get_ground_string() const;
 
     //pixels
@@ -56,6 +61,8 @@ public:
     //pixels
     static std::int32_t get_x(std::uint32_t chunk_x);
     static std::int32_t get_y(std::uint32_t chunk_y);
+
+    static std::vector<Coords<std::uint32_t>> get_zone_chunk_coords(std::uint32_t chunk_x,std::uint32_t chunk_y,std::uint32_t zone_range);
 
     void render_ground(std::uint32_t chunk_x,std::uint32_t chunk_y) const;
 };

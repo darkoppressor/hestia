@@ -3,6 +3,7 @@
 /* See the file docs/LICENSE.txt for the full license text. */
 
 #include "civilization.h"
+#include "game.h"
 
 using namespace std;
 
@@ -55,10 +56,18 @@ uint32_t Civilization::get_item_count(Inventory::Item_Type item_type) const{
     return inventory.get_item_count(item_type);
 }
 
+bool Civilization::has_food() const{
+    return get_item_count(Inventory::Item_Type::WHEAT)>0;
+}
+
 uint32_t Civilization::add_item(Inventory::Item_Type item_type,uint32_t amount){
     return inventory.add_item(item_type,amount);
 }
 
 void Civilization::remove_item(Inventory::Item_Type item_type,uint32_t amount){
     inventory.remove_item(item_type,amount);
+}
+
+string Civilization::get_color() const{
+    return Leader::get_color(get_parent_leader());
 }

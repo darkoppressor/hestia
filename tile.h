@@ -39,9 +39,10 @@ public:
 
     Type get_type() const;
     bool is_gatherable() const;
+    bool is_food() const;
 
     bool is_alive() const;
-    void kill();
+    void die();
 
     static bool tile_type_is_building(Type type_to_check);
     bool is_building() const;

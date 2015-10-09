@@ -18,11 +18,13 @@
 #include <rng.h>
 #include <coords.h>
 #include <color.h>
+#include <quadtree.h>
 
 #include <vector>
 #include <string>
 #include <cstdint>
 #include <map>
+#include <queue>
 
 class Game{
 private:
@@ -45,6 +47,10 @@ private:
     static std::vector<City> cities;
     static std::vector<Person> people;
     static std::map<Coords<std::uint32_t>,Tile,tile_compare> tiles;
+
+    static std::queue<std::uint32_t> dead_people;
+
+    static Quadtree<std::int32_t,std::uint32_t> quadtree;
 
     static void add_remove_objects();
 
@@ -109,6 +115,8 @@ public:
 
     static std::uint32_t add_civilization_item(std::uint32_t index,Inventory::Item_Type item_type,std::uint32_t amount);
     static void remove_civilization_item(std::uint32_t index,Inventory::Item_Type item_type,std::uint32_t amount);
+
+    static void damage_person(std::uint32_t index,std::int16_t attack);
 
     //Note that this distance is actually the distance^2, as the sqrt operation is skipped
     static uint64_t distance_to_nearest_city(const Coords<std::int32_t>& coords);

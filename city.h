@@ -58,6 +58,10 @@ public:
     std::uint32_t get_chunk_x() const;
     std::uint32_t get_chunk_y() const;
 
+    //tiles
+    std::uint32_t get_tile_x() const;
+    std::uint32_t get_tile_y() const;
+
     Collision_Rect<std::int32_t> get_spawn_zone() const;
 
     std::uint32_t get_population() const;
@@ -65,7 +69,6 @@ public:
     void breed(std::uint32_t index,RNG& rng);
 
     std::uint32_t get_gather_zone_tile_count(Tile::Type tile_type) const;
-    std::vector<Coords<std::uint32_t>> get_gather_zone_chunk_coords() const;
     bool allowed_to_update_gather_zone(std::uint32_t frame,std::uint32_t index) const;
     void update_gather_zone(std::uint32_t frame,std::uint32_t index);
 };

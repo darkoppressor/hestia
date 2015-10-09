@@ -101,6 +101,10 @@ void Chunk::decrement_tile_count(Tile::Type tile_type){
     tile_counts.decrement(tile_type);
 }
 
+bool Chunk::has_food() const{
+    return get_tile_count(Tile::Type::WHEAT)>0;
+}
+
 string Chunk::get_ground_string() const{
     const Region& region=Game::get_region(get_parent_region());
 
@@ -117,6 +121,53 @@ int32_t Chunk::get_x(uint32_t chunk_x){
 
 int32_t Chunk::get_y(uint32_t chunk_y){
     return int32_t(chunk_y*Game_Constants::CHUNK_SIZE*Game_Constants::TILE_SIZE);
+}
+
+vector<Coords<uint32_t>> Chunk::get_zone_chunk_coords(uint32_t chunk_x,uint32_t chunk_y,uint32_t zone_range){
+    //chunks
+    uint32_t zone_x=chunk_x;
+    uint32_t zone_y=chunk_y;
+    uint32_t zone_width=zone_range*2;
+    uint32_t zone_height=zone_range*2;
+
+    if(zone_x>=zone_range){
+        zone_x-=zone_range;
+    }
+    else{
+        zone_x=0;
+    }
+
+    if(zone_y>=zone_range){
+        zone_y-=zone_range;
+    }
+    else{
+        zone_y=0;
+    }
+
+    if(zone_x+zone_width>=Game::option_world_width){
+        zone_width=Game::option_world_width-1-zone_x;
+    }
+    if(zone_y+zone_height>=Game::option_world_height){
+        zone_height=Game::option_world_height-1-zone_y;
+    }
+
+    Collision_Rect<uint32_t> zone(zone_x,zone_y,zone_width,zone_height);
+
+    //A list of chunk coordinates within the zone
+    vector<Coords<uint32_t>> chunk_coords;
+
+    if(zone_range>0){
+        for(uint32_t x=zone.x;x<zone.x+zone.w;x++){
+            for(uint32_t y=zone.y;y<zone.y+zone.h;y++){
+                chunk_coords.push_back(Coords<uint32_t>(x,y));
+            }
+        }
+    }
+    else{
+        chunk_coords.push_back(Coords<uint32_t>(zone.x,zone.y));
+    }
+
+    return chunk_coords;
 }
 
 void Chunk::render_ground(uint32_t chunk_x,uint32_t chunk_y) const{
