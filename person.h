@@ -39,6 +39,12 @@ private:
     std::int16_t health;
     std::uint8_t hunger;
 
+    ///QQQ
+    std::int32_t diag1;
+    std::int32_t diag2;
+    std::int32_t diag3;
+    ///
+
 public:
 
     Person();
@@ -74,6 +80,9 @@ public:
     bool get_exists() const;
     void set_exists(bool new_exists);
 
+    std::int32_t get_max_speed() const;
+    std::int32_t get_move_force() const;
+
     bool is_alive() const;
     bool health_low() const;
     void damage(std::int16_t attack);
@@ -101,26 +110,41 @@ public:
     bool goal_within_range() const;
     std::int32_t get_angle_to_goal() const;
 
-    void put_our_chunk_first(std::vector<Coords<std::uint32_t>>& chunk_coords) const;
-    //Remove the chunk coordinates for any chunks that have none of the desired tile types
-    void filter_zone_chunks(std::vector<Coords<std::uint32_t>>& chunk_coords,const std::vector<Tile::Type>& desired_tile_types) const;
-    bool forage_zone_has_food(const std::vector<Coords<std::uint32_t>>& chunk_coords) const;
-    void find_tile(RNG& rng,const std::vector<Coords<std::uint32_t>>& chunk_coords);
-
     void notify_of_person_death(std::uint32_t index);
     void abandon_goal();
     void complete_goal();
-
-    bool allowed_to_target_scan(std::uint32_t frame,std::uint32_t index) const;
-    bool allowed_to_select_ai_goal(std::uint32_t frame,std::uint32_t index) const;
-
-    void ai(RNG& rng,const Quadtree<std::int32_t,std::uint32_t>& quadtree,std::uint32_t frame,std::uint32_t index);
 
     void brake();
     void accelerate();
     void movement();
 
     void render() const;
+
+    //  AI  //
+
+    void put_our_chunk_first(std::vector<Coords<std::uint32_t>>& chunk_coords) const;
+    //Remove the chunk coordinates for any chunks that have none of the desired tile types
+    void filter_zone_chunks(std::vector<Coords<std::uint32_t>>& chunk_coords,const std::vector<Tile::Type>& desired_tile_types) const;
+    bool forage_zone_has_food(const std::vector<Coords<std::uint32_t>>& chunk_coords) const;
+    void find_tile(RNG& rng,const std::vector<Coords<std::uint32_t>>& chunk_coords);
+
+    bool allowed_to_select_ai_goal(std::uint32_t frame,std::uint32_t index) const;
+
+    void consider_ignoring(std::vector<AI_Choice>& choices) const;
+    void consider_gathering(std::vector<AI_Choice>& choices) const;
+    void consider_emptying_inventory(std::vector<AI_Choice>& choices) const;
+    //Returns the forage chunk coordinates, if any were identified and the forage goal was selected
+    //Otherwise, returns an empty vector
+    std::vector<Coords<std::uint32_t>> consider_eating(std::vector<AI_Choice>& choices) const;
+    //Returns the index for the target, if one was identified, or 0 otherwise
+    //This is only used if we are setting a new goal of targeting this target,
+    //which is only a possible goal if a target was found,
+    //so there is no issue with it returning 0 (a possible target index itself) on failure to identify a target
+    std::uint32_t target_scan(std::vector<AI_Choice>& choices,const Quadtree<std::int32_t,std::uint32_t>& quadtree,std::uint32_t index);///QQQ const
+
+    void set_new_goal(RNG& rng,AI_Goal::Type new_goal_type,std::uint32_t target,std::vector<Coords<std::uint32_t>> forage_chunk_coords);
+
+    void ai(RNG& rng,const Quadtree<std::int32_t,std::uint32_t>& quadtree,std::uint32_t frame,std::uint32_t index);
 };
 
 #endif

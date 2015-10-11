@@ -56,6 +56,16 @@ public:
     bool is_retreat() const;
     bool is_attack_person_melee() const;
 
+    bool gather_can_interrupt() const;
+    bool empty_inventory_can_interrupt() const;
+    bool eat_can_interrupt() const;
+    bool eat_at_home_can_interrupt() const;
+    bool forage_can_interrupt() const;
+    bool retreat_can_interrupt() const;
+    bool attack_person_melee_can_interrupt() const;
+
+    bool is_combat() const;
+
     Tile::Type get_goal_tile_type() const;
 
     void set_type(Type new_type);

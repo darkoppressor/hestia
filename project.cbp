@@ -413,6 +413,7 @@
 		<Unit filename="network_game.h" />
 		<Unit filename="person.cpp" />
 		<Unit filename="person.h" />
+		<Unit filename="person_ai.cpp" />
 		<Unit filename="region.cpp" />
 		<Unit filename="region.h" />
 		<Unit filename="special_info.cpp" />

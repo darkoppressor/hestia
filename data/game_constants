@@ -39,14 +39,6 @@
 
 <game_constant>
 	//Valid range: [1,logic update rate]
-	//There will be ai_target_scan_period - 1 frames in between each AI target scan
-	//AI target scan is additionally staggered among the people
-	name:ai_target_scan_period
-	value:30
-</game_constant>
-
-<game_constant>
-	//Valid range: [1,logic update rate]
 	//There will be ai_goal_selection_period - 1 frames in between each AI goal selection opportunity
 	//AI goal selection is additionally staggered among the people
 	name:ai_goal_selection_period
@@ -98,11 +90,27 @@
 </game_constant>
 
 <game_constant>
+	//meters/second
+	name:person_max_speed_combat
+	//Note that this needs to be >= the logic update rate,
+	//because speeds below it are rounded down to 0
+	value:192
+</game_constant>
+
+<game_constant>
 	//newtons
 	name:person_move_force
 	//Note that this should be > person_mass,
 	//because a force smaller than mass will be rounded down to 0 acceleration
 	value:640
+</game_constant>
+
+<game_constant>
+	//newtons
+	name:person_move_force_combat
+	//Note that this should be > person_mass,
+	//because a force smaller than mass will be rounded down to 0 acceleration
+	value:768
 </game_constant>
 
 <game_constant>
@@ -134,19 +142,19 @@
 <game_constant>
 	//days to 0 hunger rating
 	name:hunger_full
-	value:20
+	value:100
 </game_constant>
 
 <game_constant>
 	//days to 0 hunger rating
 	name:hunger_hungry
-	value:10
+	value:50
 </game_constant>
 
 <game_constant>
 	//days to 0 hunger rating
 	name:hunger_starving
-	value:5
+	value:25
 </game_constant>
 
 <game_constant>
@@ -180,32 +188,76 @@
 </game_constant>
 
 <game_constant>
-	name:attack_person_melee_priority
+	//The AI combat score ratio is major if it is >= ai_combat_score_ratio_major
+	//This should be > 1 and < ai_combat_score_ratio_overwhelming
+	name:ai_combat_score_ratio_major
+	value:3
+</game_constant>
+
+<game_constant>
+	//The AI combat score ratio is overwhelming if it is >= ai_combat_score_ratio_overwhelming
+	//This should be > ai_combat_score_ratio_major
+	name:ai_combat_score_ratio_overwhelming
+	value:6
+</game_constant>
+
+<game_constant>
+	name:priority_ignore
+	value:100
+</game_constant>
+
+<game_constant>
+	name:priority_gather
 	value:10
 </game_constant>
 
 <game_constant>
-	name:attack_person_melee_with_advantage_priority
-	value:10
+	name:priority_empty_inventory
+	value:15
 </game_constant>
 
 <game_constant>
-	name:attack_person_melee_without_advantage_priority
+	name:priority_eat
+	value:90
+</game_constant>
+
+<game_constant>
+	name:priority_attack_person_melee_with_no_advantage
+	value:15
+</game_constant>
+
+<game_constant>
+	name:priority_attack_person_melee_with_minor_advantage
+	value:25
+</game_constant>
+
+<game_constant>
+	name:priority_attack_person_melee_with_major_advantage
+	value:50
+</game_constant>
+
+<game_constant>
+	name:priority_attack_person_melee_with_overwhelming_advantage
+	value:75
+</game_constant>
+
+<game_constant>
+	name:priority_retreat_with_minor_disadvantage
 	value:5
 </game_constant>
 
 <game_constant>
-	name:retreat_with_disadvantage_priority
-	value:20
-</game_constant>
-
-<game_constant>
-	name:retreat_with_low_health_priority
+	name:priority_retreat_with_major_disadvantage
 	value:10
 </game_constant>
 
 <game_constant>
-	name:ignore_priority
+	name:priority_retreat_with_overwhelming_disadvantage
+	value:20
+</game_constant>
+
+<game_constant>
+	name:priority_retreat_with_low_health
 	value:5
 </game_constant>
 

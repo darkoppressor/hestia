@@ -15,7 +15,6 @@ uint32_t Game_Constants::CHUNK_SIZE=0;
 uint32_t Game_Constants::BUILDING_SIZE=0;
 uint32_t Game_Constants::PERSON_SIZE=0;
 
-uint32_t Game_Constants::AI_TARGET_SCAN_PERIOD=0;
 uint32_t Game_Constants::AI_GOAL_SELECTION_PERIOD=0;
 uint32_t Game_Constants::CITY_GATHER_ZONE_UPDATE_PERIOD=0;
 
@@ -27,7 +26,9 @@ uint32_t Game_Constants::BREEDING_RATE=0;
 
 int32_t Game_Constants::PERSON_MASS=0;
 int32_t Game_Constants::PERSON_MAX_SPEED=0;
+int32_t Game_Constants::PERSON_MAX_SPEED_COMBAT=0;
 int32_t Game_Constants::PERSON_MOVE_FORCE=0;
+int32_t Game_Constants::PERSON_MOVE_FORCE_COMBAT=0;
 
 uint32_t Game_Constants::INVENTORY_MAX=0;
 
@@ -47,12 +48,21 @@ uint32_t Game_Constants::INTERACTION_RANGE=0;
 int32_t Game_Constants::SIGHT_RANGE=0;
 uint64_t Game_Constants::HOME_DEFENSE_RANGE=0;
 
-int32_t Game_Constants::ATTACK_PERSON_MELEE_PRIORITY=0;
-int32_t Game_Constants::ATTACK_PERSON_MELEE_WITH_ADVANTAGE_PRIORITY=0;
-int32_t Game_Constants::ATTACK_PERSON_MELEE_WITHOUT_ADVANTAGE_PRIORITY=0;
-int32_t Game_Constants::RETREAT_WITH_DISADVANTAGE_PRIORITY=0;
-int32_t Game_Constants::RETREAT_WITH_LOW_HEALTH_PRIORITY=0;
-int32_t Game_Constants::IGNORE_PRIORITY=0;
+int32_t Game_Constants::AI_COMBAT_SCORE_RATIO_MAJOR=0;
+int32_t Game_Constants::AI_COMBAT_SCORE_RATIO_OVERWHELMING=0;
+
+int32_t Game_Constants::PRIORITY_IGNORE=0;
+int32_t Game_Constants::PRIORITY_GATHER=0;
+int32_t Game_Constants::PRIORITY_EMPTY_INVENTORY=0;
+int32_t Game_Constants::PRIORITY_EAT=0;
+int32_t Game_Constants::PRIORITY_ATTACK_PERSON_MELEE_WITH_NO_ADVANTAGE=0;
+int32_t Game_Constants::PRIORITY_ATTACK_PERSON_MELEE_WITH_MINOR_ADVANTAGE=0;
+int32_t Game_Constants::PRIORITY_ATTACK_PERSON_MELEE_WITH_MAJOR_ADVANTAGE=0;
+int32_t Game_Constants::PRIORITY_ATTACK_PERSON_MELEE_WITH_OVERWHELMING_ADVANTAGE=0;
+int32_t Game_Constants::PRIORITY_RETREAT_WITH_MINOR_DISADVANTAGE=0;
+int32_t Game_Constants::PRIORITY_RETREAT_WITH_MAJOR_DISADVANTAGE=0;
+int32_t Game_Constants::PRIORITY_RETREAT_WITH_OVERWHELMING_DISADVANTAGE=0;
+int32_t Game_Constants::PRIORITY_RETREAT_WITH_LOW_HEALTH=0;
 
 uint32_t Game_Constants::GATHER_RATE=0;
 uint32_t Game_Constants::EMPTY_INVENTORY_RATE=0;
@@ -86,9 +96,6 @@ void Game_Constants_Loader::set_game_constant(string name,string value){
         Game_Constants::PERSON_SIZE=Strings::string_to_unsigned_long(value);
     }
 
-    else if(name=="ai_target_scan_period"){
-        Game_Constants::AI_TARGET_SCAN_PERIOD=Strings::string_to_unsigned_long(value);
-    }
     else if(name=="ai_goal_selection_period"){
         Game_Constants::AI_GOAL_SELECTION_PERIOD=Strings::string_to_unsigned_long(value);
     }
@@ -116,8 +123,14 @@ void Game_Constants_Loader::set_game_constant(string name,string value){
     else if(name=="person_max_speed"){
         Game_Constants::PERSON_MAX_SPEED=Strings::string_to_long(value);
     }
+    else if(name=="person_max_speed_combat"){
+        Game_Constants::PERSON_MAX_SPEED_COMBAT=Strings::string_to_long(value);
+    }
     else if(name=="person_move_force"){
         Game_Constants::PERSON_MOVE_FORCE=Strings::string_to_long(value);
+    }
+    else if(name=="person_move_force_combat"){
+        Game_Constants::PERSON_MOVE_FORCE_COMBAT=Strings::string_to_long(value);
     }
 
     else if(name=="inventory_max"){
@@ -164,23 +177,48 @@ void Game_Constants_Loader::set_game_constant(string name,string value){
         Game_Constants::HOME_DEFENSE_RANGE=Strings::string_to_unsigned_long(value);
     }
 
-    else if(name=="attack_person_melee_priority"){
-        Game_Constants::ATTACK_PERSON_MELEE_PRIORITY=Strings::string_to_long(value);
+    else if(name=="ai_combat_score_ratio_major"){
+        Game_Constants::AI_COMBAT_SCORE_RATIO_MAJOR=Strings::string_to_long(value);
     }
-    else if(name=="attack_person_melee_with_advantage_priority"){
-        Game_Constants::ATTACK_PERSON_MELEE_WITH_ADVANTAGE_PRIORITY=Strings::string_to_long(value);
+    else if(name=="ai_combat_score_ratio_overwhelming"){
+        Game_Constants::AI_COMBAT_SCORE_RATIO_OVERWHELMING=Strings::string_to_long(value);
     }
-    else if(name=="attack_person_melee_without_advantage_priority"){
-        Game_Constants::ATTACK_PERSON_MELEE_WITHOUT_ADVANTAGE_PRIORITY=Strings::string_to_long(value);
+
+    else if(name=="priority_ignore"){
+        Game_Constants::PRIORITY_IGNORE=Strings::string_to_long(value);
     }
-    else if(name=="retreat_with_disadvantage_priority"){
-        Game_Constants::RETREAT_WITH_DISADVANTAGE_PRIORITY=Strings::string_to_long(value);
+    else if(name=="priority_gather"){
+        Game_Constants::PRIORITY_GATHER=Strings::string_to_long(value);
     }
-    else if(name=="retreat_with_low_health_priority"){
-        Game_Constants::RETREAT_WITH_LOW_HEALTH_PRIORITY=Strings::string_to_long(value);
+    else if(name=="priority_empty_inventory"){
+        Game_Constants::PRIORITY_EMPTY_INVENTORY=Strings::string_to_long(value);
     }
-    else if(name=="ignore_priority"){
-        Game_Constants::IGNORE_PRIORITY=Strings::string_to_long(value);
+    else if(name=="priority_eat"){
+        Game_Constants::PRIORITY_EAT=Strings::string_to_long(value);
+    }
+    else if(name=="priority_attack_person_melee_with_no_advantage"){
+        Game_Constants::PRIORITY_ATTACK_PERSON_MELEE_WITH_NO_ADVANTAGE=Strings::string_to_long(value);
+    }
+    else if(name=="priority_attack_person_melee_with_minor_advantage"){
+        Game_Constants::PRIORITY_ATTACK_PERSON_MELEE_WITH_MINOR_ADVANTAGE=Strings::string_to_long(value);
+    }
+    else if(name=="priority_attack_person_melee_with_major_advantage"){
+        Game_Constants::PRIORITY_ATTACK_PERSON_MELEE_WITH_MAJOR_ADVANTAGE=Strings::string_to_long(value);
+    }
+    else if(name=="priority_attack_person_melee_with_overwhelming_advantage"){
+        Game_Constants::PRIORITY_ATTACK_PERSON_MELEE_WITH_OVERWHELMING_ADVANTAGE=Strings::string_to_long(value);
+    }
+    else if(name=="priority_retreat_with_minor_disadvantage"){
+        Game_Constants::PRIORITY_RETREAT_WITH_MINOR_DISADVANTAGE=Strings::string_to_long(value);
+    }
+    else if(name=="priority_retreat_with_major_disadvantage"){
+        Game_Constants::PRIORITY_RETREAT_WITH_MAJOR_DISADVANTAGE=Strings::string_to_long(value);
+    }
+    else if(name=="priority_retreat_with_overwhelming_disadvantage"){
+        Game_Constants::PRIORITY_RETREAT_WITH_OVERWHELMING_DISADVANTAGE=Strings::string_to_long(value);
+    }
+    else if(name=="priority_retreat_with_low_health"){
+        Game_Constants::PRIORITY_RETREAT_WITH_LOW_HEALTH=Strings::string_to_long(value);
     }
 
     else if(name=="gather_rate"){

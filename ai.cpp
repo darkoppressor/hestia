@@ -59,6 +59,73 @@ bool AI_Goal::is_attack_person_melee() const{
     return type==Type::ATTACK_PERSON_MELEE;
 }
 
+bool AI_Goal::gather_can_interrupt() const{
+    if(!is_in_progress()){
+        return true;
+    }
+    else{
+        return false;
+    }
+}
+
+bool AI_Goal::empty_inventory_can_interrupt() const{
+    if(!is_in_progress() || is_gather()){
+        return true;
+    }
+    else{
+        return false;
+    }
+}
+
+bool AI_Goal::eat_can_interrupt() const{
+    if(!is_in_progress() || is_gather() || is_empty_inventory() || is_eat_at_home() || is_forage() || is_retreat() || is_attack_person_melee()){
+        return true;
+    }
+    else{
+        return false;
+    }
+}
+
+bool AI_Goal::eat_at_home_can_interrupt() const{
+    if(!is_in_progress() || is_gather() || is_empty_inventory() || is_retreat() || is_attack_person_melee()){
+        return true;
+    }
+    else{
+        return false;
+    }
+}
+
+bool AI_Goal::forage_can_interrupt() const{
+    if(!is_in_progress() || is_gather() || is_empty_inventory() || is_eat_at_home() || is_retreat() || is_attack_person_melee()){
+        return true;
+    }
+    else{
+        return false;
+    }
+}
+
+bool AI_Goal::retreat_can_interrupt() const{
+    if(!is_in_progress() || is_gather() || is_forage() || is_attack_person_melee()){
+        return true;
+    }
+    else{
+        return false;
+    }
+}
+
+bool AI_Goal::attack_person_melee_can_interrupt() const{
+    if(!is_in_progress() || is_gather() || is_empty_inventory() || is_retreat()){
+        return true;
+    }
+    else{
+        return false;
+    }
+}
+
+bool AI_Goal::is_combat() const{
+    return is_retreat() || is_attack_person_melee();
+}
+
 Tile::Type AI_Goal::get_goal_tile_type() const{
     if(type==Type::GATHER_WHEAT){
         return Tile::Type::WHEAT;
