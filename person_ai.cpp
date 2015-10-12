@@ -10,6 +10,7 @@
 #include <sorting.h>
 
 #include <utility>
+#include <unordered_set>
 
 using namespace std;
 
@@ -174,73 +175,74 @@ vector<Coords<uint32_t>> Person::consider_eating(vector<AI_Choice>& choices) con
     return forage_chunk_coords;
 }
 
-uint32_t Person::target_scan(vector<AI_Choice>& choices,const Quadtree<int32_t,uint32_t>& quadtree,uint32_t index){
-    if(/**goal.retreat_can_interrupt() || goal.attack_person_melee_can_interrupt()*/true){///QQQ
+uint32_t Person::target_scan(vector<AI_Choice>& choices,RNG& rng,const Quadtree<int32_t,uint32_t>& quadtree,uint32_t index) const{
+    if(goal.retreat_can_interrupt() || goal.attack_person_melee_can_interrupt()){
         vector<uint32_t> targets_people;
 
         Collision_Rect<int32_t> box_sight=get_sight_box();
 
         quadtree.get_objects(targets_people,box_sight,index);
 
-        int32_t friendly_health=0;
-        int32_t friendly_attack=0;
-        int32_t friendly_defense=0;
-
-        int32_t enemy_health=0;
-        int32_t enemy_attack=0;
-        int32_t enemy_defense=0;
-
         bool target_found=false;
         uint32_t target=0;
+        uint64_t target_distance=0;
 
-        ///QQQ
-        diag1=0;
-        diag2=0;
-        diag3=targets_people.size();
-        ///
+        //Note that scores must never be negative
+        int32_t target_score=0;
+        int32_t friendly_score=0;
+        int32_t enemy_score=0;
 
-        for(size_t i=0;i<targets_people.size();i++){
-            const Person& person=Game::get_person(targets_people[i]);
+        unordered_set<uint32_t> collisions;
 
-            if(person.is_alive() && Collision::check_rect(box_sight,person.get_box())){
-                if(get_parent_civilization()==person.get_parent_civilization()){
-                    friendly_health+=(int32_t)person.get_health();
-                    friendly_attack+=(int32_t)person.get_attack();
-                    friendly_defense+=(int32_t)person.get_defense();
+        for(uint32_t i=0;i<targets_people.size();i++){
+            if(!collisions.count(targets_people[i])){
+                collisions.emplace(targets_people[i]);
 
-                    ///QQQ
-                    diag1++;
-                    ///
-                }
-                else{
-                    //For now at least, we just naively pick the first enemy we see as our target
-                    if(!target_found){
-                        target_found=true;
+                const Person& person=Game::get_person(targets_people[i]);
 
-                        target=targets_people[i];
+                if(person.is_alive() && Collision::check_rect(box_sight,person.get_box())){
+                    int32_t person_score=(int32_t)person.get_health()+(int32_t)person.get_attack()*3+(int32_t)person.get_defense()*2;
+
+                    if(get_parent_civilization()==person.get_parent_civilization()){
+                        friendly_score+=person_score;
                     }
+                    else{
+                        if(!target_found){
+                            target_found=true;
+                        }
 
-                    enemy_health+=(int32_t)person.get_health();
-                    enemy_attack+=(int32_t)person.get_attack();
-                    enemy_defense+=(int32_t)person.get_defense();
+                        uint32_t chance_to_change_target=0;
 
-                    ///QQQ
-                    diag2++;
-                    ///
+                        uint64_t person_distance=0;
+
+                        //If we haven't selected a target yet
+                        if(target_score==0){
+                            chance_to_change_target=100;
+                        }
+                        else{
+                            if(person_score<target_score){
+                                chance_to_change_target+=Game_Constants::AI_TARGET_SELECTION_CHANCE_COMBAT_SCORE;
+                            }
+
+                            person_distance=Int_Math::distance_between_points_no_sqrt(box.center_x(),box.center_y(),person.get_box().center_x(),person.get_box().center_y());
+
+                            if(person_distance<target_distance){
+                                chance_to_change_target+=Game_Constants::AI_TARGET_SELECTION_CHANCE_DISTANCE;
+                            }
+                        }
+
+                        if(rng.random_range(0,99)<chance_to_change_target){
+                            target=targets_people[i];
+
+                            target_distance=person_distance;
+
+                            target_score=person_score;
+                        }
+
+                        enemy_score+=person_score;
+                    }
                 }
             }
-        }
-
-        int32_t friendly_score=friendly_health+friendly_attack*3+friendly_defense*2;
-        int32_t enemy_score=enemy_health+enemy_attack*3+enemy_defense*2;
-
-        //Negative scores are not allowed
-        //This shouldn't actually be possible, but just to be safe I want to enforce it
-        if(friendly_score<0){
-            friendly_score=0;
-        }
-        if(enemy_score<0){
-            enemy_score=0;
         }
 
         //Score advantage will be one of:
@@ -366,7 +368,7 @@ void Person::set_new_goal(RNG& rng,AI_Goal::Type new_goal_type,uint32_t target,v
 
 void Person::ai(RNG& rng,const Quadtree<int32_t,uint32_t>& quadtree,uint32_t frame,uint32_t index){
     if(is_alive()){
-        if(/**allowed_to_select_ai_goal(frame,index)*/true){///QQQ
+        if(allowed_to_select_ai_goal(frame,index)){
             vector<AI_Choice> choices;
 
             consider_ignoring(choices);
@@ -377,7 +379,7 @@ void Person::ai(RNG& rng,const Quadtree<int32_t,uint32_t>& quadtree,uint32_t fra
 
             vector<Coords<uint32_t>> forage_chunk_coords=consider_eating(choices);
 
-            uint32_t target=target_scan(choices,quadtree,index);
+            uint32_t target=target_scan(choices,rng,quadtree,index);
 
             if(choices.size()>0){
                 Sorting::quick_sort(choices);

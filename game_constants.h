@@ -48,6 +48,9 @@ public:
     static std::int32_t SIGHT_RANGE;
     static std::uint64_t HOME_DEFENSE_RANGE;
 
+    static std::uint32_t AI_TARGET_SELECTION_CHANCE_COMBAT_SCORE;
+    static std::uint32_t AI_TARGET_SELECTION_CHANCE_DISTANCE;
+
     static std::int32_t AI_COMBAT_SCORE_RATIO_MAJOR;
     static std::int32_t AI_COMBAT_SCORE_RATIO_OVERWHELMING;
 

@@ -48,6 +48,9 @@ uint32_t Game_Constants::INTERACTION_RANGE=0;
 int32_t Game_Constants::SIGHT_RANGE=0;
 uint64_t Game_Constants::HOME_DEFENSE_RANGE=0;
 
+uint32_t Game_Constants::AI_TARGET_SELECTION_CHANCE_COMBAT_SCORE=0;
+uint32_t Game_Constants::AI_TARGET_SELECTION_CHANCE_DISTANCE=0;
+
 int32_t Game_Constants::AI_COMBAT_SCORE_RATIO_MAJOR=0;
 int32_t Game_Constants::AI_COMBAT_SCORE_RATIO_OVERWHELMING=0;
 
@@ -175,6 +178,13 @@ void Game_Constants_Loader::set_game_constant(string name,string value){
     }
     else if(name=="home_defense_range"){
         Game_Constants::HOME_DEFENSE_RANGE=Strings::string_to_unsigned_long(value);
+    }
+
+    else if(name=="ai_target_selection_chance_combat_score"){
+        Game_Constants::AI_TARGET_SELECTION_CHANCE_COMBAT_SCORE=Strings::string_to_unsigned_long(value);
+    }
+    else if(name=="ai_target_selection_chance_distance"){
+        Game_Constants::AI_TARGET_SELECTION_CHANCE_DISTANCE=Strings::string_to_unsigned_long(value);
     }
 
     else if(name=="ai_combat_score_ratio_major"){

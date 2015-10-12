@@ -39,12 +39,6 @@ private:
     std::int16_t health;
     std::uint8_t hunger;
 
-    ///QQQ
-    std::int32_t diag1;
-    std::int32_t diag2;
-    std::int32_t diag3;
-    ///
-
 public:
 
     Person();
@@ -140,7 +134,7 @@ public:
     //This is only used if we are setting a new goal of targeting this target,
     //which is only a possible goal if a target was found,
     //so there is no issue with it returning 0 (a possible target index itself) on failure to identify a target
-    std::uint32_t target_scan(std::vector<AI_Choice>& choices,const Quadtree<std::int32_t,std::uint32_t>& quadtree,std::uint32_t index);///QQQ const
+    std::uint32_t target_scan(std::vector<AI_Choice>& choices,RNG& rng,const Quadtree<std::int32_t,std::uint32_t>& quadtree,std::uint32_t index) const;
 
     void set_new_goal(RNG& rng,AI_Goal::Type new_goal_type,std::uint32_t target,std::vector<Coords<std::uint32_t>> forage_chunk_coords);
 
