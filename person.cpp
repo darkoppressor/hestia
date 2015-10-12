@@ -440,11 +440,11 @@ void Person::movement(){
         if(box.y<0){
             box.y=0;
         }
-        if(uint32_t(box.x+box.w)>=Game::get_world_width()){
-            box.x=(int32_t)Game::get_world_width()-box.w;
+        if(box.x+box.w>=Game::get_world_width()){
+            box.x=Game::get_world_width()-box.w;
         }
-        if(uint32_t(box.y+box.h)>=Game::get_world_height()){
-            box.y=(int32_t)Game::get_world_height()-box.h;
+        if(box.y+box.h>=Game::get_world_height()){
+            box.y=Game::get_world_height()-box.h;
         }
     }
 }
@@ -467,10 +467,10 @@ void Person::render() const{
                                      (double)box.w*Game_Manager::camera_zoom,(double)box.h*Game_Manager::camera_zoom,1.0,color);
 
             ///QQQ
-            Collision_Rect<int32_t> box_sight=get_sight_box();
+            /**Collision_Rect<int32_t> box_sight=get_sight_box();
             Render::render_rectangle((double)box_sight.x*Game_Manager::camera_zoom-Game_Manager::camera.x,
                                      (double)box_sight.y*Game_Manager::camera_zoom-Game_Manager::camera.y,
-                                     (double)box_sight.w*Game_Manager::camera_zoom,(double)box_sight.h*Game_Manager::camera_zoom,0.25,"red");
+                                     (double)box_sight.w*Game_Manager::camera_zoom,(double)box_sight.h*Game_Manager::camera_zoom,0.25,"red");*/
             Bitmap_Font* font=Object_Manager::get_font("small");
             string msg="Goal: ";
             if(goal.is_gather_wheat()){
@@ -504,9 +504,6 @@ void Person::render() const{
             msg+="Hunger: "+Strings::num_to_string((uint32_t)hunger)+"\n";
             msg+="Wheat: "+Strings::num_to_string(inventory.get_item_count(Inventory::Item_Type::WHEAT))+"\n";
             msg+="Tree: "+Strings::num_to_string(inventory.get_item_count(Inventory::Item_Type::TREE))+"\n";
-            msg+="Friendlies: "+Strings::num_to_string(diag1)+"\n";
-            msg+="Enemies: "+Strings::num_to_string(diag2)+"\n";
-            msg+="Total: "+Strings::num_to_string(diag3)+"\n";
             ///msg+=Strings::num_to_string(goal.get_coords_tiles().x)+","+Strings::num_to_string(goal.get_coords_tiles().y);
             font->show(x*Game_Manager::camera_zoom-Game_Manager::camera.x,y*Game_Manager::camera_zoom-Game_Manager::camera.y,msg,"white");
             ///

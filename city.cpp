@@ -118,11 +118,11 @@ Collision_Rect<int32_t> City::get_spawn_zone() const{
     if(spawn_zone_y<0){
         spawn_zone_y=0;
     }
-    if(spawn_zone_x+spawn_zone_width+Game_Constants::PERSON_SIZE>=Game::get_world_width()){
-        spawn_zone_width=Game::get_world_width()-1-spawn_zone_x-Game_Constants::PERSON_SIZE;
+    if(spawn_zone_x+spawn_zone_width+(int32_t)Game_Constants::PERSON_SIZE>=Game::get_world_width()){
+        spawn_zone_width=Game::get_world_width()-1-spawn_zone_x-(int32_t)Game_Constants::PERSON_SIZE;
     }
-    if(spawn_zone_y+spawn_zone_height+Game_Constants::PERSON_SIZE>=Game::get_world_height()){
-        spawn_zone_height=Game::get_world_height()-1-spawn_zone_y-Game_Constants::PERSON_SIZE;
+    if(spawn_zone_y+spawn_zone_height+(int32_t)Game_Constants::PERSON_SIZE>=Game::get_world_height()){
+        spawn_zone_height=Game::get_world_height()-1-spawn_zone_y-(int32_t)Game_Constants::PERSON_SIZE;
     }
 
     return Collision_Rect<int32_t>(spawn_zone_x,spawn_zone_y,spawn_zone_width,spawn_zone_height);

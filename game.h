@@ -102,8 +102,8 @@ public:
     static std::int32_t get_player_leader(int player_number);
 
     //pixels
-    static std::uint32_t get_world_width();
-    static std::uint32_t get_world_height();
+    static std::int32_t get_world_width();
+    static std::int32_t get_world_height();
 
     //tiles
     static std::uint32_t get_world_width_tiles();

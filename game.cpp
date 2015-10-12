@@ -310,7 +310,7 @@ void Game::generate_world(){
 
     //pixels
     //We square this value, so it can be directly compared to distances returned by Int_Math::distance_between_points_no_sqrt
-    uint64_t desired_distance_between_cities=((get_world_width()+get_world_height())/2)/4;
+    uint64_t desired_distance_between_cities=(uint64_t)((get_world_width()+get_world_height())/2)/4;
     desired_distance_between_cities*=desired_distance_between_cities;
 
     for(uint32_t leader=0;leader<leaders.size();leader++){
@@ -326,8 +326,8 @@ void Game::generate_world(){
 
         for(uint32_t attempts=0;;attempts++){
             //tiles
-            uint32_t tile_x=rng.random_range(0,get_world_width_tiles()-Game_Constants::BUILDING_SIZE);
-            uint32_t tile_y=rng.random_range(0,get_world_height_tiles()-Game_Constants::BUILDING_SIZE);
+            uint32_t tile_x=rng.random_range(0,(uint32_t)(get_world_width_tiles()-(int32_t)Game_Constants::BUILDING_SIZE));
+            uint32_t tile_y=rng.random_range(0,(uint32_t)(get_world_height_tiles()-(int32_t)Game_Constants::BUILDING_SIZE));
             Coords<uint32_t> tile_coords(tile_x,tile_y);
             Coords<int32_t> coords(Tile::get_x(tile_x)+Tile::get_tile_type_size(Tile::Type::BUILDING_CITY)/2,Tile::get_y(tile_y)+Tile::get_tile_type_size(Tile::Type::BUILDING_CITY)/2);
 
@@ -358,7 +358,7 @@ void Game::generate_world(){
         }
     }
 
-    quadtree.setup(10,5,0,Quadtree_Rect(0,0,get_world_width(),get_world_height()));
+    quadtree.setup(10,5,0,Collision_Rect<int32_t>(0,0,get_world_width(),get_world_height()));
 
     for(size_t i=0;i<leaders.size();i++){
         Object_Manager::add_color(Leader::get_color((uint32_t)i),leaders[i].get_color());
@@ -492,12 +492,12 @@ int32_t Game::get_player_leader(int player_number){
     return -1;
 }
 
-uint32_t Game::get_world_width(){
-    return option_world_width*Game_Constants::CHUNK_SIZE*Game_Constants::TILE_SIZE;
+int32_t Game::get_world_width(){
+    return int32_t(option_world_width*Game_Constants::CHUNK_SIZE*Game_Constants::TILE_SIZE);
 }
 
-uint32_t Game::get_world_height(){
-    return option_world_height*Game_Constants::CHUNK_SIZE*Game_Constants::TILE_SIZE;
+int32_t Game::get_world_height(){
+    return int32_t(option_world_height*Game_Constants::CHUNK_SIZE*Game_Constants::TILE_SIZE);
 }
 
 uint32_t Game::get_world_width_tiles(){
@@ -524,7 +524,7 @@ bool Game::tile_coords_are_valid(Tile::Type type,const Coords<uint32_t>& tile_co
         tile_size=Game_Constants::BUILDING_SIZE;
     }
 
-    if(tile_coords.x+(tile_size-1)>=get_world_width_tiles() || tile_coords.y+(tile_size-1)>=get_world_height_tiles()){
+    if(tile_coords.x+(tile_size-1)>=(uint32_t)get_world_width_tiles() || tile_coords.y+(tile_size-1)>=(uint32_t)get_world_height_tiles()){
         return false;
     }
 
@@ -710,7 +710,7 @@ void Game::render(){
         //Render each on-screen tile
         for(uint32_t x=camera_tile_x;x<end_tile_x;x++){
             for(uint32_t y=camera_tile_y;y<end_tile_y;y++){
-                if(x<get_world_width_tiles() && y<get_world_height_tiles()){
+                if(x<(uint32_t)get_world_width_tiles() && y<(uint32_t)get_world_height_tiles()){
                     Coords<uint32_t> tile_coords(x,y);
 
                     if(tile_exists(tile_coords)){
