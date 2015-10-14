@@ -122,6 +122,6 @@ void Game_Order::render() const{
     if(type==Type::BUILD_CITY){
         Render::render_rectangle(x*Game_Manager::camera_zoom-Game_Manager::camera.x,y*Game_Manager::camera_zoom-Game_Manager::camera.y,
                                  (double)Tile::get_tile_type_size(get_tile_type())*Game_Manager::camera_zoom,
-                                 (double)Tile::get_tile_type_size(get_tile_type())*Game_Manager::camera_zoom,1.0,color);
+                                 (double)Tile::get_tile_type_size(get_tile_type())*Game_Manager::camera_zoom,0.6,color);
     }
 }
