@@ -24,6 +24,7 @@ private:
     std::vector<std::uint32_t> people;
 
     std::uint32_t breeding_counter;
+    std::uint32_t captured_counter;
 
     std::uint32_t gather_zone_wheat;
     std::uint32_t gather_zone_tree;
@@ -66,7 +67,14 @@ public:
 
     std::uint32_t get_population() const;
 
+    bool needs_repair() const;
+
+    bool was_recently_captured() const;
+    void set_just_captured();
+
     void breed(std::uint32_t index,RNG& rng);
+
+    void capture_cooldown();
 
     std::uint32_t get_gather_zone_tile_count(Tile::Type tile_type) const;
     bool allowed_to_update_gather_zone(std::uint32_t frame,std::uint32_t index) const;

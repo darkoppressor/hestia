@@ -48,6 +48,31 @@ void Civilization::remove_city(uint32_t city){
     }
 }
 
+vector<Coords<uint32_t>> Civilization::get_unfinished_buildings() const{
+    return unfinished_buildings;
+}
+
+void Civilization::add_unfinished_building(Coords<uint32_t> tile_coords){
+    for(size_t i=0;i<unfinished_buildings.size();i++){
+        if(unfinished_buildings[i]==tile_coords){
+            //Exit early, because this tile is already in the list
+            return;
+        }
+    }
+
+    unfinished_buildings.push_back(tile_coords);
+}
+
+void Civilization::remove_unfinished_building(Coords<uint32_t> tile_coords){
+    for(size_t i=0;i<unfinished_buildings.size();i++){
+        if(unfinished_buildings[i]==tile_coords){
+            unfinished_buildings.erase(unfinished_buildings.begin()+i);
+
+            break;
+        }
+    }
+}
+
 uint32_t Civilization::get_item_count() const{
     return inventory.get_item_count();
 }
@@ -70,4 +95,28 @@ void Civilization::remove_item(Inventory::Item_Type item_type,uint32_t amount){
 
 string Civilization::get_color() const{
     return Leader::get_color(get_parent_leader());
+}
+
+bool Civilization::is_friends_with(uint32_t civilization_index) const{
+    const Leader& leader=Game::get_leader(get_parent_leader());
+
+    const Civilization& civilization=Game::get_civilization(civilization_index);
+
+    return leader.is_friends_with(civilization.get_parent_leader());
+}
+
+bool Civilization::is_enemies_with(uint32_t civilization_index) const{
+    const Leader& leader=Game::get_leader(get_parent_leader());
+
+    const Civilization& civilization=Game::get_civilization(civilization_index);
+
+    return leader.is_enemies_with(civilization.get_parent_leader());
+}
+
+bool Civilization::is_neutral_towards(uint32_t civilization_index) const{
+    const Leader& leader=Game::get_leader(get_parent_leader());
+
+    const Civilization& civilization=Game::get_civilization(civilization_index);
+
+    return leader.is_neutral_towards(civilization.get_parent_leader());
 }

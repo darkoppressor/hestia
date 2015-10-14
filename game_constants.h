@@ -23,6 +23,7 @@ public:
     static std::uint32_t CITY_POPULATION_MAX;
     static std::uint32_t CITY_POPULATION_START;
     static std::uint32_t BREEDING_RATE;
+    static std::uint32_t CAPTURE_COOLDOWN;
 
     static std::int32_t PERSON_MASS;
     static std::int32_t PERSON_MAX_SPEED;
@@ -37,6 +38,15 @@ public:
     static std::int16_t PERSON_ATTACK;
     static std::int16_t PERSON_DEFENSE;
 
+    static std::int16_t BUILDING_HEALTH_MAX;
+    static std::int16_t BUILDING_REPAIR_AMOUNT;
+    static std::int16_t BUILDING_DEFENSE;
+
+    static std::int16_t BUILDING_CAPTURED_HEALTH_PERCENTAGE;
+
+    static std::uint32_t COST_BUILD;
+    static std::uint32_t COST_REPAIR;
+
     static std::uint8_t HUNGER_FULL;
     static std::uint8_t HUNGER_HUNGRY;
     static std::uint8_t HUNGER_STARVING;
@@ -47,6 +57,7 @@ public:
     static std::uint64_t INTERACTION_RANGE;
     static std::int32_t SIGHT_RANGE;
     static std::uint64_t HOME_DEFENSE_RANGE;
+    static std::uint32_t CITY_SPACING;
 
     static std::uint32_t RETREAT_HOME_CHANCE;
     static std::int32_t RETREAT_ZONE_RANGE;
@@ -64,14 +75,16 @@ public:
     static std::int32_t PRIORITY_GATHER;
     static std::int32_t PRIORITY_EMPTY_INVENTORY;
     static std::int32_t PRIORITY_EAT;
-    static std::int32_t PRIORITY_ATTACK_PERSON_MELEE_WITH_NO_ADVANTAGE;
-    static std::int32_t PRIORITY_ATTACK_PERSON_MELEE_WITH_MINOR_ADVANTAGE;
-    static std::int32_t PRIORITY_ATTACK_PERSON_MELEE_WITH_MAJOR_ADVANTAGE;
-    static std::int32_t PRIORITY_ATTACK_PERSON_MELEE_WITH_OVERWHELMING_ADVANTAGE;
     static std::int32_t PRIORITY_RETREAT_WITH_MINOR_DISADVANTAGE;
     static std::int32_t PRIORITY_RETREAT_WITH_MAJOR_DISADVANTAGE;
     static std::int32_t PRIORITY_RETREAT_WITH_OVERWHELMING_DISADVANTAGE;
     static std::int32_t PRIORITY_RETREAT_WITH_LOW_HEALTH;
+    static std::int32_t PRIORITY_ATTACK_MELEE_WITH_NO_ADVANTAGE;
+    static std::int32_t PRIORITY_ATTACK_MELEE_WITH_MINOR_ADVANTAGE;
+    static std::int32_t PRIORITY_ATTACK_MELEE_WITH_MAJOR_ADVANTAGE;
+    static std::int32_t PRIORITY_ATTACK_MELEE_WITH_OVERWHELMING_ADVANTAGE;
+    static std::int32_t PRIORITY_BUILD;
+    static std::int32_t PRIORITY_REPAIR;
 
     static std::uint32_t GATHER_RATE;
     static std::uint32_t EMPTY_INVENTORY_RATE;
@@ -80,6 +93,9 @@ public:
     static std::uint32_t FORAGE_RATE;
     static std::uint32_t RETREAT_RATE;
     static std::uint32_t ATTACK_PERSON_MELEE_RATE;
+    static std::uint32_t ATTACK_BUILDING_MELEE_RATE;
+    static std::uint32_t BUILD_RATE;
+    static std::uint32_t REPAIR_RATE;
 };
 
 #endif

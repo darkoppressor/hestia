@@ -5,6 +5,7 @@
 #include "game.h"
 #include "game_constants.h"
 #include "int_math.h"
+#include "network_game.h"
 
 #include <render.h>
 #include <game_window.h>
@@ -20,6 +21,11 @@
 #include <engine.h>
 
 using namespace std;
+
+Game_Order::Type Game::order=Game_Order::Type::NONE;
+
+vector<Game_Order> Game::server_game_orders;
+vector<Game_Order> Game::client_game_orders;
 
 vector<Region> Game::regions;
 vector<vector<Chunk>> Game::chunks;
@@ -57,6 +63,13 @@ void Game::add_remove_objects(){
             //Let the parent chunk know it has one less tile in it
             chunks[Tile::get_chunk_x(it->first.x)][Tile::get_chunk_y(it->first.y)].decrement_tile_count(it->second.get_type());
 
+            //If the tile's type is an unfinished building, its parent is a civilization
+            if(it->second.get_type()==Tile::Type::BUILDING_UNFINISHED){
+                uint32_t parent_civilization=it->second.get_parent();
+
+                civilizations[parent_civilization].remove_unfinished_building(Coords<uint32_t>(it->first.x,it->first.y));
+            }
+
             it=tiles.erase(it);
         }
         else{
@@ -66,6 +79,21 @@ void Game::add_remove_objects(){
 
     for(size_t i=0;i<new_cities.size();i++){
         cities.push_back(new_cities[i]);
+
+        uint32_t city_index=cities.size()-1;
+
+        uint32_t parent_civilization=cities.back().get_parent_civilization();
+
+        civilizations[parent_civilization].add_city(city_index);
+
+        Coords<uint32_t> tile_coords=cities.back().get_tile();
+
+        civilizations[parent_civilization].remove_unfinished_building(tile_coords);
+
+        tiles.at(tile_coords).set_type(Tile::Type::BUILDING_CITY);
+
+        //If the tile's type is a city building, its parent is a city
+        tiles.at(tile_coords).set_parent(city_index);
     }
     new_cities.clear();
 
@@ -96,6 +124,13 @@ void Game::add_remove_objects(){
 
         //Let the parent chunk know it has a new tile in it
         chunks[Tile::get_chunk_x(it.first.x)][Tile::get_chunk_y(it.first.y)].increment_tile_count(it.second.get_type());
+
+        //If the tile's type is an unfinished building, its parent is a civilization
+        if(it.second.get_type()==Tile::Type::BUILDING_UNFINISHED){
+            uint32_t parent_civilization=it.second.get_parent();
+
+            civilizations[parent_civilization].add_unfinished_building(Coords<uint32_t>(it.first.x,it.first.y));
+        }
     }
     new_tiles.clear();
 }
@@ -125,16 +160,31 @@ void Game::clear_world(){
 
     frame=0;
 
+    clear_order();
+
+    clear_server_game_orders();
+    clear_client_game_orders();
+
     calendar.reset();
 
     RNG rng_seeder;
     option_rng_seed=rng_seeder.random_range(0,UINT32_MAX);
 
-    option_world_width=5;
-    option_world_height=5;
+    option_world_width=20;
+    option_world_height=20;
     option_region_min=4;
     option_region_max=8;
     option_initial_tile_growth=1440;
+
+    //chunks
+    uint32_t MAX_WORLD_SIZE=(uint32_t)INT32_MAX/(Game_Constants::CHUNK_SIZE*Game_Constants::TILE_SIZE);
+
+    if(option_world_width>MAX_WORLD_SIZE){
+        option_world_width=MAX_WORLD_SIZE;
+    }
+    if(option_world_height>MAX_WORLD_SIZE){
+        option_world_height=MAX_WORLD_SIZE;
+    }
 
     option_max_leaders=8;
 
@@ -173,6 +223,10 @@ void Game::setup_leaders(){
         }
 
         leaders.back().set_color(Color(rng_color.random_range(0,255),rng_color.random_range(0,255),rng_color.random_range(0,255),255));
+    }
+
+    for(size_t i=0;i<leaders.size();i++){
+        leaders[i].initialize_diplomacy_states((uint32_t)i,(uint32_t)leaders.size());
     }
 }
 
@@ -365,19 +419,15 @@ void Game::generate_world(){
     }
 
     //If we are a player, center the camera on our starting city
-    int player_number=Network_Engine::get_our_player_number();
-    if(player_number>=0){
-        int32_t leader=get_player_leader(player_number);
+    int32_t leader=get_our_leader();
+    if(leader>=0){
+        uint32_t civilization=leaders[leader].get_civilization();
 
-        if(leader>=0){
-            uint32_t civilization=leaders[leader].get_civilization();
+        vector<uint32_t> civ_cities=civilizations[civilization].get_cities();
 
-            vector<uint32_t> civ_cities=civilizations[civilization].get_cities();
+        City* city_ptr=&cities[civ_cities[0]];
 
-            City* city_ptr=&cities[civ_cities[0]];
-
-            Game_Manager::center_camera(Collision_Rect<double>((double)city_ptr->get_center_x(),(double)city_ptr->get_center_y(),0.0,0.0));
-        }
+        Game_Manager::center_camera(Collision_Rect<double>((double)city_ptr->get_center_x(),(double)city_ptr->get_center_y(),0.0,0.0));
     }
 
     started=true;
@@ -467,7 +517,7 @@ uint32_t Game::get_leader_count(){
     return leaders.size();
 }
 
-void Game::add_leader(bool player_controlled,uint32_t parent_player,const Color& color){
+void Game::add_leader(bool player_controlled,uint32_t parent_player,const Color& color,const vector<Leader::Diplomacy_State>& diplomacy_states){
     if(!started){
         if(player_controlled){
             leaders.push_back(Leader(parent_player));
@@ -477,6 +527,8 @@ void Game::add_leader(bool player_controlled,uint32_t parent_player,const Color&
         }
 
         leaders.back().set_color(color);
+
+        leaders.back().set_diplomacy_states(diplomacy_states);
     }
 }
 
@@ -490,6 +542,10 @@ int32_t Game::get_player_leader(int player_number){
     }
 
     return -1;
+}
+
+int32_t Game::get_our_leader(){
+    return get_player_leader(Network_Engine::get_our_player_number());
 }
 
 int32_t Game::get_world_width(){
@@ -585,6 +641,35 @@ void Game::damage_person(uint32_t index,int16_t attack){
     }
 }
 
+void Game::damage_tile(const Coords<uint32_t>& tile_coords,int16_t attack){
+    if(tile_exists(tile_coords)){
+        tiles.at(tile_coords).damage(attack);
+    }
+}
+
+void Game::repair_tile(const Coords<uint32_t>& tile_coords){
+    if(tile_exists(tile_coords)){
+        tiles.at(tile_coords).repair();
+    }
+}
+
+void Game::handle_city_capture(const Coords<uint32_t>& tile_coords,uint32_t capturing_civilization_index){
+    tiles.at(tile_coords).capture_heal();
+
+    //If the tile's type is a city building, its parent is a city
+    uint32_t city_index=tiles.at(tile_coords).get_parent();
+
+    uint32_t losing_civilization_index=cities[city_index].get_parent_civilization();
+
+    civilizations[losing_civilization_index].remove_city(city_index);
+
+    civilizations[capturing_civilization_index].add_city(city_index);
+
+    cities[city_index].set_parent_civilization(capturing_civilization_index);
+
+    cities[city_index].set_just_captured();
+}
+
 uint64_t Game::distance_to_nearest_city(const Coords<int32_t>& coords){
     bool no_city_found=true;
     uint64_t nearest=0;
@@ -602,6 +687,81 @@ uint64_t Game::distance_to_nearest_city(const Coords<int32_t>& coords){
     return nearest;
 }
 
+Game_Order::Type Game::get_order(){
+    return order;
+}
+
+bool Game::has_order(){
+    return order!=Game_Order::Type::NONE;
+}
+
+Coords<uint32_t> Game::get_order_tile_coords(){
+    int mouse_x=0;
+    int mouse_y=0;
+    Engine::get_mouse_state(&mouse_x,&mouse_y);
+
+    //pixels
+    double mouse_world_x=Game_Manager::camera.x+(double)mouse_x;
+    double mouse_world_y=Game_Manager::camera.y+(double)mouse_y;
+
+    //tiles
+    uint32_t mouse_tile_x=(uint32_t)(mouse_world_x/((double)Game_Constants::TILE_SIZE*Game_Manager::camera_zoom));
+    uint32_t mouse_tile_y=(uint32_t)(mouse_world_y/((double)Game_Constants::TILE_SIZE*Game_Manager::camera_zoom));
+
+    return Coords<uint32_t>(mouse_tile_x,mouse_tile_y);
+}
+
+void Game::set_order(Game_Order::Type new_order){
+    order=new_order;
+}
+
+void Game::clear_order(){
+    order=Game_Order::Type::NONE;
+}
+
+void Game::issue_order(const Game_Order& new_order){
+    if(Network_Engine::status=="server"){
+        server_game_orders.push_back(new_order);
+    }
+    else if(Network_Engine::status=="client"){
+        Network_Game::send_client_game_order(new_order);
+    }
+}
+
+vector<Game_Order> Game::get_server_game_orders(){
+    return server_game_orders;
+}
+
+void Game::add_server_game_order(const Game_Order& new_order){
+    server_game_orders.push_back(new_order);
+}
+
+void Game::clear_server_game_orders(){
+    server_game_orders.clear();
+}
+
+vector<Game_Order> Game::get_client_game_orders(){
+    return client_game_orders;
+}
+
+void Game::add_client_game_order(const Game_Order& new_order){
+    client_game_orders.push_back(new_order);
+}
+
+void Game::clear_client_game_orders(){
+    client_game_orders.clear();
+}
+
+void Game::execute_client_game_orders(){
+    for(size_t i=0;i<client_game_orders.size();i++){
+        if(client_game_orders[i].is_valid()){
+            client_game_orders[i].execute();
+        }
+    }
+
+    clear_client_game_orders();
+}
+
 void Game::tick(){
     if(started){
         Calendar::Change change=calendar.increment();
@@ -614,6 +774,7 @@ void Game::tick(){
 
             for(size_t i=0;i<cities.size();i++){
                 cities[i].breed((uint32_t)i,rng);
+                cities[i].capture_cooldown();
             }
 
             for(size_t i=0;i<people.size();i++){
@@ -669,6 +830,8 @@ void Game::events(){
     if(started){
         Sound_Manager::set_listener(Game_Manager::camera.center_x(),Game_Manager::camera.center_y(),Game_Manager::camera_zoom);
 
+        execute_client_game_orders();
+
         add_remove_objects();
 
         for(size_t i=0;i<cities.size();i++){
@@ -722,6 +885,12 @@ void Game::render(){
 
         for(size_t i=0;i<people.size();i++){
             people[i].render();
+        }
+
+        int32_t leader=get_our_leader();
+        if(leader>=0){
+            Game_Order current_order(order,get_order_tile_coords(),(uint32_t)leader);
+            current_order.render();
         }
     }
 }

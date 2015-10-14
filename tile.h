@@ -26,7 +26,7 @@ private:
 
     Type type;
 
-    bool alive;
+    std::int16_t health;
 
 public:
 
@@ -38,11 +38,20 @@ public:
     void set_parent(std::uint32_t new_parent);
 
     Type get_type() const;
+    void set_type(Type new_type);
     bool is_gatherable() const;
     bool is_food() const;
 
     bool is_alive() const;
+    bool needs_repair() const;
+    void repair();
+    void capture_heal();
+    void damage(std::int16_t attack);
     void die();
+
+    std::int16_t get_health_max() const;
+    std::int16_t get_health() const;
+    std::int16_t get_defense() const;
 
     static bool tile_type_is_building(Type type_to_check);
     bool is_building() const;

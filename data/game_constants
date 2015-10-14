@@ -72,7 +72,13 @@
 <game_constant>
 	//days
 	name:breeding_rate
-	value:15
+	value:20
+</game_constant>
+
+<game_constant>
+	//days
+	name:capture_cooldown
+	value:8
 </game_constant>
 
 <game_constant>
@@ -115,7 +121,7 @@
 
 <game_constant>
 	name:inventory_max
-	value:6
+	value:11
 </game_constant>
 
 <game_constant>
@@ -137,6 +143,41 @@
 <game_constant>
 	name:person_defense
 	value:0
+</game_constant>
+
+<game_constant>
+	name:building_health_max
+	value:100
+</game_constant>
+
+<game_constant>
+	//health restored per repair
+	name:building_repair_amount
+	value:25
+</game_constant>
+
+<game_constant>
+	name:building_defense
+	value:0
+</game_constant>
+
+<game_constant>
+	//integer percentage
+	//Percentage of maximum health to restore captured city to
+	name:building_captured_health_percentage
+	value:20
+</game_constant>
+
+<game_constant>
+	//trees
+	name:cost_build
+	value:100
+</game_constant>
+
+<game_constant>
+	//trees
+	name:cost_repair
+	value:5
 </game_constant>
 
 <game_constant>
@@ -185,6 +226,12 @@
 	//tiles^2
 	name:home_defense_range
 	value:4096
+</game_constant>
+
+<game_constant>
+	//tiles
+	name:city_spacing
+	value:192
 </game_constant>
 
 <game_constant>
@@ -261,26 +308,6 @@
 </game_constant>
 
 <game_constant>
-	name:priority_attack_person_melee_with_no_advantage
-	value:15
-</game_constant>
-
-<game_constant>
-	name:priority_attack_person_melee_with_minor_advantage
-	value:25
-</game_constant>
-
-<game_constant>
-	name:priority_attack_person_melee_with_major_advantage
-	value:50
-</game_constant>
-
-<game_constant>
-	name:priority_attack_person_melee_with_overwhelming_advantage
-	value:75
-</game_constant>
-
-<game_constant>
 	name:priority_retreat_with_minor_disadvantage
 	value:5
 </game_constant>
@@ -298,6 +325,36 @@
 <game_constant>
 	name:priority_retreat_with_low_health
 	value:5
+</game_constant>
+
+<game_constant>
+	name:priority_attack_melee_with_no_advantage
+	value:15
+</game_constant>
+
+<game_constant>
+	name:priority_attack_melee_with_minor_advantage
+	value:25
+</game_constant>
+
+<game_constant>
+	name:priority_attack_melee_with_major_advantage
+	value:50
+</game_constant>
+
+<game_constant>
+	name:priority_attack_melee_with_overwhelming_advantage
+	value:75
+</game_constant>
+
+<game_constant>
+	name:priority_build
+	value:20
+</game_constant>
+
+<game_constant>
+	name:priority_repair
+	value:15
 </game_constant>
 
 <game_constant>
@@ -340,4 +397,22 @@
 	//milliseconds
 	name:attack_person_melee_rate
 	value:100
+</game_constant>
+
+<game_constant>
+	//milliseconds
+	name:attack_building_melee_rate
+	value:100
+</game_constant>
+
+<game_constant>
+	//milliseconds
+	name:build_rate
+	value:10000
+</game_constant>
+
+<game_constant>
+	//milliseconds
+	name:repair_rate
+	value:2500
 </game_constant>

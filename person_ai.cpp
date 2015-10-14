@@ -189,13 +189,18 @@ vector<Coords<uint32_t>> Person::consider_eating(vector<AI_Choice>& choices) con
     return forage_chunk_coords;
 }
 
-uint32_t Person::target_scan(vector<AI_Choice>& choices,RNG& rng,const Quadtree<int32_t,uint32_t>& quadtree,uint32_t index) const{
-    if(goal.retreat_can_interrupt() || goal.attack_person_melee_can_interrupt()){
+Target_Scan_Result Person::target_scan(vector<AI_Choice>& choices,RNG& rng,const Quadtree<int32_t,uint32_t>& quadtree,uint32_t index) const{
+    Target_Scan_Result result;
+
+    if(goal.retreat_can_interrupt() || goal.attack_person_melee_can_interrupt() || goal.attack_building_melee_can_interrupt()){
         vector<uint32_t> targets_people;
 
         Collision_Rect<int32_t> box_sight=get_sight_box();
 
-        quadtree.get_objects(targets_people,box_sight,index);
+        //Only get the quadtree objects if we are retreating or attacking a person
+        if(goal.retreat_can_interrupt() || goal.attack_person_melee_can_interrupt()){
+            quadtree.get_objects(targets_people,box_sight,index);
+        }
 
         vector<AI_Target> valid_targets;
 
@@ -214,17 +219,77 @@ uint32_t Person::target_scan(vector<AI_Choice>& choices,RNG& rng,const Quadtree<
                 if(person.is_alive() && Collision::check_rect(box_sight,person.get_box())){
                     int32_t person_score=(int32_t)person.get_health()+(int32_t)person.get_attack()*3+(int32_t)person.get_defense()*2;
 
-                    if(get_parent_civilization()==person.get_parent_civilization()){
+                    if(is_friends_with_person(targets_people[i])){
                         friendly_score+=person_score;
                     }
-                    else{
-                        if(could_damage(person)){
+                    else if(is_enemies_with_person(targets_people[i])){
+                        if(could_damage_person(person)){
                             uint64_t person_distance=Int_Math::distance_between_points_no_sqrt(box.center_x(),box.center_y(),person.get_box().center_x(),person.get_box().center_y());
 
-                            valid_targets.push_back(AI_Target(targets_people[i],person_distance,person.get_health(),person.get_attack(),person.get_defense()));
+                            valid_targets.push_back(AI_Target(person_distance,person.get_health(),person.get_attack(),person.get_defense()));
+                            valid_targets.back().set_person_index(targets_people[i]);
                         }
 
                         enemy_score+=person_score;
+                    }
+                }
+            }
+        }
+
+        if(goal.attack_building_melee_can_interrupt()){
+            uint32_t sight_range=Game_Constants::SIGHT_RANGE;
+
+            uint32_t tile_start_x=get_tile_x();
+            uint32_t tile_start_y=get_tile_y();
+
+            if(tile_start_x>sight_range){
+                tile_start_x-=sight_range;
+            }
+            else{
+                tile_start_x=0;
+            }
+
+            if(tile_start_y>sight_range){
+                tile_start_y-=sight_range;
+            }
+            else{
+                tile_start_y=0;
+            }
+
+            uint32_t tile_end_x=tile_start_x+sight_range*2;
+            uint32_t tile_end_y=tile_start_y+sight_range*2;
+
+            if(tile_end_x>=Game::get_world_width_tiles()){
+                tile_end_x=Game::get_world_width_tiles()-1;
+            }
+            if(tile_end_y>=Game::get_world_height_tiles()){
+                tile_end_y=Game::get_world_height_tiles()-1;
+            }
+
+            for(uint32_t x=tile_start_x;x<=tile_end_x;x++){
+                for(uint32_t y=tile_start_y;y<=tile_end_y;y++){
+                    Coords<uint32_t> tile_coords(x,y);
+
+                    if(Game::tile_exists(tile_coords)){
+                        const Tile& tile=Game::get_tile(tile_coords);
+
+                        if(tile.is_alive() && tile.is_building()){
+                            int32_t building_score=(int32_t)tile.get_health()+(int32_t)tile.get_defense()*2;
+
+                            if(is_friends_with_tile(tile_coords)){
+                                friendly_score+=building_score;
+                            }
+                            else if(is_enemies_with_tile(tile_coords)){
+                                if(could_damage_tile(tile)){
+                                    uint64_t building_distance=Int_Math::distance_between_points_no_sqrt(box.center_x(),box.center_y(),tile.get_center_x(x),tile.get_center_y(y));
+
+                                    valid_targets.push_back(AI_Target(building_distance,tile.get_health(),0,tile.get_defense()));
+                                    valid_targets.back().set_building_tile_coords(tile_coords);
+                                }
+
+                                enemy_score+=building_score;
+                            }
+                        }
                     }
                 }
             }
@@ -247,28 +312,59 @@ uint32_t Person::target_scan(vector<AI_Choice>& choices,RNG& rng,const Quadtree<
             }
         }
 
-        uint32_t target=0;
+        if(!goal.attack_person_melee_can_interrupt()){
+            //Remove all of the target people
+            for(size_t i=0;i<valid_targets.size();){
+                if(valid_targets[i].is_person()){
+                    valid_targets.erase(valid_targets.begin()+i);
+                }
+                else{
+                    i++;
+                }
+            }
+        }
 
-        if(valid_targets.size()>0){
+        if(!goal.attack_building_melee_can_interrupt()){
+            //Remove all of the target buildings
+            for(size_t i=0;i<valid_targets.size();){
+                if(!valid_targets[i].is_person()){
+                    valid_targets.erase(valid_targets.begin()+i);
+                }
+                else{
+                    i++;
+                }
+            }
+        }
+
+        if((goal.attack_person_melee_can_interrupt() || goal.attack_building_melee_can_interrupt()) && !home_was_recently_captured() && valid_targets.size()>0){
             Sorting::quick_sort(valid_targets);
 
             uint32_t valid_target_index=rng.weighted_random_range(0,valid_targets.size()-1,valid_targets.size()-1,RNG::Weight::NORMAL);
 
-            target=valid_targets[valid_target_index].id;
+            int32_t priority_attack=0;
 
-            if(goal.attack_person_melee_can_interrupt()){
-                if(score_advantage>=Game_Constants::AI_COMBAT_SCORE_RATIO_OVERWHELMING){
-                    choices.push_back(AI_Choice(AI_Goal::Type::ATTACK_PERSON_MELEE,Game_Constants::PRIORITY_ATTACK_PERSON_MELEE_WITH_OVERWHELMING_ADVANTAGE));
-                }
-                else if(score_advantage>=Game_Constants::AI_COMBAT_SCORE_RATIO_MAJOR){
-                    choices.push_back(AI_Choice(AI_Goal::Type::ATTACK_PERSON_MELEE,Game_Constants::PRIORITY_ATTACK_PERSON_MELEE_WITH_MAJOR_ADVANTAGE));
-                }
-                else if(score_advantage>1){
-                    choices.push_back(AI_Choice(AI_Goal::Type::ATTACK_PERSON_MELEE,Game_Constants::PRIORITY_ATTACK_PERSON_MELEE_WITH_MINOR_ADVANTAGE));
-                }
-                else{
-                    choices.push_back(AI_Choice(AI_Goal::Type::ATTACK_PERSON_MELEE,Game_Constants::PRIORITY_ATTACK_PERSON_MELEE_WITH_NO_ADVANTAGE));
-                }
+            if(score_advantage>=Game_Constants::AI_COMBAT_SCORE_RATIO_OVERWHELMING){
+                priority_attack=Game_Constants::PRIORITY_ATTACK_MELEE_WITH_OVERWHELMING_ADVANTAGE;
+            }
+            else if(score_advantage>=Game_Constants::AI_COMBAT_SCORE_RATIO_MAJOR){
+                priority_attack=Game_Constants::PRIORITY_ATTACK_MELEE_WITH_MAJOR_ADVANTAGE;
+            }
+            else if(score_advantage>1){
+                priority_attack=Game_Constants::PRIORITY_ATTACK_MELEE_WITH_MINOR_ADVANTAGE;
+            }
+            else{
+                priority_attack=Game_Constants::PRIORITY_ATTACK_MELEE_WITH_NO_ADVANTAGE;
+            }
+
+            if(valid_targets[valid_target_index].is_person()){
+                result.person_index=valid_targets[valid_target_index].person_index;
+
+                choices.push_back(AI_Choice(AI_Goal::Type::ATTACK_PERSON_MELEE,priority_attack));
+            }
+            else{
+                result.building_tile_coords=valid_targets[valid_target_index].building_tile_coords;
+
+                choices.push_back(AI_Choice(AI_Goal::Type::ATTACK_BUILDING_MELEE,priority_attack));
             }
         }
 
@@ -303,15 +399,56 @@ uint32_t Person::target_scan(vector<AI_Choice>& choices,RNG& rng,const Quadtree<
                 }
             }
         }
-
-        return target;
     }
-    else{
-        return 0;
+
+    return result;
+}
+
+Coords<uint32_t> Person::consider_building(vector<AI_Choice>& choices) const{
+    if(goal.build_can_interrupt()){
+        const Civilization& civilization=Game::get_civilization(get_parent_civilization());
+
+        vector<Coords<uint32_t>> unfinished_buildings=civilization.get_unfinished_buildings();
+
+        if(unfinished_buildings.size()>0 && has_build_material()){
+            bool some_building_looked_at=false;
+            uint64_t nearest_unfinished_building=0;
+            uint32_t nearest_building_index=0;
+
+            for(size_t i=0;i<unfinished_buildings.size();i++){
+                uint64_t distance_to_building=Int_Math::distance_between_points_no_sqrt(box.center_x(),box.center_y(),
+                                                                                        Tile::get_center_x(unfinished_buildings[i].x,Tile::get_tile_type_size(Tile::Type::BUILDING_UNFINISHED)),
+                                                                                        Tile::get_center_y(unfinished_buildings[i].y,Tile::get_tile_type_size(Tile::Type::BUILDING_UNFINISHED)));
+
+                if(!some_building_looked_at || distance_to_building<nearest_unfinished_building){
+                    some_building_looked_at=true;
+
+                    nearest_unfinished_building=distance_to_building;
+
+                    nearest_building_index=(uint32_t)i;
+                }
+            }
+
+            choices.push_back(AI_Choice(AI_Goal::Type::BUILD,Game_Constants::PRIORITY_BUILD));
+
+            return unfinished_buildings[nearest_building_index];
+        }
+    }
+
+    return Coords<uint32_t>(0,0);
+}
+
+void Person::consider_repairing(vector<AI_Choice>& choices) const{
+    if(goal.repair_can_interrupt()){
+        const City& city=Game::get_city(get_parent_city());
+
+        if(city.needs_repair() && has_repair_material()){
+            choices.push_back(AI_Choice(AI_Goal::Type::REPAIR,Game_Constants::PRIORITY_REPAIR));
+        }
     }
 }
 
-void Person::set_new_goal(RNG& rng,AI_Goal::Type new_goal_type,uint32_t target,vector<Coords<uint32_t>> forage_chunk_coords){
+void Person::set_new_goal(RNG& rng,AI_Goal::Type new_goal_type,Target_Scan_Result target_scan_result,vector<Coords<uint32_t>> forage_chunk_coords,Coords<uint32_t> unfinished_building_coords){
     goal.set_type(new_goal_type);
 
     if(goal.is_gather()){
@@ -336,7 +473,7 @@ void Person::set_new_goal(RNG& rng,AI_Goal::Type new_goal_type,uint32_t target,v
     else if(goal.is_empty_inventory()){
         const City& city=Game::get_city(get_parent_city());
 
-        goal.set_coords_pixels(Coords<int32_t>(city.get_center_x(),city.get_center_y()));
+        goal.set_coords_tiles(Coords<uint32_t>(city.get_tile().x,city.get_tile().y));
     }
     else if(goal.is_eat()){
         goal.set_coords_pixels(Coords<int32_t>(box.center_x(),box.center_y()));
@@ -344,7 +481,7 @@ void Person::set_new_goal(RNG& rng,AI_Goal::Type new_goal_type,uint32_t target,v
     else if(goal.is_eat_at_home()){
         const City& city=Game::get_city(get_parent_city());
 
-        goal.set_coords_pixels(Coords<int32_t>(city.get_center_x(),city.get_center_y()));
+        goal.set_coords_tiles(Coords<uint32_t>(city.get_tile().x,city.get_tile().y));
     }
     else if(goal.is_forage()){
         find_tile(rng,forage_chunk_coords);
@@ -398,7 +535,18 @@ void Person::set_new_goal(RNG& rng,AI_Goal::Type new_goal_type,uint32_t target,v
         }
     }
     else if(goal.is_attack_person_melee()){
-        goal.set_person_index(target);
+        goal.set_person_index(target_scan_result.person_index);
+    }
+    else if(goal.is_attack_building_melee()){
+        goal.set_coords_tiles(target_scan_result.building_tile_coords);
+    }
+    else if(goal.is_build()){
+        goal.set_coords_tiles(unfinished_building_coords);
+    }
+    else if(goal.is_repair()){
+        const City& city=Game::get_city(get_parent_city());
+
+        goal.set_coords_tiles(Coords<uint32_t>(city.get_tile().x,city.get_tile().y));
     }
 }
 
@@ -409,13 +557,21 @@ void Person::ai(RNG& rng,const Quadtree<int32_t,uint32_t>& quadtree,uint32_t fra
 
             consider_ignoring(choices);
 
-            consider_gathering(choices);
-
             consider_emptying_inventory(choices);
 
             vector<Coords<uint32_t>> forage_chunk_coords=consider_eating(choices);
 
-            uint32_t target=target_scan(choices,rng,quadtree,index);
+            Coords<uint32_t> unfinished_building_coords(0,0);
+
+            if(!home_was_recently_captured()){
+                consider_gathering(choices);
+
+                unfinished_building_coords=consider_building(choices);
+
+                consider_repairing(choices);
+            }
+
+            Target_Scan_Result target_scan_result=target_scan(choices,rng,quadtree,index);
 
             if(choices.size()>0){
                 Sorting::quick_sort(choices);
@@ -423,7 +579,7 @@ void Person::ai(RNG& rng,const Quadtree<int32_t,uint32_t>& quadtree,uint32_t fra
                 uint32_t choice_index=rng.weighted_random_range(0,choices.size()-1,choices.size()-1,RNG::Weight::WEAK);
 
                 if(choices[choice_index].goal_type!=AI_Goal::Type::NONE){
-                    set_new_goal(rng,choices[choice_index].goal_type,target,forage_chunk_coords);
+                    set_new_goal(rng,choices[choice_index].goal_type,target_scan_result,forage_chunk_coords,unfinished_building_coords);
                 }
             }
         }
@@ -458,12 +614,37 @@ void Person::ai(RNG& rng,const Quadtree<int32_t,uint32_t>& quadtree,uint32_t fra
     }
 }
 
-AI_Target::AI_Target(uint32_t new_id,uint64_t new_distance,int16_t new_health,int16_t new_attack,int16_t new_defense){
-    id=new_id;
+Target_Scan_Result::Target_Scan_Result(){
+    person_index=0;
+    building_tile_coords.x=0;
+    building_tile_coords.y=0;
+}
+
+AI_Target::AI_Target(uint64_t new_distance,int16_t new_health,int16_t new_attack,int16_t new_defense){
+    person=true;
+
+    person_index=0;
+
     distance=new_distance;
     health=new_health;
     attack=new_attack;
     defense=new_defense;
+}
+
+bool AI_Target::is_person() const{
+    return person;
+}
+
+void AI_Target::set_person_index(uint32_t new_person_index){
+    person_index=new_person_index;
+
+    person=true;
+}
+
+void AI_Target::set_building_tile_coords(const Coords<uint32_t>& new_building_tile_coords){
+    building_tile_coords=new_building_tile_coords;
+
+    person=false;
 }
 
 bool AI_Target::operator<=(const AI_Target& target) const{

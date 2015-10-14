@@ -87,3 +87,13 @@
 	controller_button:
 	controller_axis:leftx
 </game_command>
+
+<game_command>
+	name:build_city
+	title:Build City
+	description:Build a city
+	developer:false
+	key:b
+	controller_button:
+	controller_axis:
+</game_command>

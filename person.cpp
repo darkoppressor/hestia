@@ -10,7 +10,7 @@
 #include <game_manager.h>
 #include <render.h>
 
-///QQQ
+///QQQ includes
 #include <object_manager.h>
 #include <font.h>
 #include <engine_strings.h>
@@ -24,7 +24,7 @@ Person::Person(){
 
     exists=true;
 
-    health=Game_Constants::PERSON_HEALTH_MAX;
+    health=get_health_max();
     hunger=Game_Constants::HUNGER_FULL;
 }
 
@@ -35,7 +35,7 @@ Person::Person(uint32_t new_parent,const Collision_Rect<int32_t>& new_box){
 
     exists=true;
 
-    health=Game_Constants::PERSON_HEALTH_MAX;
+    health=get_health_max();
     hunger=Game_Constants::HUNGER_FULL;
 }
 
@@ -96,6 +96,36 @@ void Person::remove_item(Inventory::Item_Type item_type,uint32_t amount){
     inventory.remove_item(item_type,amount);
 }
 
+bool Person::has_build_material() const{
+    uint32_t tree_count=get_item_count(Inventory::Item_Type::TREE);
+
+    const Civilization& civilization=Game::get_civilization(get_parent_civilization());
+
+    tree_count+=civilization.get_item_count(Inventory::Item_Type::TREE);
+
+    if(tree_count>=Game_Constants::COST_BUILD){
+        return true;
+    }
+    else{
+        return false;
+    }
+}
+
+bool Person::has_repair_material() const{
+    uint32_t tree_count=get_item_count(Inventory::Item_Type::TREE);
+
+    const Civilization& civilization=Game::get_civilization(get_parent_civilization());
+
+    tree_count+=civilization.get_item_count(Inventory::Item_Type::TREE);
+
+    if(tree_count>=Game_Constants::COST_REPAIR){
+        return true;
+    }
+    else{
+        return false;
+    }
+}
+
 int32_t Person::get_center_x() const{
     return box.center_x();
 }
@@ -151,7 +181,7 @@ bool Person::is_alive() const{
 }
 
 bool Person::health_low() const{
-    return health<=Game_Constants::PERSON_HEALTH_MAX/4;
+    return health<=get_health_max()/4;
 }
 
 void Person::damage(int16_t attack){
@@ -162,6 +192,10 @@ void Person::damage(int16_t attack){
     }
 
     health-=damage_done;
+}
+
+int16_t Person::get_health_max() const{
+    return Game_Constants::PERSON_HEALTH_MAX;
 }
 
 int16_t Person::get_health() const{
@@ -176,13 +210,28 @@ int16_t Person::get_defense() const{
     return Game_Constants::PERSON_DEFENSE;
 }
 
-bool Person::could_damage(const Person& person) const{
+bool Person::could_damage_person(const Person& person) const{
     if(get_attack()-person.get_defense()>0){
         return true;
     }
     else{
         return false;
     }
+}
+
+bool Person::could_damage_tile(const Tile& tile) const{
+    if(get_attack()-tile.get_defense()>0){
+        return true;
+    }
+    else{
+        return false;
+    }
+}
+
+bool Person::home_was_recently_captured() const{
+    const City& city=Game::get_city(get_parent_city());
+
+    return city.was_recently_captured();
 }
 
 bool Person::is_full() const{
@@ -210,13 +259,124 @@ void Person::process_biology(){
         if(is_full()){
             health+=Game_Constants::PERSON_HEALTH_CHANGE_RATE;
 
-            if(health>Game_Constants::PERSON_HEALTH_MAX){
-                health=Game_Constants::PERSON_HEALTH_MAX;
+            if(health>get_health_max()){
+                health=get_health_max();
             }
         }
         else if(is_starving()){
             health-=Game_Constants::PERSON_HEALTH_CHANGE_RATE;
         }
+    }
+}
+
+bool Person::is_friends_with_person(uint32_t person_index) const{
+    const Civilization& civilization=Game::get_civilization(get_parent_civilization());
+
+    const Person& person=Game::get_person(person_index);
+
+    return civilization.is_friends_with(person.get_parent_civilization());
+}
+
+bool Person::is_enemies_with_person(uint32_t person_index) const{
+    const Civilization& civilization=Game::get_civilization(get_parent_civilization());
+
+    const Person& person=Game::get_person(person_index);
+
+    return civilization.is_enemies_with(person.get_parent_civilization());
+}
+
+bool Person::is_neutral_towards_person(uint32_t person_index) const{
+    const Civilization& civilization=Game::get_civilization(get_parent_civilization());
+
+    const Person& person=Game::get_person(person_index);
+
+    return civilization.is_neutral_towards(person.get_parent_civilization());
+}
+
+bool Person::is_friends_with_tile(const Coords<uint32_t>& tile_coords) const{
+    if(Game::tile_exists(tile_coords)){
+        const Tile& tile=Game::get_tile(tile_coords);
+
+        if(tile.is_building()){
+            const Civilization& our_civilization=Game::get_civilization(get_parent_civilization());
+
+            Tile::Type tile_type=tile.get_type();
+
+            //If the tile's type is an unfinished building, its parent is a civilization
+            if(tile_type==Tile::Type::BUILDING_UNFINISHED){
+                return our_civilization.is_friends_with(tile.get_parent());
+            }
+            //If the tile's type is a city building, its parent is a city
+            else{
+                const City& city=Game::get_city(tile.get_parent());
+
+                return our_civilization.is_friends_with(city.get_parent_civilization());
+            }
+        }
+        else{
+            return false;
+        }
+    }
+    else{
+        return false;
+    }
+}
+
+bool Person::is_enemies_with_tile(const Coords<uint32_t>& tile_coords) const{
+    if(Game::tile_exists(tile_coords)){
+        const Tile& tile=Game::get_tile(tile_coords);
+
+        if(tile.is_building()){
+            const Civilization& our_civilization=Game::get_civilization(get_parent_civilization());
+
+            Tile::Type tile_type=tile.get_type();
+
+            //If the tile's type is an unfinished building, its parent is a civilization
+            if(tile_type==Tile::Type::BUILDING_UNFINISHED){
+                return our_civilization.is_enemies_with(tile.get_parent());
+            }
+            //If the tile's type is a city building, its parent is a city
+            else{
+                const City& city=Game::get_city(tile.get_parent());
+
+                return our_civilization.is_enemies_with(city.get_parent_civilization());
+            }
+        }
+        else{
+            return false;
+        }
+    }
+    else{
+        return false;
+    }
+}
+
+bool Person::is_neutral_towards_tile(const Coords<uint32_t>& tile_coords) const{
+    if(Game::tile_exists(tile_coords)){
+        const Tile& tile=Game::get_tile(tile_coords);
+
+        if(tile.is_building()){
+            const Civilization& our_civilization=Game::get_civilization(get_parent_civilization());
+
+            Tile::Type tile_type=tile.get_type();
+
+            //If the tile's type is an unfinished building, its parent is a civilization
+            if(tile_type==Tile::Type::BUILDING_UNFINISHED){
+                return our_civilization.is_neutral_towards(tile.get_parent());
+            }
+            //If the tile's type is a city building, its parent is a city
+            else{
+                const City& city=Game::get_city(tile.get_parent());
+
+                return our_civilization.is_neutral_towards(city.get_parent_civilization());
+            }
+        }
+        else{
+            return false;
+        }
+    }
+    else{
+        return false;
     }
 }
 
@@ -236,15 +396,23 @@ bool Person::is_goal_valid() const{
         }
     }
     else if(goal.is_empty_inventory() && get_item_count()>0){
-        return true;
+        const City& city=Game::get_city(get_parent_city());
+
+        if(city.get_tile()==goal.get_coords_tiles()){
+            return true;
+        }
+        else{
+            return false;
+        }
     }
     else if(goal.is_eat() && has_food()){
         return true;
     }
     else if(goal.is_eat_at_home()){
         const Civilization& civilization=Game::get_civilization(get_parent_civilization());
+        const City& city=Game::get_city(get_parent_city());
 
-        if(civilization.has_food()){
+        if(civilization.has_food() && city.get_tile()==goal.get_coords_tiles()){
             return true;
         }
         else{
@@ -267,7 +435,39 @@ bool Person::is_goal_valid() const{
     else if(goal.is_attack_person_melee()){
         const Person& person=Game::get_person(goal.get_person_index());
 
-        if(person.is_alive()){
+        if(person.is_alive() && is_enemies_with_person(goal.get_person_index())){
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
+    else if(goal.is_attack_building_melee() && Game::tile_exists(goal.get_coords_tiles())){
+        const Tile& tile=Game::get_tile(goal.get_coords_tiles());
+
+        if(tile.is_alive() && is_enemies_with_tile(goal.get_coords_tiles())){
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
+    else if(goal.is_build() && Game::tile_exists(goal.get_coords_tiles())){
+        const Tile& tile=Game::get_tile(goal.get_coords_tiles());
+
+        //If the tile's type is an unfinished building, its parent is a civilization
+        if(tile.is_alive() && tile.get_type()==Tile::Type::BUILDING_UNFINISHED && tile.get_parent()==get_parent_civilization() && has_build_material()){
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
+    else if(goal.is_repair() && Game::tile_exists(goal.get_coords_tiles())){
+        const Tile& tile=Game::get_tile(goal.get_coords_tiles());
+
+        //If the tile's type is a city building, its parent is a city
+        if(tile.is_alive() && tile.needs_repair() && tile.get_type()==Tile::Type::BUILDING_CITY && tile.get_parent()==get_parent_city() && has_repair_material()){
             return true;
         }
         else{
@@ -287,7 +487,7 @@ uint64_t Person::get_goal_distance() const{
     Coords<int32_t> goal_coords=get_goal_coords();
 
     if(goal_coords.x>=0){
-        return Int_Math::distance_between_points_no_sqrt(box.x,box.y,goal_coords.x,goal_coords.y);
+        return Int_Math::distance_between_points_no_sqrt(box.center_x(),box.center_y(),goal_coords.x,goal_coords.y);
     }
     else{
         return 0;
@@ -299,13 +499,14 @@ Coords<int32_t> Person::get_goal_coords() const{
     int32_t goal_x=-1;
     int32_t goal_y=-1;
 
-    if(goal.is_gather() || goal.is_forage()){
+    if(goal.is_gather() || goal.is_empty_inventory() || goal.is_eat_at_home() || goal.is_forage() || goal.is_attack_building_melee() ||
+       goal.is_build() || goal.is_repair()){
         Coords<uint32_t> tile_coords=goal.get_coords_tiles();
 
         goal_x=Tile::get_center_x(tile_coords.x,Tile::get_tile_type_size(goal.get_goal_tile_type()));
         goal_y=Tile::get_center_y(tile_coords.y,Tile::get_tile_type_size(goal.get_goal_tile_type()));
     }
-    else if(goal.is_empty_inventory() || goal.is_eat() || goal.is_eat_at_home() || goal.is_retreat()){
+    else if(goal.is_eat() || goal.is_retreat()){
         Coords<int32_t> goal_coords=goal.get_coords_pixels();
 
         goal_x=goal_coords.x;
@@ -406,6 +607,62 @@ void Person::complete_goal(){
         }
         else if(goal.is_attack_person_melee()){
             Game::damage_person(goal.get_person_index(),get_attack());
+
+            const Person& person=Game::get_person(goal.get_person_index());
+
+            //If we just killed the person
+            if(!person.is_alive()){
+                //Take all of their inventory items
+                add_item(Inventory::Item_Type::WHEAT,person.get_item_count(Inventory::Item_Type::WHEAT));
+                add_item(Inventory::Item_Type::TREE,person.get_item_count(Inventory::Item_Type::TREE));
+            }
+        }
+        else if(goal.is_attack_building_melee()){
+            Game::damage_tile(goal.get_coords_tiles(),get_attack());
+
+            const Tile& tile=Game::get_tile(goal.get_coords_tiles());
+
+            //If we just killed the tile
+            if(!tile.is_alive()){
+                if(tile.get_type()==Tile::Type::BUILDING_CITY){
+                    Game::handle_city_capture(goal.get_coords_tiles(),get_parent_civilization());
+                }
+            }
+        }
+        else if(goal.is_build()){
+            const Tile& tile=Game::get_tile(goal.get_coords_tiles());
+
+            //If the tile's type is an unfinished building, its parent is a civilization
+            Game::new_cities.push_back(City(tile.get_parent()));
+
+            Game::new_cities.back().set_tile(goal.get_coords_tiles());
+
+            uint32_t our_materials=get_item_count(Inventory::Item_Type::TREE);
+
+            //If we can afford the cost from our inventory
+            if(our_materials>=Game_Constants::COST_BUILD){
+                remove_item(Inventory::Item_Type::TREE,Game_Constants::COST_BUILD);
+            }
+            else{
+                remove_item(Inventory::Item_Type::TREE,our_materials);
+
+                Game::remove_civilization_item(get_parent_civilization(),Inventory::Item_Type::TREE,Game_Constants::COST_BUILD-our_materials);
+            }
+        }
+        else if(goal.is_repair()){
+            Game::repair_tile(goal.get_coords_tiles());
+
+            uint32_t our_materials=get_item_count(Inventory::Item_Type::TREE);
+
+            //If we can afford the cost from our inventory
+            if(our_materials>=Game_Constants::COST_REPAIR){
+                remove_item(Inventory::Item_Type::TREE,Game_Constants::COST_REPAIR);
+            }
+            else{
+                remove_item(Inventory::Item_Type::TREE,our_materials);
+
+                Game::remove_civilization_item(get_parent_civilization(),Inventory::Item_Type::TREE,Game_Constants::COST_REPAIR-our_materials);
+            }
         }
     }
 
@@ -465,22 +722,23 @@ void Person::movement(){
 
 void Person::render() const{
     if(is_alive()){
+        //pixels
         double x=box.x;
         double y=box.y;
 
         Collision_Rect<double> box_render(x,y,(double)box.w,(double)box.h);
 
         if(Collision::check_rect(box_render*Game_Manager::camera_zoom,Game_Manager::camera)){
-            ///QQQ - This is temporary
+            ///QQQ should render the person graphic
+
             const Civilization& civilization=Game::get_civilization(get_parent_civilization());
 
             string color=civilization.get_color();
-            ///
 
             Render::render_rectangle(x*Game_Manager::camera_zoom-Game_Manager::camera.x,y*Game_Manager::camera_zoom-Game_Manager::camera.y,
                                      (double)box.w*Game_Manager::camera_zoom,(double)box.h*Game_Manager::camera_zoom,1.0,color);
 
-            ///QQQ
+            ///QQQ dev data
             /**Collision_Rect<int32_t> box_sight=get_sight_box();
             Render::render_rectangle((double)box_sight.x*Game_Manager::camera_zoom-Game_Manager::camera.x,
                                      (double)box_sight.y*Game_Manager::camera_zoom-Game_Manager::camera.y,
@@ -511,10 +769,19 @@ void Person::render() const{
             else if(goal.is_attack_person_melee()){
                 msg+="Attack person melee\n";
             }
+            else if(goal.is_attack_building_melee()){
+                msg+="Attack building melee\n";
+            }
+            else if(goal.is_build()){
+                msg+="Build\n";
+            }
+            else if(goal.is_repair()){
+                msg+="Repair\n";
+            }
             else{
                 msg+="None\n";
             }
-            msg+="Health: "+Strings::num_to_string(health)+"/"+Strings::num_to_string(Game_Constants::PERSON_HEALTH_MAX)+"\n";
+            msg+="Health: "+Strings::num_to_string(health)+"/"+Strings::num_to_string(get_health_max())+"\n";
             msg+="Hunger: "+Strings::num_to_string((uint32_t)hunger)+"\n";
             msg+="Wheat: "+Strings::num_to_string(inventory.get_item_count(Inventory::Item_Type::WHEAT))+"\n";
             msg+="Tree: "+Strings::num_to_string(inventory.get_item_count(Inventory::Item_Type::TREE))+"\n";

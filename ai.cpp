@@ -31,6 +31,10 @@ bool AI_Goal::target_is_person() const{
     return is_attack_person_melee();
 }
 
+bool AI_Goal::is_combat() const{
+    return is_retreat() || is_attack_person_melee() || is_attack_building_melee();
+}
+
 bool AI_Goal::is_gather() const{
     return is_gather_wheat() || is_gather_tree();
 }
@@ -59,6 +63,18 @@ bool AI_Goal::is_attack_person_melee() const{
     return type==Type::ATTACK_PERSON_MELEE;
 }
 
+bool AI_Goal::is_attack_building_melee() const{
+    return type==Type::ATTACK_BUILDING_MELEE;
+}
+
+bool AI_Goal::is_build() const{
+    return type==Type::BUILD;
+}
+
+bool AI_Goal::is_repair() const{
+    return type==Type::REPAIR;
+}
+
 bool AI_Goal::gather_can_interrupt() const{
     if(!is_in_progress()){
         return true;
@@ -78,7 +94,8 @@ bool AI_Goal::empty_inventory_can_interrupt() const{
 }
 
 bool AI_Goal::eat_can_interrupt() const{
-    if(!is_in_progress() || is_gather() || is_empty_inventory() || is_eat_at_home() || is_forage() || is_retreat() || is_attack_person_melee()){
+    if(!is_in_progress() || is_gather() || is_empty_inventory() || is_eat_at_home() || is_forage() || is_retreat() || is_attack_person_melee() || is_attack_building_melee() ||
+       is_build() || is_repair()){
         return true;
     }
     else{
@@ -87,7 +104,8 @@ bool AI_Goal::eat_can_interrupt() const{
 }
 
 bool AI_Goal::eat_at_home_can_interrupt() const{
-    if(!is_in_progress() || is_gather() || is_empty_inventory() || is_retreat() || is_attack_person_melee()){
+    if(!is_in_progress() || is_gather() || is_empty_inventory() || is_retreat() || is_attack_person_melee() || is_attack_building_melee() || is_build() ||
+       is_repair()){
         return true;
     }
     else{
@@ -96,7 +114,8 @@ bool AI_Goal::eat_at_home_can_interrupt() const{
 }
 
 bool AI_Goal::forage_can_interrupt() const{
-    if(!is_in_progress() || is_gather() || is_empty_inventory() || is_eat_at_home() || is_retreat() || is_attack_person_melee()){
+    if(!is_in_progress() || is_gather() || is_empty_inventory() || is_eat_at_home() || is_retreat() || is_attack_person_melee() || is_attack_building_melee() ||
+       is_build() || is_repair()){
         return true;
     }
     else{
@@ -105,7 +124,7 @@ bool AI_Goal::forage_can_interrupt() const{
 }
 
 bool AI_Goal::retreat_can_interrupt() const{
-    if(!is_in_progress() || is_gather() || is_forage() || is_attack_person_melee()){
+    if(!is_in_progress() || is_gather() || is_forage() || is_attack_person_melee() || is_attack_building_melee() || is_build()){
         return true;
     }
     else{
@@ -122,8 +141,31 @@ bool AI_Goal::attack_person_melee_can_interrupt() const{
     }
 }
 
-bool AI_Goal::is_combat() const{
-    return is_retreat() || is_attack_person_melee();
+bool AI_Goal::attack_building_melee_can_interrupt() const{
+    if(!is_in_progress() || is_gather() || is_empty_inventory() || is_retreat()){
+        return true;
+    }
+    else{
+        return false;
+    }
+}
+
+bool AI_Goal::build_can_interrupt() const{
+    if(!is_in_progress() || is_empty_inventory()){
+        return true;
+    }
+    else{
+        return false;
+    }
+}
+
+bool AI_Goal::repair_can_interrupt() const{
+    if(!is_in_progress() || is_retreat()){
+        return true;
+    }
+    else{
+        return false;
+    }
 }
 
 Tile::Type AI_Goal::get_goal_tile_type() const{
@@ -133,8 +175,25 @@ Tile::Type AI_Goal::get_goal_tile_type() const{
     else if(type==Type::GATHER_TREE){
         return Tile::Type::TREE;
     }
+    else if(type==Type::EMPTY_INVENTORY){
+        return Tile::Type::BUILDING_CITY;
+    }
+    else if(type==Type::EAT_AT_HOME){
+        return Tile::Type::BUILDING_CITY;
+    }
     else if(type==Type::FORAGE){
         return Tile::Type::WHEAT;
+    }
+    else if(type==Type::ATTACK_BUILDING_MELEE){
+        //When attacking a building, the goal tile type could actually be either a city building or an unfinished building
+        //This function isn't used anywhere where this distinction is an issue, though
+        return Tile::Type::BUILDING_CITY;
+    }
+    else if(type==Type::BUILD){
+        return Tile::Type::BUILDING_UNFINISHED;
+    }
+    else if(type==Type::REPAIR){
+        return Tile::Type::BUILDING_CITY;
     }
     else{
         return Tile::Type::WHEAT;
@@ -201,6 +260,15 @@ uint32_t AI_Goal::get_counter_max() const{
     }
     else if(is_attack_person_melee()){
         return (Game_Constants::ATTACK_PERSON_MELEE_RATE*Engine::UPDATE_RATE)/1000;
+    }
+    else if(is_attack_building_melee()){
+        return (Game_Constants::ATTACK_BUILDING_MELEE_RATE*Engine::UPDATE_RATE)/1000;
+    }
+    else if(is_build()){
+        return (Game_Constants::BUILD_RATE*Engine::UPDATE_RATE)/1000;
+    }
+    else if(is_repair()){
+        return (Game_Constants::REPAIR_RATE*Engine::UPDATE_RATE)/1000;
     }
     else{
         return 0;

@@ -22,6 +22,13 @@ bool Network_Game::receive_game_packet(RakNet::Packet* packet,const RakNet::Mess
 
         return true;
     }
+    else if(packet_id==ID_GAME_CLIENT_ORDER){
+        if(Network_Engine::status=="server"){
+            receive_client_game_order();
+        }
+
+        return true;
+    }
 
     return false;
 }
@@ -53,7 +60,20 @@ void Network_Game::read_update(RakNet::BitStream* bitstream){
 void Network_Game::write_server_ready(RakNet::BitStream* bitstream){
     bitstream->WriteCompressed(Network_Lockstep::get_server_completed_turn());
 
-    ///Write game commands
+    vector<Game_Order> server_game_orders=Game::get_server_game_orders();
+
+    bitstream->WriteCompressed((uint32_t)server_game_orders.size());
+    for(size_t i=0;i<server_game_orders.size();i++){
+        bitstream->WriteCompressed((uint8_t)server_game_orders[i].type);
+        bitstream->WriteCompressed(server_game_orders[i].coords.x);
+        bitstream->WriteCompressed(server_game_orders[i].coords.y);
+        bitstream->WriteCompressed(server_game_orders[i].leader);
+
+        //Add the order to our own client orders list
+        Game::add_client_game_order(server_game_orders[i]);
+    }
+
+    Game::clear_server_game_orders();
 }
 
 void Network_Game::read_server_ready(RakNet::BitStream* bitstream){
@@ -61,7 +81,22 @@ void Network_Game::read_server_ready(RakNet::BitStream* bitstream){
     bitstream->ReadCompressed(server_completed_turn);
     Network_Lockstep::set_server_completed_turn(server_completed_turn);
 
-    ///Read game commands
+    uint32_t orders_size=0;
+    bitstream->ReadCompressed(orders_size);
+    for(uint32_t i=0;i<orders_size;i++){
+        uint8_t type=0;
+        bitstream->ReadCompressed(type);
+
+        Coords<uint32_t> coords;
+        bitstream->ReadCompressed(coords.x);
+        bitstream->ReadCompressed(coords.y);
+
+        uint32_t leader=0;
+        bitstream->ReadCompressed(leader);
+
+        //Add the order to our client orders list
+        Game::add_client_game_order(Game_Order((Game_Order::Type)type,coords,leader));
+    }
 }
 
 void Network_Game::send_game_start_data(){
@@ -88,6 +123,12 @@ void Network_Game::send_game_start_data(){
             bitstream.WriteCompressed((int16_t)color.get_green());
             bitstream.WriteCompressed((int16_t)color.get_blue());
             bitstream.WriteCompressed((int16_t)color.get_alpha());
+
+            vector<Leader::Diplomacy_State> diplomacy_states=leader.get_diplomacy_states();
+            bitstream.WriteCompressed((uint32_t)diplomacy_states.size());
+            for(size_t n=0;n<diplomacy_states.size();n++){
+                bitstream.WriteCompressed((uint8_t)diplomacy_states[n]);
+            }
         }
 
         Network_Engine::stat_counter_bytes_sent+=bitstream.GetNumberOfBytesUsed();
@@ -131,8 +172,55 @@ void Network_Game::receive_game_start_data(){
 
         Color color(red,green,blue,alpha);
 
-        Game::add_leader(player_controlled,parent_player,color);
+        uint32_t diplomacy_states_size=0;
+        bitstream.ReadCompressed(diplomacy_states_size);
+
+        vector<Leader::Diplomacy_State> diplomacy_states;
+
+        for(uint32_t n=0;n<diplomacy_states_size;n++){
+            uint8_t diplomacy_state=0;
+            bitstream.ReadCompressed(diplomacy_state);
+
+            diplomacy_states.push_back((Leader::Diplomacy_State)diplomacy_state);
+        }
+
+        Game::add_leader(player_controlled,parent_player,color,diplomacy_states);
     }
 
     Game_World::generate_world();
+}
+
+void Network_Game::send_client_game_order(const Game_Order& order){
+    if(Network_Engine::status=="client"){
+        RakNet::BitStream bitstream;
+        bitstream.Write((RakNet::MessageID)ID_GAME_CLIENT_ORDER);
+
+        bitstream.WriteCompressed((uint8_t)order.type);
+        bitstream.WriteCompressed(order.coords.x);
+        bitstream.WriteCompressed(order.coords.y);
+        bitstream.WriteCompressed(order.leader);
+
+        Network_Engine::stat_counter_bytes_sent+=bitstream.GetNumberOfBytesUsed();
+        Network_Engine::peer->Send(&bitstream,HIGH_PRIORITY,RELIABLE_ORDERED,ORDERING_CHANNEL_GAME_CLIENT_ORDER,Network_Engine::server_id,false);
+    }
+}
+
+void Network_Game::receive_client_game_order(){
+    RakNet::BitStream bitstream(Network_Engine::packet->data,Network_Engine::packet->length,false);
+    Network_Engine::stat_counter_bytes_received+=bitstream.GetNumberOfBytesUsed();
+
+    RakNet::MessageID type_id;
+    bitstream.Read(type_id);
+
+    uint8_t type=0;
+    bitstream.ReadCompressed(type);
+
+    Coords<uint32_t> coords;
+    bitstream.ReadCompressed(coords.x);
+    bitstream.ReadCompressed(coords.y);
+
+    uint32_t leader=0;
+    bitstream.ReadCompressed(leader);
+
+    Game::add_server_game_order(Game_Order((Game_Order::Type)type,coords,leader));
 }

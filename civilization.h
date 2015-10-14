@@ -7,6 +7,8 @@
 
 #include "inventory.h"
 
+#include <coords.h>
+
 #include <cstdint>
 #include <vector>
 #include <string>
@@ -17,6 +19,8 @@ private:
     std::uint32_t parent_leader;
 
     std::vector<std::uint32_t> cities;
+
+    std::vector<Coords<std::uint32_t>> unfinished_buildings;
 
     Inventory inventory;
 
@@ -32,6 +36,10 @@ public:
     void add_city(std::uint32_t city);
     void remove_city(std::uint32_t city);
 
+    std::vector<Coords<std::uint32_t>> get_unfinished_buildings() const;
+    void add_unfinished_building(Coords<std::uint32_t> tile_coords);
+    void remove_unfinished_building(Coords<std::uint32_t> tile_coords);
+
     std::uint32_t get_item_count() const;
     std::uint32_t get_item_count(Inventory::Item_Type item_type) const;
     bool has_food() const;
@@ -39,6 +47,10 @@ public:
     void remove_item(Inventory::Item_Type item_type,std::uint32_t amount);
 
     std::string get_color() const;
+
+    bool is_friends_with(std::uint32_t civilization_index) const;
+    bool is_enemies_with(std::uint32_t civilization_index) const;
+    bool is_neutral_towards(std::uint32_t civilization_index) const;
 };
 
 #endif

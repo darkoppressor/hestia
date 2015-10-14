@@ -14,6 +14,7 @@
 #include "tile.h"
 #include "calendar.h"
 #include "inventory.h"
+#include "game_order.h"
 
 #include <rng.h>
 #include <coords.h>
@@ -39,6 +40,11 @@ private:
             }
         }
     };
+
+    static Game_Order::Type order;
+
+    static std::vector<Game_Order> server_game_orders;
+    static std::vector<Game_Order> client_game_orders;
 
     static std::vector<Region> regions;
     static std::vector<std::vector<Chunk>> chunks;
@@ -95,11 +101,15 @@ public:
     static const Tile& get_tile(const Coords<std::uint32_t>& coords);
 
     static std::uint32_t get_leader_count();
-    static void add_leader(bool player_controlled,std::uint32_t parent_player,const Color& color);
+    static void add_leader(bool player_controlled,std::uint32_t parent_player,const Color& color,const std::vector<Leader::Diplomacy_State>& diplomacy_states);
 
     //Returns the index for the leader associated with the passed player number,
     //or -1 if the passed player number is invalid
     static std::int32_t get_player_leader(int player_number);
+
+    //Returns the index for our leader,
+    //or -1 if our leader could not be determined
+    static std::int32_t get_our_leader();
 
     //pixels
     static std::int32_t get_world_width();
@@ -117,9 +127,30 @@ public:
     static void remove_civilization_item(std::uint32_t index,Inventory::Item_Type item_type,std::uint32_t amount);
 
     static void damage_person(std::uint32_t index,std::int16_t attack);
+    static void damage_tile(const Coords<std::uint32_t>& tile_coords,std::int16_t attack);
 
-    //Note that this distance is actually the distance^2, as the sqrt operation is skipped
+    static void repair_tile(const Coords<std::uint32_t>& tile_coords);
+
+    static void handle_city_capture(const Coords<std::uint32_t>& tile_coords,std::uint32_t capturing_civilization_index);
+
+    //pixels^2
     static uint64_t distance_to_nearest_city(const Coords<std::int32_t>& coords);
+
+    static Game_Order::Type get_order();
+    static bool has_order();
+    static Coords<std::uint32_t> get_order_tile_coords();
+    static void set_order(Game_Order::Type new_order);
+    static void clear_order();
+    static void issue_order(const Game_Order& new_order);
+
+    static std::vector<Game_Order> get_server_game_orders();
+    static void add_server_game_order(const Game_Order& new_order);
+    static void clear_server_game_orders();
+
+    static std::vector<Game_Order> get_client_game_orders();
+    static void add_client_game_order(const Game_Order& new_order);
+    static void clear_client_game_orders();
+    static void execute_client_game_orders();
 
     static void tick();
     static void ai();

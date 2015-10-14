@@ -18,6 +18,8 @@
 #include <cstdint>
 #include <vector>
 
+class Target_Scan_Result;
+
 class Person{
 private:
 
@@ -58,6 +60,9 @@ public:
     std::uint32_t add_item(Inventory::Item_Type item_type,std::uint32_t amount);
     void remove_item(Inventory::Item_Type item_type,std::uint32_t amount);
 
+    bool has_build_material() const;
+    bool has_repair_material() const;
+
     //pixels
     std::int32_t get_center_x() const;
     std::int32_t get_center_y() const;
@@ -80,11 +85,15 @@ public:
     bool health_low() const;
     void damage(std::int16_t attack);
 
+    std::int16_t get_health_max() const;
     std::int16_t get_health() const;
     std::int16_t get_attack() const;
     std::int16_t get_defense() const;
 
-    bool could_damage(const Person& person) const;
+    bool could_damage_person(const Person& person) const;
+    bool could_damage_tile(const Tile& tile) const;
+
+    bool home_was_recently_captured() const;
 
     bool is_full() const;
     bool is_hungry() const;
@@ -92,6 +101,14 @@ public:
     void eat();
 
     void process_biology();
+
+    bool is_friends_with_person(std::uint32_t person_index) const;
+    bool is_enemies_with_person(std::uint32_t person_index) const;
+    bool is_neutral_towards_person(std::uint32_t person_index) const;
+
+    bool is_friends_with_tile(const Coords<std::uint32_t>& tile_coords) const;
+    bool is_enemies_with_tile(const Coords<std::uint32_t>& tile_coords) const;
+    bool is_neutral_towards_tile(const Coords<std::uint32_t>& tile_coords) const;
 
     bool has_goal() const;
     bool is_goal_valid() const;
@@ -135,27 +152,54 @@ public:
     //Returns the forage chunk coordinates, if any were identified and the forage goal was selected
     //Otherwise, returns an empty vector
     std::vector<Coords<std::uint32_t>> consider_eating(std::vector<AI_Choice>& choices) const;
-    //Returns the index for the target, if one was identified, or 0 otherwise
-    //This is only used if we are setting a new goal of targeting this target,
-    //which is only a possible goal if a target was found,
-    //so there is no issue with it returning 0 (a possible target index itself) on failure to identify a target
-    std::uint32_t target_scan(std::vector<AI_Choice>& choices,RNG& rng,const Quadtree<std::int32_t,std::uint32_t>& quadtree,std::uint32_t index) const;
+    //Returns a Target_Scan_Result, which contains:
+    //1. The index for the target person, if one was identified, or 0 otherwise
+    //This is only used if we are setting a new goal of targeting this person,
+    //which is only a possible goal if a target person was found,
+    //so there is no issue with it returning 0 (a possible target person index itself) on failure to identify a target person
+    //2. The tile coordinates of the city building tile to target, if one was identified, or 0,0 otherwise
+    //This is only used if we are setting a new goal of targeting this building tile, just like the target person explained above
+    Target_Scan_Result target_scan(std::vector<AI_Choice>& choices,RNG& rng,const Quadtree<std::int32_t,std::uint32_t>& quadtree,std::uint32_t index) const;
+    //Returns the tile coordinates of the unfinished building tile to build, if one was identified, or 0,0 otherwise
+    //This is only used if we are setting a new goal of building this tile,
+    //which is only a possible goal if an unfinished building tile was found,
+    //so there is no issue with it returning 0,0 (possible tile coordinates themselves) on failure to identify an unfinished building tile
+    Coords<std::uint32_t> consider_building(std::vector<AI_Choice>& choices) const;
+    void consider_repairing(std::vector<AI_Choice>& choices) const;
 
-    void set_new_goal(RNG& rng,AI_Goal::Type new_goal_type,std::uint32_t target,std::vector<Coords<std::uint32_t>> forage_chunk_coords);
+    void set_new_goal(RNG& rng,AI_Goal::Type new_goal_type,Target_Scan_Result target_scan_result,std::vector<Coords<std::uint32_t>> forage_chunk_coords,Coords<std::uint32_t> unfinished_building_coords);
 
     void ai(RNG& rng,const Quadtree<std::int32_t,std::uint32_t>& quadtree,std::uint32_t frame,std::uint32_t index);
 };
 
-class AI_Target{
+class Target_Scan_Result{
 public:
 
-    std::uint32_t id;
+    std::uint32_t person_index;
+    Coords<std::uint32_t> building_tile_coords;
+
+    Target_Scan_Result();
+};
+
+class AI_Target{
+private:
+
+    bool person;
+
+public:
+
+    std::uint32_t person_index;
+    Coords<std::uint32_t> building_tile_coords;
     std::uint64_t distance;
     std::int16_t health;
     std::int16_t attack;
     std::int16_t defense;
 
-    AI_Target(std::uint32_t new_id,std::uint64_t new_distance,std::int16_t new_health,std::int16_t new_attack,std::int16_t new_defense);
+    AI_Target(std::uint64_t new_distance,std::int16_t new_health,std::int16_t new_attack,std::int16_t new_defense);
+
+    bool is_person() const;
+    void set_person_index(std::uint32_t new_person_index);
+    void set_building_tile_coords(const Coords<std::uint32_t>& new_building_tile_coords);
 
     //Implemented for compatibility with quick_sort
     bool operator<=(const AI_Target& target) const;

@@ -5,6 +5,8 @@
 #ifndef network_game_h
 #define network_game_h
 
+#include "game_order.h"
+
 #include <network_message_identifiers.h>
 
 #include <string>
@@ -12,11 +14,13 @@
 #include "raknet/Source/BitStream.h"
 
 enum{
-    ID_GAME_START=ID_GAME_PACKET_ENUM
+    ID_GAME_START=ID_GAME_PACKET_ENUM,
+    ID_GAME_CLIENT_ORDER
 };
 
 enum{
-    ORDERING_CHANNEL_GAME_START=ORDERING_CHANNEL_GAME_PACKET_ENUM
+    ORDERING_CHANNEL_GAME_START=ORDERING_CHANNEL_GAME_PACKET_ENUM,
+    ORDERING_CHANNEL_GAME_CLIENT_ORDER
 };
 
 class Network_Game{
@@ -40,6 +44,9 @@ public:
 
     static void send_game_start_data();
     static void receive_game_start_data();
+
+    static void send_client_game_order(const Game_Order& order);
+    static void receive_client_game_order();
 };
 
 #endif

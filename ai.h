@@ -23,7 +23,10 @@ public:
         EAT_AT_HOME,
         FORAGE,
         RETREAT,
-        ATTACK_PERSON_MELEE
+        ATTACK_PERSON_MELEE,
+        ATTACK_BUILDING_MELEE,
+        BUILD,
+        REPAIR
     };
 
 private:
@@ -47,6 +50,7 @@ public:
     bool is_gather_wheat() const;
     bool is_gather_tree() const;
     bool target_is_person() const;
+    bool is_combat() const;
 
     bool is_gather() const;
     bool is_empty_inventory() const;
@@ -55,6 +59,9 @@ public:
     bool is_forage() const;
     bool is_retreat() const;
     bool is_attack_person_melee() const;
+    bool is_attack_building_melee() const;
+    bool is_build() const;
+    bool is_repair() const;
 
     bool gather_can_interrupt() const;
     bool empty_inventory_can_interrupt() const;
@@ -63,8 +70,9 @@ public:
     bool forage_can_interrupt() const;
     bool retreat_can_interrupt() const;
     bool attack_person_melee_can_interrupt() const;
-
-    bool is_combat() const;
+    bool attack_building_melee_can_interrupt() const;
+    bool build_can_interrupt() const;
+    bool repair_can_interrupt() const;
 
     Tile::Type get_goal_tile_type() const;
 

@@ -31,18 +31,14 @@ void Engine::render_dev_info(){
             msg+="Month: "+Strings::num_to_string(Game::calendar.get_month())+"\n";
             msg+="Year: "+Strings::num_to_string(Game::calendar.get_year())+"\n";
 
-            int player_number=Network_Engine::get_our_player_number();
-            if(player_number>=0){
-                int32_t leader_index=Game::get_player_leader(player_number);
+            int32_t leader_index=Game::get_our_leader();
+            if(leader_index>=0){
+                const Leader& leader=Game::get_leader((uint32_t)leader_index);
+                const Civilization& civilization=Game::get_civilization(leader.get_civilization());
 
-                if(leader_index>=0){
-                    const Leader& leader=Game::get_leader((uint32_t)leader_index);
-                    const Civilization& civilization=Game::get_civilization(leader.get_civilization());
-
-                    msg+="\nCivilization:\n";
-                    msg+="Wheat: "+Strings::num_to_string(civilization.get_item_count(Inventory::Item_Type::WHEAT))+"\n";
-                    msg+="Tree: "+Strings::num_to_string(civilization.get_item_count(Inventory::Item_Type::TREE))+"\n";
-                }
+                msg+="\nCivilization:\n";
+                msg+="Wheat: "+Strings::num_to_string(civilization.get_item_count(Inventory::Item_Type::WHEAT))+"\n";
+                msg+="Tree: "+Strings::num_to_string(civilization.get_item_count(Inventory::Item_Type::TREE))+"\n";
             }
         }
     }

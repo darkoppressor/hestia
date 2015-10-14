@@ -14,6 +14,7 @@ City::City(){
     parent_civilization=0;
 
     breeding_counter=Game_Constants::BREEDING_RATE;
+    captured_counter=0;
 
     gather_zone_wheat=0;
     gather_zone_tree=0;
@@ -23,6 +24,7 @@ City::City(uint32_t new_parent){
     parent_civilization=new_parent;
 
     breeding_counter=Game_Constants::BREEDING_RATE;
+    captured_counter=0;
 
     gather_zone_wheat=0;
     gather_zone_tree=0;
@@ -132,6 +134,20 @@ uint32_t City::get_population() const{
     return people.size();
 }
 
+bool City::needs_repair() const{
+    const Tile& our_tile=Game::get_tile(tile);
+
+    return our_tile.needs_repair();
+}
+
+bool City::was_recently_captured() const{
+    return captured_counter!=0;
+}
+
+void City::set_just_captured(){
+    captured_counter=Game_Constants::CAPTURE_COOLDOWN;
+}
+
 void City::breed(uint32_t index,RNG& rng){
     if(get_population()<Game_Constants::CITY_POPULATION_MAX){
         if(--breeding_counter==0){
@@ -144,6 +160,12 @@ void City::breed(uint32_t index,RNG& rng){
 
             Game::new_people.push_back(Person(index,Collision_Rect<int32_t>(x,y,Game_Constants::PERSON_SIZE,Game_Constants::PERSON_SIZE)));
         }
+    }
+}
+
+void City::capture_cooldown(){
+    if(captured_counter>0){
+        captured_counter--;
     }
 }
 

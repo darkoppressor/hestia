@@ -11,6 +11,7 @@
 #include <object_manager.h>
 #include <options.h>
 #include <engine_input.h>
+#include <window_manager.h>
 
 using namespace std;
 
@@ -145,6 +146,16 @@ bool Game_Manager::handle_game_command_gui(string command_name){
 
             return true;
         }
+        else if(command_name=="build_city"){
+            if(Game::get_order()!=Game_Order::Type::BUILD_CITY){
+                Game::set_order(Game_Order::Type::BUILD_CITY);
+            }
+            else{
+                Game::clear_order();
+            }
+
+            return true;
+        }
     }
 
     //Toggle chat box
@@ -213,6 +224,26 @@ bool Game_Manager::handle_input_events_gui(){
                 zoom_camera_out(camera);
 
                 event_consumed=true;
+            }
+        }
+        else if(Engine_Input::event.type==SDL_MOUSEBUTTONDOWN){
+            if(!Window_Manager::is_mouse_over_open_window()){
+                if(!event_consumed && Engine_Input::event.button.button==SDL_BUTTON_LEFT){
+                    if(Game::has_order()){
+                        int32_t leader=Game::get_our_leader();
+                        if(leader>=0){
+                            Game_Order current_order(Game::get_order(),Game::get_order_tile_coords(),(uint32_t)leader);
+
+                            if(current_order.is_valid()){
+                                Game::issue_order(current_order);
+                            }
+                        }
+
+                        Game::clear_order();
+                    }
+
+                    event_consumed=true;
+                }
             }
         }
     }

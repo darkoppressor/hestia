@@ -23,6 +23,7 @@ uint32_t Game_Constants::DAY_LENGTH=0;
 uint32_t Game_Constants::CITY_POPULATION_MAX=0;
 uint32_t Game_Constants::CITY_POPULATION_START=0;
 uint32_t Game_Constants::BREEDING_RATE=0;
+uint32_t Game_Constants::CAPTURE_COOLDOWN=0;
 
 int32_t Game_Constants::PERSON_MASS=0;
 int32_t Game_Constants::PERSON_MAX_SPEED=0;
@@ -37,6 +38,15 @@ int16_t Game_Constants::PERSON_HEALTH_CHANGE_RATE=0;
 int16_t Game_Constants::PERSON_ATTACK=0;
 int16_t Game_Constants::PERSON_DEFENSE=0;
 
+int16_t Game_Constants::BUILDING_HEALTH_MAX=0;
+int16_t Game_Constants::BUILDING_REPAIR_AMOUNT=0;
+int16_t Game_Constants::BUILDING_DEFENSE=0;
+
+int16_t Game_Constants::BUILDING_CAPTURED_HEALTH_PERCENTAGE=0;
+
+uint32_t Game_Constants::COST_BUILD=0;
+uint32_t Game_Constants::COST_REPAIR=0;
+
 uint8_t Game_Constants::HUNGER_FULL=0;
 uint8_t Game_Constants::HUNGER_HUNGRY=0;
 uint8_t Game_Constants::HUNGER_STARVING=0;
@@ -47,6 +57,7 @@ uint32_t Game_Constants::FORAGE_ZONE_RANGE=0;
 uint64_t Game_Constants::INTERACTION_RANGE=0;
 int32_t Game_Constants::SIGHT_RANGE=0;
 uint64_t Game_Constants::HOME_DEFENSE_RANGE=0;
+uint32_t Game_Constants::CITY_SPACING=0;
 
 uint32_t Game_Constants::RETREAT_HOME_CHANCE=0;
 int32_t Game_Constants::RETREAT_ZONE_RANGE=0;
@@ -64,14 +75,16 @@ int32_t Game_Constants::PRIORITY_IGNORE=0;
 int32_t Game_Constants::PRIORITY_GATHER=0;
 int32_t Game_Constants::PRIORITY_EMPTY_INVENTORY=0;
 int32_t Game_Constants::PRIORITY_EAT=0;
-int32_t Game_Constants::PRIORITY_ATTACK_PERSON_MELEE_WITH_NO_ADVANTAGE=0;
-int32_t Game_Constants::PRIORITY_ATTACK_PERSON_MELEE_WITH_MINOR_ADVANTAGE=0;
-int32_t Game_Constants::PRIORITY_ATTACK_PERSON_MELEE_WITH_MAJOR_ADVANTAGE=0;
-int32_t Game_Constants::PRIORITY_ATTACK_PERSON_MELEE_WITH_OVERWHELMING_ADVANTAGE=0;
 int32_t Game_Constants::PRIORITY_RETREAT_WITH_MINOR_DISADVANTAGE=0;
 int32_t Game_Constants::PRIORITY_RETREAT_WITH_MAJOR_DISADVANTAGE=0;
 int32_t Game_Constants::PRIORITY_RETREAT_WITH_OVERWHELMING_DISADVANTAGE=0;
 int32_t Game_Constants::PRIORITY_RETREAT_WITH_LOW_HEALTH=0;
+int32_t Game_Constants::PRIORITY_ATTACK_MELEE_WITH_NO_ADVANTAGE=0;
+int32_t Game_Constants::PRIORITY_ATTACK_MELEE_WITH_MINOR_ADVANTAGE=0;
+int32_t Game_Constants::PRIORITY_ATTACK_MELEE_WITH_MAJOR_ADVANTAGE=0;
+int32_t Game_Constants::PRIORITY_ATTACK_MELEE_WITH_OVERWHELMING_ADVANTAGE=0;
+int32_t Game_Constants::PRIORITY_BUILD=0;
+int32_t Game_Constants::PRIORITY_REPAIR=0;
 
 uint32_t Game_Constants::GATHER_RATE=0;
 uint32_t Game_Constants::EMPTY_INVENTORY_RATE=0;
@@ -80,6 +93,9 @@ uint32_t Game_Constants::EAT_AT_HOME_RATE=0;
 uint32_t Game_Constants::FORAGE_RATE=0;
 uint32_t Game_Constants::RETREAT_RATE=0;
 uint32_t Game_Constants::ATTACK_PERSON_MELEE_RATE=0;
+uint32_t Game_Constants::ATTACK_BUILDING_MELEE_RATE=0;
+uint32_t Game_Constants::BUILD_RATE=0;
+uint32_t Game_Constants::REPAIR_RATE=0;
 
 void Game_Constants_Loader::set_game_constant(string name,string value){
     if(name=="zoom_rate"){
@@ -126,6 +142,10 @@ void Game_Constants_Loader::set_game_constant(string name,string value){
         Game_Constants::BREEDING_RATE=Strings::string_to_unsigned_long(value);
     }
 
+    else if(name=="capture_cooldown"){
+        Game_Constants::CAPTURE_COOLDOWN=Strings::string_to_unsigned_long(value);
+    }
+
     else if(name=="person_mass"){
         Game_Constants::PERSON_MASS=Strings::string_to_long(value);
     }
@@ -159,6 +179,27 @@ void Game_Constants_Loader::set_game_constant(string name,string value){
         Game_Constants::PERSON_DEFENSE=Strings::string_to_long(value);
     }
 
+    else if(name=="building_health_max"){
+        Game_Constants::BUILDING_HEALTH_MAX=Strings::string_to_long(value);
+    }
+    else if(name=="building_repair_amount"){
+        Game_Constants::BUILDING_REPAIR_AMOUNT=Strings::string_to_long(value);
+    }
+    else if(name=="building_defense"){
+        Game_Constants::BUILDING_DEFENSE=Strings::string_to_long(value);
+    }
+
+    else if(name=="building_captured_health_percentage"){
+        Game_Constants::BUILDING_CAPTURED_HEALTH_PERCENTAGE=Strings::string_to_long(value);
+    }
+
+    else if(name=="cost_build"){
+        Game_Constants::COST_BUILD=Strings::string_to_unsigned_long(value);
+    }
+    else if(name=="cost_repair"){
+        Game_Constants::COST_REPAIR=Strings::string_to_unsigned_long(value);
+    }
+
     else if(name=="hunger_full"){
         Game_Constants::HUNGER_FULL=Strings::string_to_unsigned_long(value);
     }
@@ -184,6 +225,9 @@ void Game_Constants_Loader::set_game_constant(string name,string value){
     }
     else if(name=="home_defense_range"){
         Game_Constants::HOME_DEFENSE_RANGE=Strings::string_to_unsigned_long(value);
+    }
+    else if(name=="city_spacing"){
+        Game_Constants::CITY_SPACING=Strings::string_to_unsigned_long(value);
     }
 
     else if(name=="retreat_home_chance"){
@@ -228,18 +272,6 @@ void Game_Constants_Loader::set_game_constant(string name,string value){
     else if(name=="priority_eat"){
         Game_Constants::PRIORITY_EAT=Strings::string_to_long(value);
     }
-    else if(name=="priority_attack_person_melee_with_no_advantage"){
-        Game_Constants::PRIORITY_ATTACK_PERSON_MELEE_WITH_NO_ADVANTAGE=Strings::string_to_long(value);
-    }
-    else if(name=="priority_attack_person_melee_with_minor_advantage"){
-        Game_Constants::PRIORITY_ATTACK_PERSON_MELEE_WITH_MINOR_ADVANTAGE=Strings::string_to_long(value);
-    }
-    else if(name=="priority_attack_person_melee_with_major_advantage"){
-        Game_Constants::PRIORITY_ATTACK_PERSON_MELEE_WITH_MAJOR_ADVANTAGE=Strings::string_to_long(value);
-    }
-    else if(name=="priority_attack_person_melee_with_overwhelming_advantage"){
-        Game_Constants::PRIORITY_ATTACK_PERSON_MELEE_WITH_OVERWHELMING_ADVANTAGE=Strings::string_to_long(value);
-    }
     else if(name=="priority_retreat_with_minor_disadvantage"){
         Game_Constants::PRIORITY_RETREAT_WITH_MINOR_DISADVANTAGE=Strings::string_to_long(value);
     }
@@ -251,6 +283,24 @@ void Game_Constants_Loader::set_game_constant(string name,string value){
     }
     else if(name=="priority_retreat_with_low_health"){
         Game_Constants::PRIORITY_RETREAT_WITH_LOW_HEALTH=Strings::string_to_long(value);
+    }
+    else if(name=="priority_attack_melee_with_no_advantage"){
+        Game_Constants::PRIORITY_ATTACK_MELEE_WITH_NO_ADVANTAGE=Strings::string_to_long(value);
+    }
+    else if(name=="priority_attack_melee_with_minor_advantage"){
+        Game_Constants::PRIORITY_ATTACK_MELEE_WITH_MINOR_ADVANTAGE=Strings::string_to_long(value);
+    }
+    else if(name=="priority_attack_melee_with_major_advantage"){
+        Game_Constants::PRIORITY_ATTACK_MELEE_WITH_MAJOR_ADVANTAGE=Strings::string_to_long(value);
+    }
+    else if(name=="priority_attack_melee_with_overwhelming_advantage"){
+        Game_Constants::PRIORITY_ATTACK_MELEE_WITH_OVERWHELMING_ADVANTAGE=Strings::string_to_long(value);
+    }
+    else if(name=="priority_build"){
+        Game_Constants::PRIORITY_BUILD=Strings::string_to_long(value);
+    }
+    else if(name=="priority_repair"){
+        Game_Constants::PRIORITY_REPAIR=Strings::string_to_long(value);
     }
 
     else if(name=="gather_rate"){
@@ -273,5 +323,14 @@ void Game_Constants_Loader::set_game_constant(string name,string value){
     }
     else if(name=="attack_person_melee_rate"){
         Game_Constants::ATTACK_PERSON_MELEE_RATE=Strings::string_to_unsigned_long(value);
+    }
+    else if(name=="attack_building_melee_rate"){
+        Game_Constants::ATTACK_BUILDING_MELEE_RATE=Strings::string_to_unsigned_long(value);
+    }
+    else if(name=="build_rate"){
+        Game_Constants::BUILD_RATE=Strings::string_to_unsigned_long(value);
+    }
+    else if(name=="repair_rate"){
+        Game_Constants::REPAIR_RATE=Strings::string_to_unsigned_long(value);
     }
 }

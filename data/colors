@@ -5,6 +5,16 @@
 	rgb:21,158,204
 </color>
 
+<color>
+	name:order_valid
+	rgb:230,230,230
+</color>
+
+<color>
+	name:order_invalid
+	rgb:204,10,10
+</color>
+
 //** Engine Colors **//
 
 <color>
