@@ -8,6 +8,7 @@
 
 #include <render.h>
 #include <game_manager.h>
+#include <image_manager.h>
 
 using namespace std;
 
@@ -118,10 +119,16 @@ void Game_Order::render() const{
         color="order_invalid";
     }
 
-    ///QQQ should render the building tile
     if(type==Type::BUILD_CITY){
-        Render::render_rectangle(x*Game_Manager::camera_zoom-Game_Manager::camera.x,y*Game_Manager::camera_zoom-Game_Manager::camera.y,
-                                 (double)Tile::get_tile_type_size(get_tile_type())*Game_Manager::camera_zoom,
-                                 (double)Tile::get_tile_type_size(get_tile_type())*Game_Manager::camera_zoom,0.6,color);
+        double tile_size=(double)Tile::get_tile_type_size(get_tile_type());
+
+        Render::render_rectangle_empty(x*Game_Manager::camera_zoom-Game_Manager::camera.x,
+                                       y*Game_Manager::camera_zoom-Game_Manager::camera.y,
+                                       tile_size*Game_Manager::camera_zoom,
+                                       tile_size*Game_Manager::camera_zoom,
+                                       1.0,color,Game_Constants::RENDER_BUILDING_COLOR_BORDER*Game_Manager::camera_zoom);
+
+        Render::render_texture(x*Game_Manager::camera_zoom-Game_Manager::camera.x,y*Game_Manager::camera_zoom-Game_Manager::camera.y,
+                               Image_Manager::get_image("tile_building_unfinished"),0.75,Game_Manager::camera_zoom,Game_Manager::camera_zoom,0.0,color);
     }
 }

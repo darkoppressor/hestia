@@ -416,3 +416,21 @@
 	name:repair_rate
 	value:2500
 </game_constant>
+
+<game_constant>
+	//pixels
+	name:render_building_unfinished_color
+	value:0.0
+</game_constant>
+
+<game_constant>
+	//pixels
+	name:render_building_city_color
+	value:32.0
+</game_constant>
+
+<game_constant>
+	//pixels
+	name:render_building_color_border
+	value:4.0
+</game_constant>

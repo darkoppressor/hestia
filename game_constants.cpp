@@ -97,6 +97,10 @@ uint32_t Game_Constants::ATTACK_BUILDING_MELEE_RATE=0;
 uint32_t Game_Constants::BUILD_RATE=0;
 uint32_t Game_Constants::REPAIR_RATE=0;
 
+double Game_Constants::RENDER_BUILDING_UNFINISHED_COLOR=0.0;
+double Game_Constants::RENDER_BUILDING_CITY_COLOR=0.0;
+double Game_Constants::RENDER_BUILDING_COLOR_BORDER=0.0;
+
 void Game_Constants_Loader::set_game_constant(string name,string value){
     if(name=="zoom_rate"){
         Engine_Data::ZOOM_RATE=Strings::string_to_double(value);
@@ -332,5 +336,15 @@ void Game_Constants_Loader::set_game_constant(string name,string value){
     }
     else if(name=="repair_rate"){
         Game_Constants::REPAIR_RATE=Strings::string_to_unsigned_long(value);
+    }
+
+    else if(name=="render_building_unfinished_color"){
+        Game_Constants::RENDER_BUILDING_UNFINISHED_COLOR=Strings::string_to_double(value);
+    }
+    else if(name=="render_building_city_color"){
+        Game_Constants::RENDER_BUILDING_CITY_COLOR=Strings::string_to_double(value);
+    }
+    else if(name=="render_building_color_border"){
+        Game_Constants::RENDER_BUILDING_COLOR_BORDER=Strings::string_to_double(value);
     }
 }

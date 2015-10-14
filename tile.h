@@ -6,6 +6,7 @@
 #define tile_h
 
 #include <cstdint>
+#include <string>
 
 class Tile{
 public:
@@ -75,6 +76,8 @@ public:
     //chunks
     static std::uint32_t get_chunk_x(std::uint32_t tile_x);
     static std::uint32_t get_chunk_y(std::uint32_t tile_y);
+
+    static std::string get_type_string(Type type_to_check);
 
     void render(std::uint32_t tile_x,std::uint32_t tile_y) const;
 };
