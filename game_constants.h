@@ -100,6 +100,8 @@ public:
     static double RENDER_BUILDING_UNFINISHED_COLOR;
     static double RENDER_BUILDING_CITY_COLOR;
     static double RENDER_BUILDING_COLOR_BORDER;
+    static double RENDER_BAR_HEIGHT;
+    static double RENDER_BAR_THICKNESS;
 };
 
 #endif

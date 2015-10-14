@@ -83,6 +83,10 @@ bool Tile::is_alive() const{
     return health>0;
 }
 
+bool Tile::health_low() const{
+    return health<=get_health_max()/4;
+}
+
 bool Tile::needs_repair() const{
     return health<get_health_max();
 }
@@ -259,6 +263,26 @@ void Tile::render(uint32_t tile_x,uint32_t tile_y) const{
 
             Render::render_texture(x*Game_Manager::camera_zoom-Game_Manager::camera.x,y*Game_Manager::camera_zoom-Game_Manager::camera.y,
                                    Image_Manager::get_image("tile_"+get_type_string(type)),1.0,Game_Manager::camera_zoom,Game_Manager::camera_zoom);
+
+            if(is_building()){
+                double percentage=(double)get_health()/(double)get_health_max();
+                double max_bar_width=(double)get_size();
+                double bar_width=max_bar_width*percentage;
+                double bar_height=Game_Constants::RENDER_BAR_HEIGHT;
+                double back_thickness=Game_Constants::RENDER_BAR_THICKNESS;
+
+                string color_bar_health="health_normal";
+                if(health_low()){
+                    color_bar_health="health_low";
+                }
+
+                Render::render_rectangle((x-back_thickness)*Game_Manager::camera_zoom-Game_Manager::camera.x,
+                                         (y-bar_height-back_thickness*4.0)*Game_Manager::camera_zoom-Game_Manager::camera.y,
+                                         (max_bar_width+back_thickness*2.0)*Game_Manager::camera_zoom,(bar_height+back_thickness*2.0)*Game_Manager::camera_zoom,1.0,"ui_black");
+                Render::render_rectangle(x*Game_Manager::camera_zoom-Game_Manager::camera.x,
+                                         (y-bar_height-back_thickness*3.0)*Game_Manager::camera_zoom-Game_Manager::camera.y,
+                                         bar_width*Game_Manager::camera_zoom,bar_height*Game_Manager::camera_zoom,1.0,color_bar_health);
+            }
 
             ///QQQ dev data
             ///Bitmap_Font* font=Object_Manager::get_font("small");

@@ -434,3 +434,15 @@
 	name:render_building_color_border
 	value:4.0
 </game_constant>
+
+<game_constant>
+	//pixels
+	name:render_bar_height
+	value:4.0
+</game_constant>
+
+<game_constant>
+	//pixels
+	name:render_bar_thickness
+	value:1.0
+</game_constant>

@@ -9,6 +9,7 @@
 #include <engine.h>
 #include <game_manager.h>
 #include <render.h>
+#include <image_manager.h>
 
 ///QQQ includes
 #include <object_manager.h>
@@ -738,12 +739,41 @@ void Person::render() const{
             Render::render_rectangle(x*Game_Manager::camera_zoom-Game_Manager::camera.x,y*Game_Manager::camera_zoom-Game_Manager::camera.y,
                                      (double)box.w*Game_Manager::camera_zoom,(double)box.h*Game_Manager::camera_zoom,1.0,color);
 
+            double percentage=(double)get_health()/(double)get_health_max();
+            double max_bar_width=(double)box.w;
+            double bar_width=max_bar_width*percentage;
+            double bar_height=Game_Constants::RENDER_BAR_HEIGHT;
+            double back_thickness=Game_Constants::RENDER_BAR_THICKNESS;
+
+            string color_bar_health="health_normal";
+            if(health_low()){
+                color_bar_health="health_low";
+            }
+
+            Render::render_rectangle((x-back_thickness)*Game_Manager::camera_zoom-Game_Manager::camera.x,
+                                     (y-bar_height-back_thickness*4.0)*Game_Manager::camera_zoom-Game_Manager::camera.y,
+                                     (max_bar_width+back_thickness*2.0)*Game_Manager::camera_zoom,(bar_height+back_thickness*2.0)*Game_Manager::camera_zoom,1.0,"ui_black");
+            Render::render_rectangle(x*Game_Manager::camera_zoom-Game_Manager::camera.x,
+                                     (y-bar_height-back_thickness*3.0)*Game_Manager::camera_zoom-Game_Manager::camera.y,
+                                     bar_width*Game_Manager::camera_zoom,bar_height*Game_Manager::camera_zoom,1.0,color_bar_health);
+
+            if(is_hungry()){
+                Render::render_texture((x+max_bar_width+back_thickness*2.0)*Game_Manager::camera_zoom-Game_Manager::camera.x,
+                                       (y-bar_height-back_thickness*4.0)*Game_Manager::camera_zoom-Game_Manager::camera.y,Image_Manager::get_image("icon_person_hungry"),1.0,
+                                       Game_Manager::camera_zoom,Game_Manager::camera_zoom);
+            }
+            else if(is_starving()){
+                Render::render_texture((x+max_bar_width+back_thickness*2.0)*Game_Manager::camera_zoom-Game_Manager::camera.x,
+                                       (y-bar_height-back_thickness*4.0)*Game_Manager::camera_zoom-Game_Manager::camera.y,Image_Manager::get_image("icon_person_starving"),1.0,
+                                       Game_Manager::camera_zoom,Game_Manager::camera_zoom);
+            }
+
             ///QQQ dev data
             /**Collision_Rect<int32_t> box_sight=get_sight_box();
             Render::render_rectangle((double)box_sight.x*Game_Manager::camera_zoom-Game_Manager::camera.x,
                                      (double)box_sight.y*Game_Manager::camera_zoom-Game_Manager::camera.y,
                                      (double)box_sight.w*Game_Manager::camera_zoom,(double)box_sight.h*Game_Manager::camera_zoom,0.25,"red");*/
-            Bitmap_Font* font=Object_Manager::get_font("small");
+            /**Bitmap_Font* font=Object_Manager::get_font("small");
             string msg="Goal: ";
             if(goal.is_gather_wheat()){
                 msg+="Gather wheat\n";
@@ -786,7 +816,7 @@ void Person::render() const{
             msg+="Wheat: "+Strings::num_to_string(inventory.get_item_count(Inventory::Item_Type::WHEAT))+"\n";
             msg+="Tree: "+Strings::num_to_string(inventory.get_item_count(Inventory::Item_Type::TREE))+"\n";
             ///msg+=Strings::num_to_string(goal.get_coords_tiles().x)+","+Strings::num_to_string(goal.get_coords_tiles().y);
-            font->show(x*Game_Manager::camera_zoom-Game_Manager::camera.x,y*Game_Manager::camera_zoom-Game_Manager::camera.y,msg,"white");
+            font->show(x*Game_Manager::camera_zoom-Game_Manager::camera.x,y*Game_Manager::camera_zoom-Game_Manager::camera.y,msg,"white");*/
             ///
         }
     }

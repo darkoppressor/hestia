@@ -44,6 +44,7 @@ public:
     bool is_food() const;
 
     bool is_alive() const;
+    bool health_low() const;
     bool needs_repair() const;
     void repair();
     void capture_heal();

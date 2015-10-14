@@ -100,6 +100,8 @@ uint32_t Game_Constants::REPAIR_RATE=0;
 double Game_Constants::RENDER_BUILDING_UNFINISHED_COLOR=0.0;
 double Game_Constants::RENDER_BUILDING_CITY_COLOR=0.0;
 double Game_Constants::RENDER_BUILDING_COLOR_BORDER=0.0;
+double Game_Constants::RENDER_BAR_HEIGHT=0.0;
+double Game_Constants::RENDER_BAR_THICKNESS=0.0;
 
 void Game_Constants_Loader::set_game_constant(string name,string value){
     if(name=="zoom_rate"){
@@ -346,5 +348,11 @@ void Game_Constants_Loader::set_game_constant(string name,string value){
     }
     else if(name=="render_building_color_border"){
         Game_Constants::RENDER_BUILDING_COLOR_BORDER=Strings::string_to_double(value);
+    }
+    else if(name=="render_bar_height"){
+        Game_Constants::RENDER_BAR_HEIGHT=Strings::string_to_double(value);
+    }
+    else if(name=="render_bar_thickness"){
+        Game_Constants::RENDER_BAR_THICKNESS=Strings::string_to_double(value);
     }
 }

@@ -15,6 +15,16 @@
 	rgb:204,10,10
 </color>
 
+<color>
+	name:health_normal
+	rgb:18,178,18
+</color>
+
+<color>
+	name:health_low
+	rgb:242,12,12
+</color>
+
 //** Engine Colors **//
 
 <color>
