@@ -44,12 +44,18 @@ public:
     static std::uint32_t GATHER_ZONE_RANGE;
     static std::uint32_t FORAGE_ZONE_RANGE;
 
-    static std::uint32_t INTERACTION_RANGE;
+    static std::uint64_t INTERACTION_RANGE;
     static std::int32_t SIGHT_RANGE;
     static std::uint64_t HOME_DEFENSE_RANGE;
 
-    static std::uint32_t AI_TARGET_SELECTION_CHANCE_COMBAT_SCORE;
-    static std::uint32_t AI_TARGET_SELECTION_CHANCE_DISTANCE;
+    static std::uint32_t RETREAT_HOME_CHANCE;
+    static std::int32_t RETREAT_ZONE_RANGE;
+
+    static std::uint32_t AI_TARGET_SELECTION_WEIGHT_NEEDED;
+    static std::uint32_t AI_TARGET_SELECTION_WEIGHT_HEALTH;
+    static std::uint32_t AI_TARGET_SELECTION_WEIGHT_ATTACK;
+    static std::uint32_t AI_TARGET_SELECTION_WEIGHT_DEFENSE;
+    static std::uint32_t AI_TARGET_SELECTION_WEIGHT_DISTANCE;
 
     static std::int32_t AI_COMBAT_SCORE_RATIO_MAJOR;
     static std::int32_t AI_COMBAT_SCORE_RATIO_OVERWHELMING;

@@ -26,7 +26,6 @@ private:
     Collision_Rect<std::int32_t> box;
 
     Int_Vector velocity;
-    Int_Vector acceleration;
     Int_Vector force;
 
     Inventory inventory;
@@ -85,6 +84,8 @@ public:
     std::int16_t get_attack() const;
     std::int16_t get_defense() const;
 
+    bool could_damage(const Person& person) const;
+
     bool is_full() const;
     bool is_hungry() const;
     bool is_starving() const;
@@ -98,6 +99,9 @@ public:
     //pixels
     //Returns the range^2
     std::uint64_t get_goal_range() const;
+    //pixels
+    //Returns the distance^2
+    std::uint64_t get_goal_distance() const;
     //pixels
     //Returns coordinates of -1,-1 if the goal coordinates could not be determined
     Coords<std::int32_t> get_goal_coords() const;
@@ -116,6 +120,7 @@ public:
 
     //  AI  //
 
+    void put_our_city_first(std::vector<std::uint32_t>& cities) const;
     void put_our_chunk_first(std::vector<Coords<std::uint32_t>>& chunk_coords) const;
     //Remove the chunk coordinates for any chunks that have none of the desired tile types
     void filter_zone_chunks(std::vector<Coords<std::uint32_t>>& chunk_coords,const std::vector<Tile::Type>& desired_tile_types) const;
@@ -139,6 +144,21 @@ public:
     void set_new_goal(RNG& rng,AI_Goal::Type new_goal_type,std::uint32_t target,std::vector<Coords<std::uint32_t>> forage_chunk_coords);
 
     void ai(RNG& rng,const Quadtree<std::int32_t,std::uint32_t>& quadtree,std::uint32_t frame,std::uint32_t index);
+};
+
+class AI_Target{
+public:
+
+    std::uint32_t id;
+    std::uint64_t distance;
+    std::int16_t health;
+    std::int16_t attack;
+    std::int16_t defense;
+
+    AI_Target(std::uint32_t new_id,std::uint64_t new_distance,std::int16_t new_health,std::int16_t new_attack,std::int16_t new_defense);
+
+    //Implemented for compatibility with quick_sort
+    bool operator<=(const AI_Target& target) const;
 };
 
 #endif

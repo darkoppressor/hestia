@@ -170,9 +170,9 @@
 </game_constant>
 
 <game_constant>
-	//tiles
+	//pixels
 	name:interaction_range
-	value:2
+	value:24
 </game_constant>
 
 <game_constant>
@@ -189,13 +189,40 @@
 
 <game_constant>
 	//integer percentage
-	name:ai_target_selection_chance_combat_score
+	//Note that this only takes effect when the player has only one city
+	//It represents the chance that a person will retreat to their home city as opposed to a random location
+	name:retreat_home_chance
+	value:75
+</game_constant>
+
+<game_constant>
+	//tiles
+	name:retreat_zone_range
+	value:128
+</game_constant>
+
+<game_constant>
+	name:ai_target_selection_weight_needed
+	value:90
+</game_constant>
+
+<game_constant>
+	name:ai_target_selection_weight_health
+	value:35
+</game_constant>
+
+<game_constant>
+	name:ai_target_selection_weight_attack
 	value:55
 </game_constant>
 
 <game_constant>
-	//integer percentage
-	name:ai_target_selection_chance_distance
+	name:ai_target_selection_weight_defense
+	value:45
+</game_constant>
+
+<game_constant>
+	name:ai_target_selection_weight_distance
 	value:35
 </game_constant>
 

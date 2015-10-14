@@ -44,12 +44,18 @@ uint8_t Game_Constants::HUNGER_STARVING=0;
 uint32_t Game_Constants::GATHER_ZONE_RANGE=0;
 uint32_t Game_Constants::FORAGE_ZONE_RANGE=0;
 
-uint32_t Game_Constants::INTERACTION_RANGE=0;
+uint64_t Game_Constants::INTERACTION_RANGE=0;
 int32_t Game_Constants::SIGHT_RANGE=0;
 uint64_t Game_Constants::HOME_DEFENSE_RANGE=0;
 
-uint32_t Game_Constants::AI_TARGET_SELECTION_CHANCE_COMBAT_SCORE=0;
-uint32_t Game_Constants::AI_TARGET_SELECTION_CHANCE_DISTANCE=0;
+uint32_t Game_Constants::RETREAT_HOME_CHANCE=0;
+int32_t Game_Constants::RETREAT_ZONE_RANGE=0;
+
+uint32_t Game_Constants::AI_TARGET_SELECTION_WEIGHT_NEEDED=0;
+uint32_t Game_Constants::AI_TARGET_SELECTION_WEIGHT_HEALTH=0;
+uint32_t Game_Constants::AI_TARGET_SELECTION_WEIGHT_ATTACK=0;
+uint32_t Game_Constants::AI_TARGET_SELECTION_WEIGHT_DEFENSE=0;
+uint32_t Game_Constants::AI_TARGET_SELECTION_WEIGHT_DISTANCE=0;
 
 int32_t Game_Constants::AI_COMBAT_SCORE_RATIO_MAJOR=0;
 int32_t Game_Constants::AI_COMBAT_SCORE_RATIO_OVERWHELMING=0;
@@ -180,11 +186,27 @@ void Game_Constants_Loader::set_game_constant(string name,string value){
         Game_Constants::HOME_DEFENSE_RANGE=Strings::string_to_unsigned_long(value);
     }
 
-    else if(name=="ai_target_selection_chance_combat_score"){
-        Game_Constants::AI_TARGET_SELECTION_CHANCE_COMBAT_SCORE=Strings::string_to_unsigned_long(value);
+    else if(name=="retreat_home_chance"){
+        Game_Constants::RETREAT_HOME_CHANCE=Strings::string_to_unsigned_long(value);
     }
-    else if(name=="ai_target_selection_chance_distance"){
-        Game_Constants::AI_TARGET_SELECTION_CHANCE_DISTANCE=Strings::string_to_unsigned_long(value);
+    else if(name=="retreat_zone_range"){
+        Game_Constants::RETREAT_ZONE_RANGE=Strings::string_to_long(value);
+    }
+
+    else if(name=="ai_target_selection_weight_needed"){
+        Game_Constants::AI_TARGET_SELECTION_WEIGHT_NEEDED=Strings::string_to_unsigned_long(value);
+    }
+    else if(name=="ai_target_selection_weight_health"){
+        Game_Constants::AI_TARGET_SELECTION_WEIGHT_HEALTH=Strings::string_to_unsigned_long(value);
+    }
+    else if(name=="ai_target_selection_weight_attack"){
+        Game_Constants::AI_TARGET_SELECTION_WEIGHT_ATTACK=Strings::string_to_unsigned_long(value);
+    }
+    else if(name=="ai_target_selection_weight_defense"){
+        Game_Constants::AI_TARGET_SELECTION_WEIGHT_DEFENSE=Strings::string_to_unsigned_long(value);
+    }
+    else if(name=="ai_target_selection_weight_distance"){
+        Game_Constants::AI_TARGET_SELECTION_WEIGHT_DISTANCE=Strings::string_to_unsigned_long(value);
     }
 
     else if(name=="ai_combat_score_ratio_major"){

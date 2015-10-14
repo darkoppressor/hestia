@@ -14,6 +14,20 @@
 
 using namespace std;
 
+void Person::put_our_city_first(vector<uint32_t>& cities) const{
+    uint32_t our_city=get_parent_city();
+
+    for(size_t i=0;i<cities.size();i++){
+        if(cities[i]==our_city){
+            if(i>0){
+                swap(cities[i],cities[0]);
+            }
+
+            break;
+        }
+    }
+}
+
 void Person::put_our_chunk_first(vector<Coords<uint32_t>>& chunk_coords) const{
     Coords<uint32_t> our_chunk_coords(get_chunk_x(),get_chunk_y());
 
@@ -183,12 +197,9 @@ uint32_t Person::target_scan(vector<AI_Choice>& choices,RNG& rng,const Quadtree<
 
         quadtree.get_objects(targets_people,box_sight,index);
 
-        bool target_found=false;
-        uint32_t target=0;
-        uint64_t target_distance=0;
+        vector<AI_Target> valid_targets;
 
         //Note that scores must never be negative
-        int32_t target_score=0;
         int32_t friendly_score=0;
         int32_t enemy_score=0;
 
@@ -207,36 +218,10 @@ uint32_t Person::target_scan(vector<AI_Choice>& choices,RNG& rng,const Quadtree<
                         friendly_score+=person_score;
                     }
                     else{
-                        if(!target_found){
-                            target_found=true;
-                        }
+                        if(could_damage(person)){
+                            uint64_t person_distance=Int_Math::distance_between_points_no_sqrt(box.center_x(),box.center_y(),person.get_box().center_x(),person.get_box().center_y());
 
-                        uint32_t chance_to_change_target=0;
-
-                        uint64_t person_distance=0;
-
-                        //If we haven't selected a target yet
-                        if(target_score==0){
-                            chance_to_change_target=100;
-                        }
-                        else{
-                            if(person_score<target_score){
-                                chance_to_change_target+=Game_Constants::AI_TARGET_SELECTION_CHANCE_COMBAT_SCORE;
-                            }
-
-                            person_distance=Int_Math::distance_between_points_no_sqrt(box.center_x(),box.center_y(),person.get_box().center_x(),person.get_box().center_y());
-
-                            if(person_distance<target_distance){
-                                chance_to_change_target+=Game_Constants::AI_TARGET_SELECTION_CHANCE_DISTANCE;
-                            }
-                        }
-
-                        if(rng.random_range(0,99)<chance_to_change_target){
-                            target=targets_people[i];
-
-                            target_distance=person_distance;
-
-                            target_score=person_score;
+                            valid_targets.push_back(AI_Target(targets_people[i],person_distance,person.get_health(),person.get_attack(),person.get_defense()));
                         }
 
                         enemy_score+=person_score;
@@ -262,7 +247,15 @@ uint32_t Person::target_scan(vector<AI_Choice>& choices,RNG& rng,const Quadtree<
             }
         }
 
-        if(target_found){
+        uint32_t target=0;
+
+        if(valid_targets.size()>0){
+            Sorting::quick_sort(valid_targets);
+
+            uint32_t valid_target_index=rng.weighted_random_range(0,valid_targets.size()-1,valid_targets.size()-1,RNG::Weight::NORMAL);
+
+            target=valid_targets[valid_target_index].id;
+
             if(goal.attack_person_melee_can_interrupt()){
                 if(score_advantage>=Game_Constants::AI_COMBAT_SCORE_RATIO_OVERWHELMING){
                     choices.push_back(AI_Choice(AI_Goal::Type::ATTACK_PERSON_MELEE,Game_Constants::PRIORITY_ATTACK_PERSON_MELEE_WITH_OVERWHELMING_ADVANTAGE));
@@ -357,9 +350,52 @@ void Person::set_new_goal(RNG& rng,AI_Goal::Type new_goal_type,uint32_t target,v
         find_tile(rng,forage_chunk_coords);
     }
     else if(goal.is_retreat()){
-        const City& city=Game::get_city(get_parent_city());
+        const Civilization& civilization=Game::get_civilization(get_parent_civilization());
 
-        goal.set_coords_pixels(Coords<int32_t>(city.get_center_x(),city.get_center_y()));
+        vector<uint32_t> civ_cities=civilization.get_cities();
+
+        //If we have multiple cities
+        if(civ_cities.size()>1){
+            put_our_city_first(civ_cities);
+
+            uint32_t city_index=rng.weighted_random_range(0,civ_cities.size()-1,0,RNG::Weight::NORMAL);
+
+            const City& city=Game::get_city(city_index);
+
+            goal.set_coords_pixels(Coords<int32_t>(city.get_center_x(),city.get_center_y()));
+        }
+        //If we have only one city
+        else{
+            if(rng.random_range(0,99)<Game_Constants::RETREAT_HOME_CHANCE){
+                const City& city=Game::get_city(get_parent_city());
+
+                goal.set_coords_pixels(Coords<int32_t>(city.get_center_x(),city.get_center_y()));
+            }
+            else{
+                int32_t retreat_zone_x=box.center_x()-(Game_Constants::RETREAT_ZONE_RANGE*(int32_t)Game_Constants::TILE_SIZE);
+                int32_t retreat_zone_y=box.center_y()-(Game_Constants::RETREAT_ZONE_RANGE*(int32_t)Game_Constants::TILE_SIZE);
+                int32_t retreat_zone_width=Game_Constants::RETREAT_ZONE_RANGE*(int32_t)Game_Constants::TILE_SIZE*2;
+                int32_t retreat_zone_height=Game_Constants::RETREAT_ZONE_RANGE*(int32_t)Game_Constants::TILE_SIZE*2;
+
+                if(retreat_zone_x<0){
+                    retreat_zone_x=0;
+                }
+                if(retreat_zone_y<0){
+                    retreat_zone_y=0;
+                }
+                if(retreat_zone_x+retreat_zone_width>=Game::get_world_width()){
+                    retreat_zone_width=Game::get_world_width()-1-retreat_zone_x;
+                }
+                if(retreat_zone_y+retreat_zone_height>=Game::get_world_height()){
+                    retreat_zone_height=Game::get_world_height()-1-retreat_zone_y;
+                }
+
+                int32_t x=(int32_t)rng.random_range((uint32_t)retreat_zone_x,uint32_t(retreat_zone_x+retreat_zone_width));
+                int32_t y=(int32_t)rng.random_range((uint32_t)retreat_zone_y,uint32_t(retreat_zone_y+retreat_zone_height));
+
+                goal.set_coords_pixels(Coords<int32_t>(x,y));
+            }
+        }
     }
     else if(goal.is_attack_person_melee()){
         goal.set_person_index(target);
@@ -384,7 +420,7 @@ void Person::ai(RNG& rng,const Quadtree<int32_t,uint32_t>& quadtree,uint32_t fra
             if(choices.size()>0){
                 Sorting::quick_sort(choices);
 
-                uint32_t choice_index=rng.weighted_random_range(0,choices.size()-1,choices.size()-1,"weak");
+                uint32_t choice_index=rng.weighted_random_range(0,choices.size()-1,choices.size()-1,RNG::Weight::WEAK);
 
                 if(choices[choice_index].goal_type!=AI_Goal::Type::NONE){
                     set_new_goal(rng,choices[choice_index].goal_type,target,forage_chunk_coords);
@@ -419,5 +455,40 @@ void Person::ai(RNG& rng,const Quadtree<int32_t,uint32_t>& quadtree,uint32_t fra
         else{
             brake();
         }
+    }
+}
+
+AI_Target::AI_Target(uint32_t new_id,uint64_t new_distance,int16_t new_health,int16_t new_attack,int16_t new_defense){
+    id=new_id;
+    distance=new_distance;
+    health=new_health;
+    attack=new_attack;
+    defense=new_defense;
+}
+
+bool AI_Target::operator<=(const AI_Target& target) const{
+    uint32_t score=0;
+
+    if(health>=target.health){
+        score+=Game_Constants::AI_TARGET_SELECTION_WEIGHT_HEALTH;
+    }
+
+    if(attack>=target.attack){
+        score+=Game_Constants::AI_TARGET_SELECTION_WEIGHT_ATTACK;
+    }
+
+    if(defense>=target.defense){
+        score+=Game_Constants::AI_TARGET_SELECTION_WEIGHT_DEFENSE;
+    }
+
+    if(distance>=target.distance){
+        score+=Game_Constants::AI_TARGET_SELECTION_WEIGHT_DISTANCE;
+    }
+
+    if(score>=Game_Constants::AI_TARGET_SELECTION_WEIGHT_NEEDED){
+        return true;
+    }
+    else{
+        return false;
     }
 }

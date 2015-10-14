@@ -176,6 +176,15 @@ int16_t Person::get_defense() const{
     return Game_Constants::PERSON_DEFENSE;
 }
 
+bool Person::could_damage(const Person& person) const{
+    if(get_attack()-person.get_defense()>0){
+        return true;
+    }
+    else{
+        return false;
+    }
+}
+
 bool Person::is_full() const{
     return !is_hungry() && !is_starving();
 }
@@ -271,9 +280,18 @@ bool Person::is_goal_valid() const{
 }
 
 uint64_t Person::get_goal_range() const{
-    uint64_t range=Game_Constants::INTERACTION_RANGE*Game_Constants::TILE_SIZE;
+    return Game_Constants::INTERACTION_RANGE*Game_Constants::INTERACTION_RANGE;
+}
 
-    return range*range;
+uint64_t Person::get_goal_distance() const{
+    Coords<int32_t> goal_coords=get_goal_coords();
+
+    if(goal_coords.x>=0){
+        return Int_Math::distance_between_points_no_sqrt(box.x,box.y,goal_coords.x,goal_coords.y);
+    }
+    else{
+        return 0;
+    }
 }
 
 Coords<int32_t> Person::get_goal_coords() const{
@@ -304,11 +322,7 @@ Coords<int32_t> Person::get_goal_coords() const{
 }
 
 bool Person::goal_within_range() const{
-    uint64_t goal_range=get_goal_range();
-
-    Coords<int32_t> goal_coords=get_goal_coords();
-
-    if(goal_coords.x>=0 && Int_Math::distance_between_points_no_sqrt(box.x,box.y,goal_coords.x,goal_coords.y)<=goal_range){
+    if(get_goal_distance()<=get_goal_range()){
         return true;
     }
     else{
@@ -412,7 +426,7 @@ void Person::brake(){
 
 void Person::accelerate(){
     if(is_alive()){
-        acceleration=force/Game_Constants::PERSON_MASS;
+        Int_Vector acceleration=force/Game_Constants::PERSON_MASS;
 
         velocity+=acceleration;
 
