@@ -60,6 +60,8 @@ public:
     static std::uint64_t HOME_DEFENSE_RANGE;
     static std::uint32_t CITY_SPACING;
 
+    static std::uint32_t MAINTAIN_TARGET_CHANCE;
+
     static std::uint32_t RETREAT_HOME_CHANCE;
     static std::int32_t RETREAT_ZONE_RANGE;
 

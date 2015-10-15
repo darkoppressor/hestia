@@ -200,10 +200,14 @@ Tile::Type AI_Goal::get_goal_tile_type() const{
     }
 }
 
+void AI_Goal::reset_counter(){
+    counter=get_counter_max();
+}
+
 void AI_Goal::set_type(Type new_type){
     type=new_type;
 
-    counter=get_counter_max();
+    reset_counter();
 }
 
 void AI_Goal::clear_goal(){

@@ -134,7 +134,7 @@ public:
     //This does not check if we are actually near our city
     void grab_some_food();
     void abandon_goal();
-    void complete_goal();
+    void complete_goal(RNG& rng);
 
     void brake();
     void accelerate();

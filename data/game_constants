@@ -243,6 +243,13 @@
 
 <game_constant>
 	//integer percentage
+	//Chance that a person will continue attacking its target
+	name:maintain_target_chance
+	value:90
+</game_constant>
+
+<game_constant>
+	//integer percentage
 	//Note that this only takes effect when the player has only one city
 	//It represents the chance that a person will retreat to their home city as opposed to a random location
 	name:retreat_home_chance

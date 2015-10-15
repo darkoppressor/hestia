@@ -76,8 +76,8 @@ public:
 
     Tile::Type get_goal_tile_type() const;
 
+    void reset_counter();
     void set_type(Type new_type);
-
     void clear_goal();
 
     Coords<std::uint32_t> get_coords_tiles() const;

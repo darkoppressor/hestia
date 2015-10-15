@@ -616,7 +616,7 @@ void Person::ai(RNG& rng,const Quadtree<int32_t,uint32_t>& quadtree,uint32_t fra
                 }
                 else{
                     if(goal.countdown()){
-                        complete_goal();
+                        complete_goal(rng);
                     }
                 }
             }

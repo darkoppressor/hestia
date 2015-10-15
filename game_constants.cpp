@@ -60,6 +60,8 @@ int32_t Game_Constants::SIGHT_RANGE=0;
 uint64_t Game_Constants::HOME_DEFENSE_RANGE=0;
 uint32_t Game_Constants::CITY_SPACING=0;
 
+uint32_t Game_Constants::MAINTAIN_TARGET_CHANCE=0;
+
 uint32_t Game_Constants::RETREAT_HOME_CHANCE=0;
 int32_t Game_Constants::RETREAT_ZONE_RANGE=0;
 
@@ -240,6 +242,10 @@ void Game_Constants_Loader::set_game_constant(string name,string value){
     }
     else if(name=="city_spacing"){
         Game_Constants::CITY_SPACING=Strings::string_to_unsigned_long(value);
+    }
+
+    else if(name=="maintain_target_chance"){
+        Game_Constants::MAINTAIN_TARGET_CHANCE=Strings::string_to_unsigned_long(value);
     }
 
     else if(name=="retreat_home_chance"){

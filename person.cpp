@@ -613,7 +613,7 @@ void Person::abandon_goal(){
     goal.clear_goal();
 }
 
-void Person::complete_goal(){
+void Person::complete_goal(RNG& rng){
     if(is_goal_valid()){
         if(goal.is_gather()){
             const Tile& tile=Game::get_tile(goal.get_coords_tiles());
@@ -678,6 +678,13 @@ void Person::complete_goal(){
                     add_item(item_types[i],person.get_item_count(item_types[i]));
                 }
             }
+            else{
+                if(rng.random_range(0,99)<Game_Constants::MAINTAIN_TARGET_CHANCE){
+                    //Reset the counter and return early, so we don't abandon the goal down below
+                    goal.reset_counter();
+                    return;
+                }
+            }
         }
         else if(goal.is_attack_building_melee()){
             Game::damage_tile(goal.get_coords_tiles(),get_attack());
@@ -688,6 +695,13 @@ void Person::complete_goal(){
             if(!tile.is_alive()){
                 if(tile.get_type()==Tile::Type::BUILDING_CITY){
                     Game::handle_city_capture(goal.get_coords_tiles(),get_parent_civilization());
+                }
+            }
+            else{
+                if(rng.random_range(0,99)<Game_Constants::MAINTAIN_TARGET_CHANCE){
+                    //Reset the counter and return early, so we don't abandon the goal down below
+                    goal.reset_counter();
+                    return;
                 }
             }
         }
