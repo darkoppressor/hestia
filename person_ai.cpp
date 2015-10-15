@@ -146,6 +146,12 @@ void Person::consider_gathering(vector<AI_Choice>& choices) const{
 void Person::consider_emptying_inventory(vector<AI_Choice>& choices) const{
     if(goal.empty_inventory_can_interrupt()){
         if(!has_inventory_space()){
+            choices.push_back(AI_Choice(AI_Goal::Type::EMPTY_INVENTORY,Game_Constants::PRIORITY_EMPTY_INVENTORY_FULL));
+        }
+        else if(is_inventory_space_low()){
+            choices.push_back(AI_Choice(AI_Goal::Type::EMPTY_INVENTORY,Game_Constants::PRIORITY_EMPTY_INVENTORY_ALMOST_FULL));
+        }
+        else if(has_item_to_deposit()){
             choices.push_back(AI_Choice(AI_Goal::Type::EMPTY_INVENTORY,Game_Constants::PRIORITY_EMPTY_INVENTORY));
         }
     }

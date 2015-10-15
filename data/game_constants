@@ -125,6 +125,13 @@
 </game_constant>
 
 <game_constant>
+	//integer percentage
+	//Inventory is almost full when it has less than this percentage of space available
+	name:inventory_almost_full_threshold
+	value:40
+</game_constant>
+
+<game_constant>
 	name:person_health_max
 	value:10
 </game_constant>
@@ -298,8 +305,18 @@
 </game_constant>
 
 <game_constant>
-	name:priority_empty_inventory
+	name:priority_empty_inventory_full
 	value:15
+</game_constant>
+
+<game_constant>
+	name:priority_empty_inventory_almost_full
+	value:10
+</game_constant>
+
+<game_constant>
+	name:priority_empty_inventory
+	value:5
 </game_constant>
 
 <game_constant>

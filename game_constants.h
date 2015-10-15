@@ -32,6 +32,7 @@ public:
     static std::int32_t PERSON_MOVE_FORCE_COMBAT;
 
     static std::uint32_t INVENTORY_MAX;
+    static std::uint32_t INVENTORY_ALMOST_FULL_THRESHOLD;
 
     static std::int16_t PERSON_HEALTH_MAX;
     static std::int16_t PERSON_HEALTH_CHANGE_RATE;
@@ -73,6 +74,8 @@ public:
 
     static std::int32_t PRIORITY_IGNORE;
     static std::int32_t PRIORITY_GATHER;
+    static std::int32_t PRIORITY_EMPTY_INVENTORY_FULL;
+    static std::int32_t PRIORITY_EMPTY_INVENTORY_ALMOST_FULL;
     static std::int32_t PRIORITY_EMPTY_INVENTORY;
     static std::int32_t PRIORITY_EAT;
     static std::int32_t PRIORITY_RETREAT_WITH_MINOR_DISADVANTAGE;

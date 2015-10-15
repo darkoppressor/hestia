@@ -85,6 +85,29 @@ bool Person::has_inventory_space(uint32_t amount) const{
     }
 }
 
+bool Person::is_inventory_space_low() const{
+    uint32_t denominator=1000/Game_Constants::INVENTORY_ALMOST_FULL_THRESHOLD;
+
+    if(!has_inventory_space((Game_Constants::INVENTORY_MAX*10)/denominator)){
+        return true;
+    }
+    else{
+        return false;
+    }
+}
+
+bool Person::has_item_to_deposit() const{
+    if(get_item_count()==1 && !has_food()){
+        return true;
+    }
+    else if(get_item_count()>1){
+        return true;
+    }
+    else{
+        return false;
+    }
+}
+
 bool Person::has_food() const{
     return get_item_count(Inventory::Item_Type::WHEAT)>0;
 }
@@ -396,7 +419,7 @@ bool Person::is_goal_valid() const{
             return false;
         }
     }
-    else if(goal.is_empty_inventory() && get_item_count()>0){
+    else if(goal.is_empty_inventory() && has_item_to_deposit()){
         const City& city=Game::get_city(get_parent_city());
 
         if(city.get_tile()==goal.get_coords_tiles()){
@@ -543,9 +566,30 @@ int32_t Person::get_angle_to_goal() const{
     }
 }
 
+bool Person::is_at_home() const{
+    const City& city=Game::get_city(get_parent_city());
+
+    if(Int_Math::distance_between_points_no_sqrt(box.center_x(),box.center_y(),city.get_center_x(),city.get_center_y())<=get_goal_range()){
+        return true;
+    }
+    else{
+        return false;
+    }
+}
+
 void Person::notify_of_person_death(uint32_t index){
     if(goal.target_is_person() && goal.get_person_index()==index){
         abandon_goal();
+    }
+}
+
+void Person::grab_some_food(){
+    const Civilization& civilization=Game::get_civilization(get_parent_civilization());
+
+    if(civilization.has_food() && has_inventory_space() && !has_food()){
+        add_item(Inventory::Item_Type::WHEAT,1);
+
+        Game::remove_civilization_item(get_parent_civilization(),Inventory::Item_Type::WHEAT,1);
     }
 }
 
@@ -573,20 +617,14 @@ void Person::complete_goal(){
             for(size_t i=0;i<item_types.size();i++){
                 Inventory::Item_Type item_type=item_types[i];
                 uint32_t item_count=get_item_count(item_type);
-                uint32_t item_minimum=0;
 
-                //Keep 1 piece of wheat if possible
-                if(item_type==Inventory::Item_Type::WHEAT){
-                    item_minimum=1;
-                }
-
-                if(item_count>item_minimum){
-                    uint32_t item_exchange=item_count-item_minimum;
-
-                    Game::add_civilization_item(get_parent_civilization(),item_type,item_exchange);
-                    remove_item(item_type,item_exchange);
+                if(item_count>0){
+                    Game::add_civilization_item(get_parent_civilization(),item_type,item_count);
+                    remove_item(item_type,item_count);
                 }
             }
+
+            grab_some_food();
         }
         else if(goal.is_eat()){
             eat();
@@ -597,6 +635,8 @@ void Person::complete_goal(){
             eat();
 
             Game::remove_civilization_item(get_parent_civilization(),Inventory::Item_Type::WHEAT,1);
+
+            grab_some_food();
         }
         else if(goal.is_forage()){
             eat();
@@ -604,7 +644,9 @@ void Person::complete_goal(){
             Game::kill_tile(goal.get_coords_tiles());
         }
         else if(goal.is_retreat()){
-            //Nothing needs to be done after successfully retreating
+            if(is_at_home()){
+                grab_some_food();
+            }
         }
         else if(goal.is_attack_person_melee()){
             Game::damage_person(goal.get_person_index(),get_attack());
@@ -614,8 +656,11 @@ void Person::complete_goal(){
             //If we just killed the person
             if(!person.is_alive()){
                 //Take all of their inventory items
-                add_item(Inventory::Item_Type::WHEAT,person.get_item_count(Inventory::Item_Type::WHEAT));
-                add_item(Inventory::Item_Type::TREE,person.get_item_count(Inventory::Item_Type::TREE));
+                vector<Inventory::Item_Type> item_types=Inventory::get_item_types();
+
+                for(size_t i=0;i<item_types.size();i++){
+                    add_item(item_types[i],person.get_item_count(item_types[i]));
+                }
             }
         }
         else if(goal.is_attack_building_melee()){
@@ -664,6 +709,8 @@ void Person::complete_goal(){
 
                 Game::remove_civilization_item(get_parent_civilization(),Inventory::Item_Type::TREE,Game_Constants::COST_REPAIR-our_materials);
             }
+
+            grab_some_food();
         }
     }
 

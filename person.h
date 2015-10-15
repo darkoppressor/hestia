@@ -56,6 +56,8 @@ public:
     std::uint32_t get_item_count() const;
     std::uint32_t get_item_count(Inventory::Item_Type item_type) const;
     bool has_inventory_space(std::uint32_t amount=1) const;
+    bool is_inventory_space_low() const;
+    bool has_item_to_deposit() const;
     bool has_food() const;
     std::uint32_t add_item(Inventory::Item_Type item_type,std::uint32_t amount);
     void remove_item(Inventory::Item_Type item_type,std::uint32_t amount);
@@ -125,7 +127,12 @@ public:
     bool goal_within_range() const;
     std::int32_t get_angle_to_goal() const;
 
+    bool is_at_home() const;
+
     void notify_of_person_death(std::uint32_t index);
+    //Takes one piece of food from civilization inventory if possible and needed
+    //This does not check if we are actually near our city
+    void grab_some_food();
     void abandon_goal();
     void complete_goal();
 

@@ -32,6 +32,7 @@ int32_t Game_Constants::PERSON_MOVE_FORCE=0;
 int32_t Game_Constants::PERSON_MOVE_FORCE_COMBAT=0;
 
 uint32_t Game_Constants::INVENTORY_MAX=0;
+uint32_t Game_Constants::INVENTORY_ALMOST_FULL_THRESHOLD=0;
 
 int16_t Game_Constants::PERSON_HEALTH_MAX=0;
 int16_t Game_Constants::PERSON_HEALTH_CHANGE_RATE=0;
@@ -73,6 +74,8 @@ int32_t Game_Constants::AI_COMBAT_SCORE_RATIO_OVERWHELMING=0;
 
 int32_t Game_Constants::PRIORITY_IGNORE=0;
 int32_t Game_Constants::PRIORITY_GATHER=0;
+int32_t Game_Constants::PRIORITY_EMPTY_INVENTORY_FULL=0;
+int32_t Game_Constants::PRIORITY_EMPTY_INVENTORY_ALMOST_FULL=0;
 int32_t Game_Constants::PRIORITY_EMPTY_INVENTORY=0;
 int32_t Game_Constants::PRIORITY_EAT=0;
 int32_t Game_Constants::PRIORITY_RETREAT_WITH_MINOR_DISADVANTAGE=0;
@@ -170,6 +173,9 @@ void Game_Constants_Loader::set_game_constant(string name,string value){
 
     else if(name=="inventory_max"){
         Game_Constants::INVENTORY_MAX=Strings::string_to_unsigned_long(value);
+    }
+    else if(name=="inventory_almost_full_threshold"){
+        Game_Constants::INVENTORY_ALMOST_FULL_THRESHOLD=Strings::string_to_unsigned_long(value);
     }
 
     else if(name=="person_health_max"){
@@ -271,6 +277,12 @@ void Game_Constants_Loader::set_game_constant(string name,string value){
     }
     else if(name=="priority_gather"){
         Game_Constants::PRIORITY_GATHER=Strings::string_to_long(value);
+    }
+    else if(name=="priority_empty_inventory_full"){
+        Game_Constants::PRIORITY_EMPTY_INVENTORY_FULL=Strings::string_to_long(value);
+    }
+    else if(name=="priority_empty_inventory_almost_full"){
+        Game_Constants::PRIORITY_EMPTY_INVENTORY_ALMOST_FULL=Strings::string_to_long(value);
     }
     else if(name=="priority_empty_inventory"){
         Game_Constants::PRIORITY_EMPTY_INVENTORY=Strings::string_to_long(value);
