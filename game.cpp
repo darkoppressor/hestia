@@ -608,6 +608,9 @@ bool Game::tile_coords_are_valid(Tile::Type type,const Coords<uint32_t>& tile_co
             if(tile_exists(Coords<uint32_t>(x,y))){
                 return false;
             }
+            else if(new_tiles.count(Coords<uint32_t>(x,y))){
+                return false;
+            }
         }
     }
 
