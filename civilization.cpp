@@ -61,12 +61,32 @@ void Civilization::add_unfinished_building(Coords<uint32_t> tile_coords){
     }
 
     unfinished_buildings.push_back(tile_coords);
+    unfinished_building_flags.push_back(false);
 }
 
 void Civilization::remove_unfinished_building(Coords<uint32_t> tile_coords){
     for(size_t i=0;i<unfinished_buildings.size();i++){
         if(unfinished_buildings[i]==tile_coords){
             unfinished_buildings.erase(unfinished_buildings.begin()+i);
+            unfinished_building_flags.erase(unfinished_building_flags.begin()+i);
+
+            break;
+        }
+    }
+}
+
+bool Civilization::get_unfinished_building_flag(Coords<uint32_t> tile_coords) const{
+    for(size_t i=0;i<unfinished_buildings.size();i++){
+        if(unfinished_buildings[i]==tile_coords){
+            return unfinished_building_flags[i];
+        }
+    }
+}
+
+void Civilization::set_unfinished_building_flag(Coords<uint32_t> tile_coords,bool new_flag){
+    for(size_t i=0;i<unfinished_buildings.size();i++){
+        if(unfinished_buildings[i]==tile_coords){
+            unfinished_building_flags[i]=new_flag;
 
             break;
         }

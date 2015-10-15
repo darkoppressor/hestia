@@ -85,7 +85,7 @@ public:
 
     bool is_alive() const;
     bool health_low() const;
-    void damage(std::int16_t attack);
+    void damage(std::int16_t attack,bool direct=false);
 
     std::int16_t get_health_max() const;
     std::int16_t get_health() const;

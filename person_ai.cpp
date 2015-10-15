@@ -422,22 +422,27 @@ Coords<uint32_t> Person::consider_building(vector<AI_Choice>& choices) const{
             uint32_t nearest_building_index=0;
 
             for(size_t i=0;i<unfinished_buildings.size();i++){
-                uint64_t distance_to_building=Int_Math::distance_between_points_no_sqrt(box.center_x(),box.center_y(),
-                                                                                        Tile::get_center_x(unfinished_buildings[i].x,Tile::get_tile_type_size(Tile::Type::BUILDING_UNFINISHED)),
-                                                                                        Tile::get_center_y(unfinished_buildings[i].y,Tile::get_tile_type_size(Tile::Type::BUILDING_UNFINISHED)));
+                //If this unfinished building is not flagged
+                if(!civilization.get_unfinished_building_flag(unfinished_buildings[i])){
+                    uint64_t distance_to_building=Int_Math::distance_between_points_no_sqrt(box.center_x(),box.center_y(),
+                                                                                            Tile::get_center_x(unfinished_buildings[i].x,Tile::get_tile_type_size(Tile::Type::BUILDING_UNFINISHED)),
+                                                                                            Tile::get_center_y(unfinished_buildings[i].y,Tile::get_tile_type_size(Tile::Type::BUILDING_UNFINISHED)));
 
-                if(!some_building_looked_at || distance_to_building<nearest_unfinished_building){
-                    some_building_looked_at=true;
+                    if(!some_building_looked_at || distance_to_building<nearest_unfinished_building){
+                        some_building_looked_at=true;
 
-                    nearest_unfinished_building=distance_to_building;
+                        nearest_unfinished_building=distance_to_building;
 
-                    nearest_building_index=(uint32_t)i;
+                        nearest_building_index=(uint32_t)i;
+                    }
                 }
             }
 
-            choices.push_back(AI_Choice(AI_Goal::Type::BUILD,Game_Constants::PRIORITY_BUILD));
+            if(some_building_looked_at){
+                choices.push_back(AI_Choice(AI_Goal::Type::BUILD,Game_Constants::PRIORITY_BUILD));
 
-            return unfinished_buildings[nearest_building_index];
+                return unfinished_buildings[nearest_building_index];
+            }
         }
     }
 
@@ -455,6 +460,14 @@ void Person::consider_repairing(vector<AI_Choice>& choices) const{
 }
 
 void Person::set_new_goal(RNG& rng,AI_Goal::Type new_goal_type,Target_Scan_Result target_scan_result,vector<Coords<uint32_t>> forage_chunk_coords,Coords<uint32_t> unfinished_building_coords){
+    //If we had the building goal before, we are interrupting it
+    if(goal.is_build()){
+        const Civilization& civilization=Game::get_civilization(get_parent_civilization());
+
+        //Unflag the target building from our previous goal
+        civilization.set_unfinished_building_flag(goal.get_coords_tiles(),false);
+    }
+
     goal.set_type(new_goal_type);
 
     if(goal.is_gather()){
@@ -548,6 +561,10 @@ void Person::set_new_goal(RNG& rng,AI_Goal::Type new_goal_type,Target_Scan_Resul
     }
     else if(goal.is_build()){
         goal.set_coords_tiles(unfinished_building_coords);
+
+        const Civilization& civilization=Game::get_civilization(get_parent_civilization());
+
+        civilization.set_unfinished_building_flag(unfinished_building_coords,true);
     }
     else if(goal.is_repair()){
         const City& city=Game::get_city(get_parent_city());

@@ -208,14 +208,24 @@ bool Person::health_low() const{
     return health<=get_health_max()/4;
 }
 
-void Person::damage(int16_t attack){
-    int16_t damage_done=attack-get_defense();
+void Person::damage(int16_t attack,bool direct){
+    if(is_alive()){
+        int16_t damage_done=attack;
+        if(!direct){
+            damage_done-=get_defense();
+        }
 
-    if(damage_done<0){
-        damage_done=0;
+        if(damage_done<0){
+            damage_done=0;
+        }
+
+        health-=damage_done;
+
+        //If we were just killed
+        if(!is_alive()){
+            abandon_goal();
+        }
     }
-
-    health-=damage_done;
 }
 
 int16_t Person::get_health_max() const{
@@ -288,7 +298,7 @@ void Person::process_biology(){
             }
         }
         else if(is_starving()){
-            health-=Game_Constants::PERSON_HEALTH_CHANGE_RATE;
+            damage(Game_Constants::PERSON_HEALTH_CHANGE_RATE,true);
         }
     }
 }
@@ -594,6 +604,12 @@ void Person::grab_some_food(){
 }
 
 void Person::abandon_goal(){
+    if(goal.is_build()){
+        const Civilization& civilization=Game::get_civilization(get_parent_civilization());
+
+        civilization.set_unfinished_building_flag(goal.get_coords_tiles(),false);
+    }
+
     goal.clear_goal();
 }
 

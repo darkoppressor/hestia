@@ -21,6 +21,8 @@ private:
     std::vector<std::uint32_t> cities;
 
     std::vector<Coords<std::uint32_t>> unfinished_buildings;
+    //These are all either 0 or 1, but I don't want to use a vector<bool>
+    std::vector<std::uint8_t> unfinished_building_flags;
 
     Inventory inventory;
 
@@ -39,6 +41,8 @@ public:
     std::vector<Coords<std::uint32_t>> get_unfinished_buildings() const;
     void add_unfinished_building(Coords<std::uint32_t> tile_coords);
     void remove_unfinished_building(Coords<std::uint32_t> tile_coords);
+    bool get_unfinished_building_flag(Coords<std::uint32_t> tile_coords) const;
+    void set_unfinished_building_flag(Coords<std::uint32_t> tile_coords,bool new_flag);
 
     std::uint32_t get_item_count() const;
     std::uint32_t get_item_count(Inventory::Item_Type item_type) const;
