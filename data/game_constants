@@ -158,9 +158,9 @@
 </game_constant>
 
 <game_constant>
-	//health restored per repair
+	//integer percentage
 	name:building_repair_amount
-	value:25
+	value:10
 </game_constant>
 
 <game_constant>
@@ -184,7 +184,7 @@
 <game_constant>
 	//trees
 	name:cost_repair
-	value:5
+	value:2
 </game_constant>
 
 <game_constant>

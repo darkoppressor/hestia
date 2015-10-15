@@ -92,7 +92,9 @@ bool Tile::needs_repair() const{
 }
 
 void Tile::repair(){
-    health+=Game_Constants::BUILDING_REPAIR_AMOUNT;
+    int16_t denominator=100/Game_Constants::BUILDING_REPAIR_AMOUNT;
+
+    health+=get_health_max()/denominator;
 
     if(health>get_health_max()){
         health=get_health_max();
