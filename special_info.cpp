@@ -2,6 +2,8 @@
 /* This file is licensed under the MIT License. */
 /* See the file docs/LICENSE.txt for the full license text. */
 
+#include "game.h"
+
 #include <special_info.h>
 #include <log.h>
 #include <object_manager.h>
@@ -14,6 +16,33 @@ string Special_Info::get_special_info_text(string special_info){
     if(special_info.length()>0){
         if(special_info=="configure_command"){
             Object_Manager::output_command_configuration_info(text);
+        }
+        else if(special_info=="person"){
+            Game_Selection selection=Game::get_selection();
+
+            if(selection.type==Game_Selection::Type::PERSON){
+                const Person& person=Game::get_person(selection.index);
+
+                person.write_info_string(text);
+            }
+        }
+        else if(special_info=="city"){
+            Game_Selection selection=Game::get_selection();
+
+            if(selection.type==Game_Selection::Type::CITY){
+                const City& city=Game::get_city(selection.index);
+
+                city.write_info_string(text);
+            }
+        }
+        else if(special_info=="civilization"){
+            Game_Selection selection=Game::get_selection();
+
+            if(selection.type==Game_Selection::Type::CIVILIZATION){
+                const Civilization& civilization=Game::get_civilization(selection.index);
+
+                civilization.write_info_string(text);
+            }
         }
         else{
             Log::add_error("Invalid special info text: '"+special_info+"'");

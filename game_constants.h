@@ -107,6 +107,10 @@ public:
     static double RENDER_BUILDING_COLOR_BORDER;
     static double RENDER_BAR_HEIGHT;
     static double RENDER_BAR_THICKNESS;
+    static double RENDER_SELECTION_SIZE;
+    static double RENDER_SELECTION_BORDER;
+    static double RENDER_MINIMAP_BORDER;
+    static double RENDER_MINIMAP_CAMERA_RECTANGLE;
 };
 
 #endif

@@ -19,6 +19,7 @@
 #include <log.h>
 #include <engine_strings.h>
 #include <engine.h>
+#include <window_manager.h>
 
 using namespace std;
 
@@ -26,6 +27,8 @@ Game_Order::Type Game::order=Game_Order::Type::NONE;
 
 vector<Game_Order> Game::server_game_orders;
 vector<Game_Order> Game::client_game_orders;
+
+Game_Selection Game::selection;
 
 vector<Region> Game::regions;
 vector<vector<Chunk>> Game::chunks;
@@ -39,22 +42,30 @@ queue<uint32_t> Game::dead_people;
 
 Quadtree<int32_t,uint32_t> Game::quadtree;
 
+Minimap Game::minimap;
+
 void Game::add_remove_objects(){
     for(size_t i=0;i<people.size();i++){
         if(people[i].get_exists() && !people[i].is_alive()){
+            uint32_t person_index=(uint32_t)i;
+
             uint32_t parent_city=people[i].get_parent_city();
 
-            cities[parent_city].remove_person((uint32_t)i);
+            cities[parent_city].remove_person(person_index);
 
             for(size_t n=0;n<people.size();n++){
                 if(n!=i && people[n].is_alive()){
-                    people[n].notify_of_person_death((uint32_t)i);
+                    people[n].notify_of_person_death(person_index);
                 }
             }
 
             people[i].set_exists(false);
 
-            dead_people.push((uint32_t)i);
+            dead_people.push(person_index);
+
+            if(selection.type==Game_Selection::Type::PERSON && selection.index==person_index){
+                clear_selection();
+            }
         }
     }
 
@@ -135,6 +146,18 @@ void Game::add_remove_objects(){
     new_tiles.clear();
 }
 
+void Game::generate_minimap(){
+    minimap.generate_surface(320,180);
+}
+
+void Game::update_minimap(){
+    minimap.update();
+}
+
+void Game::clear_minimap(){
+    minimap.clear_map();
+}
+
 bool Game::started=false;
 
 uint32_t Game::frame=0;
@@ -164,6 +187,8 @@ void Game::clear_world(){
 
     clear_server_game_orders();
     clear_client_game_orders();
+
+    clear_selection();
 
     calendar.reset();
 
@@ -203,6 +228,8 @@ void Game::clear_world(){
     dead_people={};
 
     quadtree.clear_tree();
+
+    clear_minimap();
 
     new_cities.clear();
     new_people.clear();
@@ -418,6 +445,9 @@ void Game::generate_world(){
         Object_Manager::add_color(Leader::get_color((uint32_t)i),leaders[i].get_color());
     }
 
+    generate_minimap();
+    update_minimap();
+
     //If we are a player, center the camera on our starting city
     int32_t leader=get_our_leader();
     if(leader>=0){
@@ -434,6 +464,18 @@ void Game::generate_world(){
 
     //Begin the network turn timer
     Network_Lockstep::start();
+}
+
+uint32_t Game::get_people_count(){
+    return people.size();
+}
+
+uint32_t Game::get_city_count(){
+    return cities.size();
+}
+
+const map<Coords<uint32_t>,Tile,Game::tile_compare>& Game::get_tiles(){
+    return tiles;
 }
 
 const Region& Game::get_region(uint32_t index){
@@ -638,6 +680,12 @@ void Game::remove_civilization_item(uint32_t index,Inventory::Item_Type item_typ
     }
 }
 
+void Game::set_civilization_unfinished_building_flag(uint32_t index,Coords<uint32_t> tile_coords,bool new_flag){
+    if(index<civilizations.size()){
+        civilizations[index].set_unfinished_building_flag(tile_coords,new_flag);
+    }
+}
+
 void Game::damage_person(uint32_t index,int16_t attack){
     if(index<people.size()){
         people[index].damage(attack);
@@ -671,6 +719,10 @@ void Game::handle_city_capture(const Coords<uint32_t>& tile_coords,uint32_t capt
     cities[city_index].set_parent_civilization(capturing_civilization_index);
 
     cities[city_index].set_just_captured();
+
+    if(selection.type==Game_Selection::Type::CITY && selection.index==city_index){
+        clear_selection();
+    }
 }
 
 uint64_t Game::distance_to_nearest_city(const Coords<int32_t>& coords){
@@ -690,15 +742,19 @@ uint64_t Game::distance_to_nearest_city(const Coords<int32_t>& coords){
     return nearest;
 }
 
-Game_Order::Type Game::get_order(){
-    return order;
+Coords<int32_t> Game::get_mouse_coords_pixels(){
+    int mouse_x=0;
+    int mouse_y=0;
+    Engine::get_mouse_state(&mouse_x,&mouse_y);
+
+    //pixels
+    double mouse_world_x=(Game_Manager::camera.x+(double)mouse_x)/Game_Manager::camera_zoom;
+    double mouse_world_y=(Game_Manager::camera.y+(double)mouse_y)/Game_Manager::camera_zoom;
+
+    return Coords<int32_t>((int32_t)mouse_world_x,(int32_t)mouse_world_y);
 }
 
-bool Game::has_order(){
-    return order!=Game_Order::Type::NONE;
-}
-
-Coords<uint32_t> Game::get_order_tile_coords(){
+Coords<uint32_t> Game::get_mouse_coords_tiles(){
     int mouse_x=0;
     int mouse_y=0;
     Engine::get_mouse_state(&mouse_x,&mouse_y);
@@ -712,6 +768,48 @@ Coords<uint32_t> Game::get_order_tile_coords(){
     uint32_t mouse_tile_y=(uint32_t)(mouse_world_y/((double)Game_Constants::TILE_SIZE*Game_Manager::camera_zoom));
 
     return Coords<uint32_t>(mouse_tile_x,mouse_tile_y);
+}
+
+Game_Selection Game::get_selection(){
+    return selection;
+}
+
+void Game::set_selection(Game_Selection::Type type,uint32_t index){
+    selection.type=type;
+    selection.index=index;
+
+    close_selection_windows();
+
+    if(selection.type==Game_Selection::Type::PERSON){
+        Window_Manager::get_window("game_person")->toggle_on(true,true);
+    }
+    else if(selection.type==Game_Selection::Type::CITY){
+        Window_Manager::get_window("game_city")->toggle_on(true,true);
+    }
+    else if(selection.type==Game_Selection::Type::CIVILIZATION){
+        Window_Manager::get_window("game_civilization")->toggle_on(true,true);
+    }
+}
+
+void Game::clear_selection(){
+    selection.clear_type();
+
+    //Ensure that the selection windows are all closed
+    close_selection_windows();
+}
+
+void Game::close_selection_windows(){
+    Window_Manager::get_window("game_person")->toggle_on(true,false);
+    Window_Manager::get_window("game_city")->toggle_on(true,false);
+    Window_Manager::get_window("game_civilization")->toggle_on(true,false);
+}
+
+Game_Order::Type Game::get_order(){
+    return order;
+}
+
+bool Game::has_order(){
+    return order!=Game_Order::Type::NONE;
 }
 
 void Game::set_order(Game_Order::Type new_order){
@@ -837,6 +935,9 @@ void Game::events(){
 
         add_remove_objects();
 
+        ///QQQ move into separate thread
+        update_minimap();
+
         for(size_t i=0;i<cities.size();i++){
             cities[i].update_gather_zone(frame,(uint32_t)i);
         }
@@ -880,19 +981,38 @@ void Game::render(){
                     Coords<uint32_t> tile_coords(x,y);
 
                     if(tile_exists(tile_coords)){
-                        tiles.at(tile_coords).render(x,y);
+                        bool selected=false;
+
+                        if(selection.type==Game_Selection::Type::CITY){
+                            if(tiles.at(tile_coords).is_alive() && tiles.at(tile_coords).get_type()==Tile::Type::BUILDING_CITY){
+                                //If the tile is of type BUILDING_CITY, its parent is a City
+                                if(selection.index==tiles.at(tile_coords).get_parent()){
+                                    selected=true;
+                                }
+                            }
+                        }
+
+                        tiles.at(tile_coords).render(x,y,selected);
                     }
                 }
             }
         }
 
         for(size_t i=0;i<people.size();i++){
-            people[i].render();
+            bool selected=false;
+
+            if(selection.type==Game_Selection::Type::PERSON && selection.index==(uint32_t)i){
+                selected=true;
+            }
+
+            people[i].render(selected);
         }
+
+        minimap.render();
 
         int32_t leader=get_our_leader();
         if(leader>=0){
-            Game_Order current_order(order,get_order_tile_coords(),(uint32_t)leader);
+            Game_Order current_order(order,get_mouse_coords_tiles(),(uint32_t)leader);
             current_order.render();
         }
     }

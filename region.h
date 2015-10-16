@@ -7,6 +7,7 @@
 
 #include <coords.h>
 #include <rng.h>
+#include <color.h>
 
 #include <vector>
 #include <string>
@@ -51,7 +52,8 @@ public:
     void set_biome(Biome new_biome);
 
     Ground get_ground() const;
-    std::string get_ground_string(Ground ground) const;
+    std::string get_ground_string() const;
+    Color* get_ground_color() const;
 
     uint32_t get_tile_growth_chance() const;
     uint32_t get_tile_growth_tree_chance() const;

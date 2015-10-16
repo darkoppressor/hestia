@@ -30,16 +30,6 @@ void Engine::render_dev_info(){
             msg+="Week: "+Strings::num_to_string(Game::calendar.get_week())+"\n";
             msg+="Month: "+Strings::num_to_string(Game::calendar.get_month())+"\n";
             msg+="Year: "+Strings::num_to_string(Game::calendar.get_year())+"\n";
-
-            int32_t leader_index=Game::get_our_leader();
-            if(leader_index>=0){
-                const Leader& leader=Game::get_leader((uint32_t)leader_index);
-                const Civilization& civilization=Game::get_civilization(leader.get_civilization());
-
-                msg+="\nCivilization:\n";
-                msg+="Wheat: "+Strings::num_to_string(civilization.get_item_count(Inventory::Item_Type::WHEAT))+"\n";
-                msg+="Tree: "+Strings::num_to_string(civilization.get_item_count(Inventory::Item_Type::TREE))+"\n";
-            }
         }
     }
 

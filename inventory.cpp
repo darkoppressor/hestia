@@ -38,6 +38,18 @@ vector<Inventory::Item_Type> Inventory::get_item_types(){
     return item_types;
 }
 
+string Inventory::get_item_type_string(Item_Type type){
+    if(type==Item_Type::WHEAT){
+        return "Wheat";
+    }
+    else if(type==Item_Type::TREE){
+        return "Tree";
+    }
+    else{
+        return "";
+    }
+}
+
 uint32_t Inventory::get_item_count() const{
     return wheat+tree;
 }

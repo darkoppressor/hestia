@@ -605,9 +605,7 @@ void Person::grab_some_food(){
 
 void Person::abandon_goal(){
     if(goal.is_build()){
-        const Civilization& civilization=Game::get_civilization(get_parent_civilization());
-
-        civilization.set_unfinished_building_flag(goal.get_coords_tiles(),false);
+        Game::set_civilization_unfinished_building_flag(get_parent_civilization(),goal.get_coords_tiles(),false);
     }
 
     goal.clear_goal();
@@ -798,7 +796,36 @@ void Person::movement(){
     }
 }
 
-void Person::render() const{
+void Person::write_info_string(string& text) const{
+    text+="Goal: ";
+
+    text+=goal.get_type_string()+"\n";
+
+    text+="\n";
+
+    string hunger_state="";
+
+    if(is_hungry()){
+        hunger_state=" (hungry)";
+    }
+    else if(is_starving()){
+        hunger_state=" (starving)";
+    }
+
+    text+="Health: "+Strings::num_to_string(health)+"/"+Strings::num_to_string(get_health_max())+hunger_state+"\n";
+
+    text+="\n";
+
+    text+="Inventory:\n";
+
+    vector<Inventory::Item_Type> item_types=Inventory::get_item_types();
+
+    for(size_t i=0;i<item_types.size();i++){
+        text+=Inventory::get_item_type_string(item_types[i])+": "+Strings::num_to_string(get_item_count(item_types[i]))+"\n";
+    }
+}
+
+void Person::render(bool selected) const{
     if(is_alive()){
         //pixels
         double x=box.x;
@@ -845,55 +872,24 @@ void Person::render() const{
                                        Game_Manager::camera_zoom,Game_Manager::camera_zoom);
             }
 
+            if(selected){
+                Render::render_rectangle_empty((x-Game_Constants::RENDER_SELECTION_SIZE)*Game_Manager::camera_zoom-Game_Manager::camera.x,
+                                               (y-Game_Constants::RENDER_SELECTION_SIZE)*Game_Manager::camera_zoom-Game_Manager::camera.y,
+                                               ((double)box.w+Game_Constants::RENDER_SELECTION_SIZE*2.0)*Game_Manager::camera_zoom,
+                                               ((double)box.h+Game_Constants::RENDER_SELECTION_SIZE*2.0)*Game_Manager::camera_zoom,
+                                               1.0,"selection",Game_Constants::RENDER_SELECTION_BORDER*Game_Manager::camera_zoom);
+
+                if(has_goal()){
+                    Render::render_texture(x*Game_Manager::camera_zoom-Game_Manager::camera.x,(y-bar_height-back_thickness*4.0-16)*Game_Manager::camera_zoom-Game_Manager::camera.y,
+                                           Image_Manager::get_image("arrow"),1.0,Game_Manager::camera_zoom,Game_Manager::camera_zoom,get_angle_to_goal(),"selection");
+                }
+            }
+
             ///QQQ dev data
             /**Collision_Rect<int32_t> box_sight=get_sight_box();
             Render::render_rectangle((double)box_sight.x*Game_Manager::camera_zoom-Game_Manager::camera.x,
                                      (double)box_sight.y*Game_Manager::camera_zoom-Game_Manager::camera.y,
                                      (double)box_sight.w*Game_Manager::camera_zoom,(double)box_sight.h*Game_Manager::camera_zoom,0.25,"red");*/
-            /**Bitmap_Font* font=Object_Manager::get_font("small");
-            string msg="Goal: ";
-            if(goal.is_gather_wheat()){
-                msg+="Gather wheat\n";
-            }
-            else if(goal.is_gather_tree()){
-                msg+="Gather tree\n";
-            }
-            else if(goal.is_empty_inventory()){
-                msg+="Empty inventory\n";
-            }
-            else if(goal.is_eat()){
-                msg+="Eat\n";
-            }
-            else if(goal.is_eat_at_home()){
-                msg+="Eat at home\n";
-            }
-            else if(goal.is_forage()){
-                msg+="Forage\n";
-            }
-            else if(goal.is_retreat()){
-                msg+="Retreat\n";
-            }
-            else if(goal.is_attack_person_melee()){
-                msg+="Attack person melee\n";
-            }
-            else if(goal.is_attack_building_melee()){
-                msg+="Attack building melee\n";
-            }
-            else if(goal.is_build()){
-                msg+="Build\n";
-            }
-            else if(goal.is_repair()){
-                msg+="Repair\n";
-            }
-            else{
-                msg+="None\n";
-            }
-            msg+="Health: "+Strings::num_to_string(health)+"/"+Strings::num_to_string(get_health_max())+"\n";
-            msg+="Hunger: "+Strings::num_to_string((uint32_t)hunger)+"\n";
-            msg+="Wheat: "+Strings::num_to_string(inventory.get_item_count(Inventory::Item_Type::WHEAT))+"\n";
-            msg+="Tree: "+Strings::num_to_string(inventory.get_item_count(Inventory::Item_Type::TREE))+"\n";
-            ///msg+=Strings::num_to_string(goal.get_coords_tiles().x)+","+Strings::num_to_string(goal.get_coords_tiles().y);
-            font->show(x*Game_Manager::camera_zoom-Game_Manager::camera.x,y*Game_Manager::camera_zoom-Game_Manager::camera.y,msg,"white");*/
             ///
         }
     }

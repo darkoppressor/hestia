@@ -1,0 +1,13 @@
+<window>
+	name:game_person
+	starting_position:-1,-1
+	width:300
+	height:217
+	title:Person
+
+	<info>
+		location:2,36
+		special_text:person
+	</info>
+
+</window>

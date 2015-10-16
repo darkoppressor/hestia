@@ -10,6 +10,7 @@
 #include <coords.h>
 
 #include <cstdint>
+#include <string>
 
 class AI_Goal{
 public:
@@ -44,6 +45,8 @@ private:
 public:
 
     AI_Goal();
+
+    std::string get_type_string() const;
 
     bool is_in_progress() const;
 

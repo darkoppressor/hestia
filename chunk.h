@@ -54,6 +54,7 @@ public:
     bool has_food() const;
 
     std::string get_ground_string() const;
+    Color* get_ground_color() const;
 
     //pixels
     std::int32_t get_size() const;

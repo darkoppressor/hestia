@@ -1,0 +1,13 @@
+<window>
+	name:game_city
+	starting_position:-1,-1
+	width:300
+	height:129
+	title:City
+
+	<info>
+		location:2,36
+		special_text:city
+	</info>
+
+</window>

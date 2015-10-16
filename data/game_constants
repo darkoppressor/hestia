@@ -470,3 +470,27 @@
 	name:render_bar_thickness
 	value:1.0
 </game_constant>
+
+<game_constant>
+	//pixels
+	name:render_selection_size
+	value:2.0
+</game_constant>
+
+<game_constant>
+	//pixels
+	name:render_selection_border
+	value:1.0
+</game_constant>
+
+<game_constant>
+	//pixels
+	name:render_minimap_border
+	value:4.0
+</game_constant>
+
+<game_constant>
+	//pixels
+	name:render_minimap_camera_rectangle
+	value:2.0
+</game_constant>

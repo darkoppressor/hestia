@@ -15,11 +15,14 @@
 #include "calendar.h"
 #include "inventory.h"
 #include "game_order.h"
+#include "game_selection.h"
+#include "minimap.h"
 
 #include <rng.h>
 #include <coords.h>
 #include <color.h>
 #include <quadtree.h>
+#include <image_data.h>
 
 #include <vector>
 #include <string>
@@ -28,7 +31,7 @@
 #include <queue>
 
 class Game{
-private:
+public:
 
     struct tile_compare{
         bool operator()(const Coords<std::uint32_t>& a,const Coords<std::uint32_t>& b) const{
@@ -41,10 +44,14 @@ private:
         }
     };
 
+private:
+
     static Game_Order::Type order;
 
     static std::vector<Game_Order> server_game_orders;
     static std::vector<Game_Order> client_game_orders;
+
+    static Game_Selection selection;
 
     static std::vector<Region> regions;
     static std::vector<std::vector<Chunk>> chunks;
@@ -58,7 +65,13 @@ private:
 
     static Quadtree<std::int32_t,std::uint32_t> quadtree;
 
+    static Minimap minimap;
+
     static void add_remove_objects();
+
+    static void generate_minimap();
+    static void update_minimap();
+    static void clear_minimap();
 
 public:
 
@@ -91,6 +104,11 @@ public:
     static void clear_world();
     static void setup_leaders();
     static void generate_world();
+
+    static std::uint32_t get_people_count();
+    static std::uint32_t get_city_count();
+
+    static const std::map<Coords<std::uint32_t>,Tile,tile_compare>& get_tiles();
 
     static const Region& get_region(std::uint32_t index);
     static const Chunk& get_chunk(const Coords<std::uint32_t>& coords);
@@ -125,6 +143,7 @@ public:
 
     static std::uint32_t add_civilization_item(std::uint32_t index,Inventory::Item_Type item_type,std::uint32_t amount);
     static void remove_civilization_item(std::uint32_t index,Inventory::Item_Type item_type,std::uint32_t amount);
+    static void set_civilization_unfinished_building_flag(std::uint32_t index,Coords<std::uint32_t> tile_coords,bool new_flag);
 
     static void damage_person(std::uint32_t index,std::int16_t attack);
     static void damage_tile(const Coords<std::uint32_t>& tile_coords,std::int16_t attack);
@@ -136,9 +155,16 @@ public:
     //pixels^2
     static uint64_t distance_to_nearest_city(const Coords<std::int32_t>& coords);
 
+    static Coords<std::int32_t> get_mouse_coords_pixels();
+    static Coords<std::uint32_t> get_mouse_coords_tiles();
+
+    static Game_Selection get_selection();
+    static void set_selection(Game_Selection::Type type,std::uint32_t index);
+    static void clear_selection();
+    static void close_selection_windows();
+
     static Game_Order::Type get_order();
     static bool has_order();
-    static Coords<std::uint32_t> get_order_tile_coords();
     static void set_order(Game_Order::Type new_order);
     static void clear_order();
     static void issue_order(const Game_Order& new_order);

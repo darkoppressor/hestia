@@ -403,6 +403,8 @@
 		<Unit filename="game_options.h" />
 		<Unit filename="game_order.cpp" />
 		<Unit filename="game_order.h" />
+		<Unit filename="game_selection.cpp" />
+		<Unit filename="game_selection.h" />
 		<Unit filename="int_math.cpp" />
 		<Unit filename="int_math.h" />
 		<Unit filename="inventory.cpp" />
@@ -411,6 +413,8 @@
 		<Unit filename="leader.h" />
 		<Unit filename="main.cpp" />
 		<Unit filename="main.h" />
+		<Unit filename="minimap.cpp" />
+		<Unit filename="minimap.h" />
 		<Unit filename="network_game.cpp" />
 		<Unit filename="network_game.h" />
 		<Unit filename="person.cpp" />

@@ -7,6 +7,7 @@
 #include "game.h"
 
 #include <engine.h>
+#include <engine_strings.h>
 
 using namespace std;
 
@@ -204,4 +205,14 @@ void City::update_gather_zone(uint32_t frame,uint32_t index){
             gather_zone_tree+=chunk.get_tile_count(Tile::Type::TREE);
         }
     }
+}
+
+void City::write_info_string(string& text) const{
+    const Tile& our_tile=Game::get_tile(tile);
+
+    text+="Health: "+Strings::num_to_string(our_tile.get_health())+"/"+Strings::num_to_string(our_tile.get_health_max())+"\n";
+
+    text+="\n";
+
+    text+="Population: "+Strings::num_to_string(get_population())+"\n";
 }

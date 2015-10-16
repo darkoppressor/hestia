@@ -5,6 +5,8 @@
 #ifndef tile_h
 #define tile_h
 
+#include <color.h>
+
 #include <cstdint>
 #include <string>
 
@@ -79,8 +81,9 @@ public:
     static std::uint32_t get_chunk_y(std::uint32_t tile_y);
 
     static std::string get_type_string(Type type_to_check);
+    static Color* get_type_color(Type type_to_check);
 
-    void render(std::uint32_t tile_x,std::uint32_t tile_y) const;
+    void render(std::uint32_t tile_x,std::uint32_t tile_y,bool selected) const;
 };
 
 #endif

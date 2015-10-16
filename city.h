@@ -13,6 +13,7 @@
 
 #include <cstdint>
 #include <vector>
+#include <string>
 
 class City{
 private:
@@ -79,6 +80,8 @@ public:
     std::uint32_t get_gather_zone_tile_count(Tile::Type tile_type) const;
     bool allowed_to_update_gather_zone(std::uint32_t frame,std::uint32_t index) const;
     void update_gather_zone(std::uint32_t frame,std::uint32_t index);
+
+    void write_info_string(std::string& text) const;
 };
 
 #endif

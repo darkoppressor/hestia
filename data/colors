@@ -25,6 +25,66 @@
 	rgb:242,12,12
 </color>
 
+<color>
+	name:selection
+	rgb:230,230,230
+</color>
+
+<color>
+	name:minimap_border
+	rgb:230,230,230
+</color>
+
+<color>
+	name:minimap_camera_rectangle
+	rgb:230,230,230
+</color>
+
+<color>
+	name:ground_dirt
+	rgb:89,89,9
+</color>
+
+<color>
+	name:ground_grass
+	rgb:14,140,14
+</color>
+
+<color>
+	name:ground_ice
+	rgb:178,255,255
+</color>
+
+<color>
+	name:ground_sand
+	rgb:255,229,153
+</color>
+
+<color>
+	name:ground_stone
+	rgb:178,178,178
+</color>
+
+<color>
+	name:tile_wheat
+	rgb:255,229,153
+</color>
+
+<color>
+	name:tile_tree
+	rgb:17,166,17
+</color>
+
+<color>
+	name:tile_building_unfinished
+	rgb:140,119,14
+</color>
+
+<color>
+	name:tile_building_city
+	rgb:140,119,14
+</color>
+
 //** Engine Colors **//
 
 <color>

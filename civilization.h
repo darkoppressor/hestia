@@ -50,11 +50,15 @@ public:
     std::uint32_t add_item(Inventory::Item_Type item_type,std::uint32_t amount);
     void remove_item(Inventory::Item_Type item_type,std::uint32_t amount);
 
+    std::uint32_t get_population() const;
+
     std::string get_color() const;
 
     bool is_friends_with(std::uint32_t civilization_index) const;
     bool is_enemies_with(std::uint32_t civilization_index) const;
     bool is_neutral_towards(std::uint32_t civilization_index) const;
+
+    void write_info_string(std::string& text) const;
 };
 
 #endif

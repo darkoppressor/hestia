@@ -7,6 +7,7 @@
 
 #include <cstdint>
 #include <vector>
+#include <string>
 
 class Inventory{
 public:
@@ -28,6 +29,8 @@ public:
     Inventory();
 
     static std::vector<Item_Type> get_item_types();
+
+    static std::string get_item_type_string(Item_Type type);
 
     std::uint32_t get_item_count() const;
     std::uint32_t get_item_count(Item_Type type) const;

@@ -9,6 +9,7 @@
 
 #include <log.h>
 #include <engine_strings.h>
+#include <object_manager.h>
 
 using namespace std;
 
@@ -63,7 +64,9 @@ Region::Ground Region::get_ground() const{
     }
 }
 
-string Region::get_ground_string(Ground ground) const{
+string Region::get_ground_string() const{
+    Ground ground=get_ground();
+
     if(ground==Ground::DIRT){
         return "dirt";
     }
@@ -81,6 +84,17 @@ string Region::get_ground_string(Ground ground) const{
     }
     else{
         return "";
+    }
+}
+
+Color* Region::get_ground_color() const{
+    string ground_string=get_ground_string();
+
+    if(ground_string.length()>0){
+        return Object_Manager::get_color("ground_"+ground_string);
+    }
+    else{
+        return Object_Manager::get_color("ground_grass");
     }
 }
 

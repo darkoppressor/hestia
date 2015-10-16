@@ -97,3 +97,13 @@
 	controller_button:
 	controller_axis:
 </game_command>
+
+<game_command>
+	name:select_civilization
+	title:Open Civilization Window
+	description:Open the management window for our civilization
+	developer:false
+	key:c
+	controller_button:
+	controller_axis:
+</game_command>

@@ -63,7 +63,15 @@ void Game_Manager::set_camera(){
 
     Screen_Shake::update_camera_before(camera);
 
-    if(false/**Something to follow*/){
+    Game_Selection selection=Game::get_selection();
+
+    if(/**selection.type==Game_Selection::Type::PERSON*/false){
+        const Person& person=Game::get_person(selection.index);
+
+        Collision_Rect<int32_t> box_person=person.get_box();
+        Collision_Rect<double> box(box_person.x,box_person.y,box_person.w,box_person.h);
+
+        center_camera(box);
     }
     else{
         if(cam_state=="left"){

@@ -17,6 +17,7 @@
 
 #include <cstdint>
 #include <vector>
+#include <string>
 
 class Target_Scan_Result;
 
@@ -140,7 +141,9 @@ public:
     void accelerate();
     void movement();
 
-    void render() const;
+    void write_info_string(std::string& text) const;
+
+    void render(bool selected) const;
 
     //  AI  //
 
@@ -151,7 +154,7 @@ public:
     bool forage_zone_has_food(const std::vector<Coords<std::uint32_t>>& chunk_coords) const;
     void find_tile(RNG& rng,const std::vector<Coords<std::uint32_t>>& chunk_coords);
 
-    bool allowed_to_select_ai_goal(std::uint32_t frame,std::uint32_t index) const;
+    bool allowed_to_select_ai_goal(std::uint32_t frame,std::uint32_t our_index) const;
 
     void consider_ignoring(std::vector<AI_Choice>& choices) const;
     void consider_gathering(std::vector<AI_Choice>& choices) const;
@@ -166,7 +169,7 @@ public:
     //so there is no issue with it returning 0 (a possible target person index itself) on failure to identify a target person
     //2. The tile coordinates of the city building tile to target, if one was identified, or 0,0 otherwise
     //This is only used if we are setting a new goal of targeting this building tile, just like the target person explained above
-    Target_Scan_Result target_scan(std::vector<AI_Choice>& choices,RNG& rng,const Quadtree<std::int32_t,std::uint32_t>& quadtree,std::uint32_t index) const;
+    Target_Scan_Result target_scan(std::vector<AI_Choice>& choices,RNG& rng,const Quadtree<std::int32_t,std::uint32_t>& quadtree,std::uint32_t our_index) const;
     //Returns the tile coordinates of the unfinished building tile to build, if one was identified, or 0,0 otherwise
     //This is only used if we are setting a new goal of building this tile,
     //which is only a possible goal if an unfinished building tile was found,
@@ -176,7 +179,7 @@ public:
 
     void set_new_goal(RNG& rng,AI_Goal::Type new_goal_type,Target_Scan_Result target_scan_result,std::vector<Coords<std::uint32_t>> forage_chunk_coords,Coords<std::uint32_t> unfinished_building_coords);
 
-    void ai(RNG& rng,const Quadtree<std::int32_t,std::uint32_t>& quadtree,std::uint32_t frame,std::uint32_t index);
+    void ai(RNG& rng,const Quadtree<std::int32_t,std::uint32_t>& quadtree,std::uint32_t frame,std::uint32_t our_index);
 };
 
 class Target_Scan_Result{

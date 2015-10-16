@@ -108,7 +108,13 @@ bool Chunk::has_food() const{
 string Chunk::get_ground_string() const{
     const Region& region=Game::get_region(get_parent_region());
 
-    return region.get_ground_string(region.get_ground());
+    return region.get_ground_string();
+}
+
+Color* Chunk::get_ground_color() const{
+    const Region& region=Game::get_region(get_parent_region());
+
+    return region.get_ground_color();
 }
 
 int32_t Chunk::get_size() const{

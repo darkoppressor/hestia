@@ -4,15 +4,15 @@
 
 #include "tile.h"
 #include "game_constants.h"
+#include "game.h"
 
 #include <collision.h>
 #include <render.h>
 #include <game_manager.h>
 #include <image_manager.h>
+#include <object_manager.h>
 
 ///QQQ includes
-#include "game.h"
-#include <object_manager.h>
 #include <font.h>
 #include <engine_strings.h>
 ///
@@ -222,7 +222,18 @@ string Tile::get_type_string(Type type_to_check){
     }
 }
 
-void Tile::render(uint32_t tile_x,uint32_t tile_y) const{
+Color* Tile::get_type_color(Type type_to_check){
+    string type_string=get_type_string(type_to_check);
+
+    if(type_string.length()>0){
+        return Object_Manager::get_color("tile_"+type_string);
+    }
+    else{
+        return Object_Manager::get_color("tile_wheat");
+    }
+}
+
+void Tile::render(uint32_t tile_x,uint32_t tile_y,bool selected) const{
     if(is_alive()){
         //pixels
         double x=get_x(tile_x);
@@ -284,6 +295,14 @@ void Tile::render(uint32_t tile_x,uint32_t tile_y) const{
                 Render::render_rectangle(x*Game_Manager::camera_zoom-Game_Manager::camera.x,
                                          (y-bar_height-back_thickness*3.0)*Game_Manager::camera_zoom-Game_Manager::camera.y,
                                          bar_width*Game_Manager::camera_zoom,bar_height*Game_Manager::camera_zoom,1.0,color_bar_health);
+            }
+
+            if(selected){
+                Render::render_rectangle_empty((x-Game_Constants::RENDER_SELECTION_SIZE)*Game_Manager::camera_zoom-Game_Manager::camera.x,
+                                               (y-Game_Constants::RENDER_SELECTION_SIZE)*Game_Manager::camera_zoom-Game_Manager::camera.y,
+                                               ((double)get_size()+Game_Constants::RENDER_SELECTION_SIZE*2.0)*Game_Manager::camera_zoom,
+                                               ((double)get_size()+Game_Constants::RENDER_SELECTION_SIZE*2.0)*Game_Manager::camera_zoom,
+                                               1.0,"selection",Game_Constants::RENDER_SELECTION_BORDER*Game_Manager::camera_zoom);
             }
 
             ///QQQ dev data

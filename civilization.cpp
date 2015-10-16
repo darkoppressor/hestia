@@ -5,6 +5,8 @@
 #include "civilization.h"
 #include "game.h"
 
+#include <engine_strings.h>
+
 using namespace std;
 
 Civilization::Civilization(){
@@ -113,6 +115,18 @@ void Civilization::remove_item(Inventory::Item_Type item_type,uint32_t amount){
     inventory.remove_item(item_type,amount);
 }
 
+uint32_t Civilization::get_population() const{
+    uint32_t population=0;
+
+    for(size_t i=0;i<cities.size();i++){
+        const City& city=Game::get_city(cities[i]);
+
+        population+=city.get_population();
+    }
+
+    return population;
+}
+
 string Civilization::get_color() const{
     return Leader::get_color(get_parent_leader());
 }
@@ -139,4 +153,22 @@ bool Civilization::is_neutral_towards(uint32_t civilization_index) const{
     const Civilization& civilization=Game::get_civilization(civilization_index);
 
     return leader.is_neutral_towards(civilization.get_parent_leader());
+}
+
+void Civilization::write_info_string(string& text) const{
+    text+="Cities: "+Strings::num_to_string(cities.size())+"\n";
+
+    text+="\n";
+
+    text+="Population: "+Strings::num_to_string(get_population())+"\n";
+
+    text+="\n";
+
+    text+="Inventory:\n";
+
+    vector<Inventory::Item_Type> item_types=Inventory::get_item_types();
+
+    for(size_t i=0;i<item_types.size();i++){
+        text+=Inventory::get_item_type_string(item_types[i])+": "+Strings::num_to_string(get_item_count(item_types[i]))+"\n";
+    }
 }

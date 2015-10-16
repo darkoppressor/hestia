@@ -112,8 +112,8 @@ void Person::find_tile(RNG& rng,const vector<Coords<uint32_t>>& chunk_coords){
     abandon_goal();
 }
 
-bool Person::allowed_to_select_ai_goal(uint32_t frame,uint32_t index) const{
-    if((frame+(index%Engine::UPDATE_RATE))%Game_Constants::AI_GOAL_SELECTION_PERIOD==0){
+bool Person::allowed_to_select_ai_goal(uint32_t frame,uint32_t our_index) const{
+    if((frame+(our_index%Engine::UPDATE_RATE))%Game_Constants::AI_GOAL_SELECTION_PERIOD==0){
         return true;
     }
     else{
@@ -195,7 +195,7 @@ vector<Coords<uint32_t>> Person::consider_eating(vector<AI_Choice>& choices) con
     return forage_chunk_coords;
 }
 
-Target_Scan_Result Person::target_scan(vector<AI_Choice>& choices,RNG& rng,const Quadtree<int32_t,uint32_t>& quadtree,uint32_t index) const{
+Target_Scan_Result Person::target_scan(vector<AI_Choice>& choices,RNG& rng,const Quadtree<int32_t,uint32_t>& quadtree,uint32_t our_index) const{
     Target_Scan_Result result;
 
     if(goal.retreat_can_interrupt() || goal.attack_person_melee_can_interrupt() || goal.attack_building_melee_can_interrupt()){
@@ -205,7 +205,7 @@ Target_Scan_Result Person::target_scan(vector<AI_Choice>& choices,RNG& rng,const
 
         //Only get the quadtree objects if we are retreating or attacking a person
         if(goal.retreat_can_interrupt() || goal.attack_person_melee_can_interrupt()){
-            quadtree.get_objects(targets_people,box_sight,index);
+            quadtree.get_objects(targets_people,box_sight);
         }
 
         vector<AI_Target> valid_targets;
@@ -220,23 +220,25 @@ Target_Scan_Result Person::target_scan(vector<AI_Choice>& choices,RNG& rng,const
             if(!collisions.count(targets_people[i])){
                 collisions.emplace(targets_people[i]);
 
-                const Person& person=Game::get_person(targets_people[i]);
+                if(targets_people[i]!=our_index){
+                    const Person& person=Game::get_person(targets_people[i]);
 
-                if(person.is_alive() && Collision::check_rect(box_sight,person.get_box())){
-                    int32_t person_score=(int32_t)person.get_health()+(int32_t)person.get_attack()*3+(int32_t)person.get_defense()*2;
+                    if(person.is_alive() && Collision::check_rect(box_sight,person.get_box())){
+                        int32_t person_score=(int32_t)person.get_health()+(int32_t)person.get_attack()*3+(int32_t)person.get_defense()*2;
 
-                    if(is_friends_with_person(targets_people[i])){
-                        friendly_score+=person_score;
-                    }
-                    else if(is_enemies_with_person(targets_people[i])){
-                        if(could_damage_person(person)){
-                            uint64_t person_distance=Int_Math::distance_between_points_no_sqrt(box.center_x(),box.center_y(),person.get_box().center_x(),person.get_box().center_y());
-
-                            valid_targets.push_back(AI_Target(person_distance,person.get_health(),person.get_attack(),person.get_defense()));
-                            valid_targets.back().set_person_index(targets_people[i]);
+                        if(is_friends_with_person(targets_people[i])){
+                            friendly_score+=person_score;
                         }
+                        else if(is_enemies_with_person(targets_people[i])){
+                            if(could_damage_person(person)){
+                                uint64_t person_distance=Int_Math::distance_between_points_no_sqrt(box.center_x(),box.center_y(),person.get_box().center_x(),person.get_box().center_y());
 
-                        enemy_score+=person_score;
+                                valid_targets.push_back(AI_Target(person_distance,person.get_health(),person.get_attack(),person.get_defense()));
+                                valid_targets.back().set_person_index(targets_people[i]);
+                            }
+
+                            enemy_score+=person_score;
+                        }
                     }
                 }
             }
@@ -462,10 +464,8 @@ void Person::consider_repairing(vector<AI_Choice>& choices) const{
 void Person::set_new_goal(RNG& rng,AI_Goal::Type new_goal_type,Target_Scan_Result target_scan_result,vector<Coords<uint32_t>> forage_chunk_coords,Coords<uint32_t> unfinished_building_coords){
     //If we had the building goal before, we are interrupting it
     if(goal.is_build()){
-        const Civilization& civilization=Game::get_civilization(get_parent_civilization());
-
         //Unflag the target building from our previous goal
-        civilization.set_unfinished_building_flag(goal.get_coords_tiles(),false);
+        Game::set_civilization_unfinished_building_flag(get_parent_civilization(),goal.get_coords_tiles(),false);
     }
 
     goal.set_type(new_goal_type);
@@ -562,9 +562,7 @@ void Person::set_new_goal(RNG& rng,AI_Goal::Type new_goal_type,Target_Scan_Resul
     else if(goal.is_build()){
         goal.set_coords_tiles(unfinished_building_coords);
 
-        const Civilization& civilization=Game::get_civilization(get_parent_civilization());
-
-        civilization.set_unfinished_building_flag(unfinished_building_coords,true);
+        Game::set_civilization_unfinished_building_flag(get_parent_civilization(),unfinished_building_coords,true);
     }
     else if(goal.is_repair()){
         const City& city=Game::get_city(get_parent_city());
@@ -573,9 +571,9 @@ void Person::set_new_goal(RNG& rng,AI_Goal::Type new_goal_type,Target_Scan_Resul
     }
 }
 
-void Person::ai(RNG& rng,const Quadtree<int32_t,uint32_t>& quadtree,uint32_t frame,uint32_t index){
+void Person::ai(RNG& rng,const Quadtree<int32_t,uint32_t>& quadtree,uint32_t frame,uint32_t our_index){
     if(is_alive()){
-        if(allowed_to_select_ai_goal(frame,index)){
+        if(allowed_to_select_ai_goal(frame,our_index)){
             vector<AI_Choice> choices;
 
             consider_ignoring(choices);
@@ -594,7 +592,7 @@ void Person::ai(RNG& rng,const Quadtree<int32_t,uint32_t>& quadtree,uint32_t fra
                 consider_repairing(choices);
             }
 
-            Target_Scan_Result target_scan_result=target_scan(choices,rng,quadtree,index);
+            Target_Scan_Result target_scan_result=target_scan(choices,rng,quadtree,our_index);
 
             if(choices.size()>0){
                 Sorting::quick_sort(choices);

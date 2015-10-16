@@ -15,6 +15,45 @@ AI_Goal::AI_Goal(){
     counter=0;
 }
 
+string AI_Goal::get_type_string() const{
+    if(is_gather_wheat()){
+        return "Gather wheat";
+    }
+    else if(is_gather_tree()){
+        return "Gather wood";
+    }
+    else if(is_empty_inventory()){
+        return "Empty inventory";
+    }
+    else if(is_eat()){
+        return "Eat";
+    }
+    else if(is_eat_at_home()){
+        return "Return home to eat";
+    }
+    else if(is_forage()){
+        return "Forage";
+    }
+    else if(is_retreat()){
+        return "Retreat";
+    }
+    else if(is_attack_person_melee()){
+        return "Attack person with melee";
+    }
+    else if(is_attack_building_melee()){
+        return "Attack building with melee";
+    }
+    else if(is_build()){
+        return "Build new city";
+    }
+    else if(is_repair()){
+        return "Repair home city";
+    }
+    else{
+        return "None";
+    }
+}
+
 bool AI_Goal::is_in_progress() const{
     return type!=Type::NONE;
 }
