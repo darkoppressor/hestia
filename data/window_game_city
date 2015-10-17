@@ -1,12 +1,28 @@
 <window>
 	name:game_city
-	starting_position:-1,-1
+	starting_position:0,547
 	width:300
-	height:129
+	height:173
 	title:City
 
-	<info>
+	<button>
 		location:2,36
+		text:Repopulate
+		event:repopulate_city
+		sound_moused:moused_1
+		sound_click:click_1
+	</button>
+
+	<button>
+		location:125,36
+		text:Abandon
+		event:abandon_city
+		sound_moused:moused_1
+		sound_click:click_1
+	</button>
+
+	<info>
+		location:2,80
 		special_text:city
 	</info>
 

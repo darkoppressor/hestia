@@ -16,12 +16,17 @@ public:
 
     enum class Type : std::uint8_t{
         NONE,
-        BUILD_CITY
+        BUILD_CITY,
+        REPOPULATE_CITY,
+        ABANDON_CITY
     };
 
     Type type;
 
-    //These represent different kinds of coordinates depending on type
+    //These represent different kinds of coordinates (or other data) depending on type
+    //BUILD_CITY: the tile coordinates of the new unfinished building tile
+    //REPOPULATE_CITY: x represents the city's index, y is unused
+    //ABANDON_CITY: x represents the city's index, y is unused
     Coords<std::uint32_t> coords;
 
     std::uint32_t leader;

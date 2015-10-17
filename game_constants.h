@@ -17,10 +17,12 @@ public:
 
     static std::uint32_t AI_GOAL_SELECTION_PERIOD;
     static std::uint32_t CITY_GATHER_ZONE_UPDATE_PERIOD;
+    static std::uint32_t CIVILIZATION_NEEDS_UPDATE_PERIOD;
 
     static std::uint32_t DAY_LENGTH;
 
     static std::uint32_t CITY_POPULATION_MAX;
+    static std::uint32_t CITY_POPULATION_DESIRED;
     static std::uint32_t CITY_POPULATION_START;
     static std::uint32_t BREEDING_RATE;
     static std::uint32_t CAPTURE_COOLDOWN;
@@ -47,6 +49,9 @@ public:
 
     static std::uint32_t COST_BUILD;
     static std::uint32_t COST_REPAIR;
+
+    static std::uint32_t SURPLUS_WHEAT;
+    static std::uint32_t SURPLUS_TREE;
 
     static std::uint8_t HUNGER_FULL;
     static std::uint8_t HUNGER_HUNGRY;
@@ -76,6 +81,7 @@ public:
 
     static std::int32_t PRIORITY_IGNORE;
     static std::int32_t PRIORITY_GATHER;
+    static std::int32_t PRIORITY_GATHER_SURPLUS;
     static std::int32_t PRIORITY_EMPTY_INVENTORY_FULL;
     static std::int32_t PRIORITY_EMPTY_INVENTORY_ALMOST_FULL;
     static std::int32_t PRIORITY_EMPTY_INVENTORY;

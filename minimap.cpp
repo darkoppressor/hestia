@@ -162,17 +162,19 @@ void Minimap::update(){
             for(uint32_t i=0;i<Game::get_city_count();i++){
                 const City& city=Game::get_city(i);
 
-                const Civilization& civilization=Game::get_civilization(city.get_parent_civilization());
+                if(city.get_exists()){
+                    const Civilization& civilization=Game::get_civilization(city.get_parent_civilization());
 
-                string color=civilization.get_color();
+                    string color=civilization.get_color();
 
-                uint32_t x=(double)city.get_x()*map_scale_x;
-                uint32_t y=(double)city.get_y()*map_scale_y;
+                    uint32_t x=(double)city.get_x()*map_scale_x;
+                    uint32_t y=(double)city.get_y()*map_scale_y;
 
-                for(uint32_t city_x=x;city_x<x+city_width;city_x++){
-                    for(uint32_t city_y=y;city_y<y+city_height;city_y++){
-                        if(city_x<width && city_y<height){
-                            Pixels::surface_put_pixel(surface_final,city_x,city_y,*Object_Manager::get_color(color));
+                    for(uint32_t city_x=x;city_x<x+city_width;city_x++){
+                        for(uint32_t city_y=y;city_y<y+city_height;city_y++){
+                            if(city_x<width && city_y<height){
+                                Pixels::surface_put_pixel(surface_final,city_x,city_y,*Object_Manager::get_color(color));
+                            }
                         }
                     }
                 }

@@ -34,7 +34,7 @@ private:
 
     Type type;
 
-    //These represent different kinds of coordinates depending on type
+    //These represent different kinds of coordinates (or other data) depending on type
     //Tile: the tile coordinates
     //City: the pixel coordinates
     //Person: x represents the person's index, y is unused

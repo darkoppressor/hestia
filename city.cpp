@@ -12,6 +12,8 @@
 using namespace std;
 
 City::City(){
+    exists=true;
+
     parent_civilization=0;
 
     breeding_counter=Game_Constants::BREEDING_RATE;
@@ -22,6 +24,8 @@ City::City(){
 }
 
 City::City(uint32_t new_parent){
+    exists=true;
+
     parent_civilization=new_parent;
 
     breeding_counter=Game_Constants::BREEDING_RATE;
@@ -29,6 +33,14 @@ City::City(uint32_t new_parent){
 
     gather_zone_wheat=0;
     gather_zone_tree=0;
+}
+
+bool City::get_exists() const{
+    return exists;
+}
+
+void City::set_exists(bool new_exists){
+    exists=new_exists;
 }
 
 uint32_t City::get_parent_civilization() const{
@@ -135,10 +147,37 @@ uint32_t City::get_population() const{
     return people.size();
 }
 
+bool City::has_maximum_population() const{
+    return get_population()>=Game_Constants::CITY_POPULATION_MAX;
+}
+
+uint32_t City::get_excess_population() const{
+    uint32_t denominator=100/Game_Constants::CITY_POPULATION_DESIRED;
+
+    uint32_t minimum_population=Game_Constants::CITY_POPULATION_MAX/denominator;
+
+    if(get_population()>minimum_population){
+        return get_population()-minimum_population;
+    }
+    else{
+        return 0;
+    }
+}
+
+bool City::has_excess_population() const{
+    return get_excess_population()>0;
+}
+
 bool City::needs_repair() const{
     const Tile& our_tile=Game::get_tile(tile);
 
     return our_tile.needs_repair();
+}
+
+uint32_t City::repair_count_needed() const{
+    const Tile& our_tile=Game::get_tile(tile);
+
+    return our_tile.repair_count_needed();
 }
 
 bool City::was_recently_captured() const{
@@ -150,23 +189,27 @@ void City::set_just_captured(){
 }
 
 void City::breed(uint32_t index,RNG& rng){
-    if(get_population()<Game_Constants::CITY_POPULATION_MAX){
-        if(--breeding_counter==0){
-            breeding_counter=Game_Constants::BREEDING_RATE;
+    if(get_exists()){
+        if(!has_maximum_population()){
+            if(--breeding_counter==0){
+                breeding_counter=Game_Constants::BREEDING_RATE;
 
-            Collision_Rect<int32_t> box_spawn_zone=get_spawn_zone();
+                Collision_Rect<int32_t> box_spawn_zone=get_spawn_zone();
 
-            int32_t x=(int32_t)rng.random_range((uint32_t)box_spawn_zone.x,(uint32_t)(box_spawn_zone.x+box_spawn_zone.w));
-            int32_t y=(int32_t)rng.random_range((uint32_t)box_spawn_zone.y,(uint32_t)(box_spawn_zone.y+box_spawn_zone.h));
+                int32_t x=(int32_t)rng.random_range((uint32_t)box_spawn_zone.x,(uint32_t)(box_spawn_zone.x+box_spawn_zone.w));
+                int32_t y=(int32_t)rng.random_range((uint32_t)box_spawn_zone.y,(uint32_t)(box_spawn_zone.y+box_spawn_zone.h));
 
-            Game::new_people.push_back(Person(index,Collision_Rect<int32_t>(x,y,Game_Constants::PERSON_SIZE,Game_Constants::PERSON_SIZE)));
+                Game::new_people.push_back(Person(index,Collision_Rect<int32_t>(x,y,Game_Constants::PERSON_SIZE,Game_Constants::PERSON_SIZE)));
+            }
         }
     }
 }
 
 void City::capture_cooldown(){
-    if(captured_counter>0){
-        captured_counter--;
+    if(get_exists()){
+        if(captured_counter>0){
+            captured_counter--;
+        }
     }
 }
 
@@ -192,17 +235,19 @@ bool City::allowed_to_update_gather_zone(uint32_t frame,uint32_t index) const{
 }
 
 void City::update_gather_zone(uint32_t frame,uint32_t index){
-    if(allowed_to_update_gather_zone(frame,index)){
-        gather_zone_wheat=0;
-        gather_zone_tree=0;
+    if(get_exists()){
+        if(allowed_to_update_gather_zone(frame,index)){
+            gather_zone_wheat=0;
+            gather_zone_tree=0;
 
-        vector<Coords<uint32_t>> chunk_coords=Chunk::get_zone_chunk_coords(get_chunk_x(),get_chunk_y(),Game_Constants::GATHER_ZONE_RANGE);
+            vector<Coords<uint32_t>> chunk_coords=Chunk::get_zone_chunk_coords(get_chunk_x(),get_chunk_y(),Game_Constants::GATHER_ZONE_RANGE);
 
-        for(size_t i=0;i<chunk_coords.size();i++){
-            const Chunk& chunk=Game::get_chunk(chunk_coords[i]);
+            for(size_t i=0;i<chunk_coords.size();i++){
+                const Chunk& chunk=Game::get_chunk(chunk_coords[i]);
 
-            gather_zone_wheat+=chunk.get_tile_count(Tile::Type::WHEAT);
-            gather_zone_tree+=chunk.get_tile_count(Tile::Type::TREE);
+                gather_zone_wheat+=chunk.get_tile_count(Tile::Type::WHEAT);
+                gather_zone_tree+=chunk.get_tile_count(Tile::Type::TREE);
+            }
         }
     }
 }

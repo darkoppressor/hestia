@@ -54,6 +54,14 @@
 </game_constant>
 
 <game_constant>
+	//Valid range: [1,logic update rate]
+	//There will be civilization_needs_update_period - 1 frames in between each civilization needs update
+	//Civilization needs updating is additionally staggered among the civilizations
+	name:civilization_needs_update_period
+	value:30
+</game_constant>
+
+<game_constant>
 	//seconds
 	name:day_length
 	value:4
@@ -62,6 +70,12 @@
 <game_constant>
 	name:city_population_max
 	value:20
+</game_constant>
+
+<game_constant>
+	//integer percentage
+	name:city_population_desired
+	value:25
 </game_constant>
 
 <game_constant>
@@ -188,6 +202,18 @@
 </game_constant>
 
 <game_constant>
+	//integer percentage
+	name:surplus_wheat
+	value:20
+</game_constant>
+
+<game_constant>
+	//integer percentage
+	name:surplus_tree
+	value:20
+</game_constant>
+
+<game_constant>
 	//days to 0 hunger rating
 	name:hunger_full
 	value:100
@@ -309,6 +335,11 @@
 <game_constant>
 	name:priority_gather
 	value:10
+</game_constant>
+
+<game_constant>
+	name:priority_gather_surplus
+	value:5
 </game_constant>
 
 <game_constant>

@@ -18,6 +18,9 @@
 class City{
 private:
 
+    //When a city is abandoned, exists is set to false
+    bool exists;
+
     std::uint32_t parent_civilization;
 
     Coords<std::uint32_t> tile;
@@ -34,6 +37,9 @@ public:
 
     City();
     City(std::uint32_t new_parent);
+
+    bool get_exists() const;
+    void set_exists(bool new_exists);
 
     std::uint32_t get_parent_civilization() const;
     void set_parent_civilization(std::uint32_t new_parent);
@@ -67,8 +73,12 @@ public:
     Collision_Rect<std::int32_t> get_spawn_zone() const;
 
     std::uint32_t get_population() const;
+    bool has_maximum_population() const;
+    std::uint32_t get_excess_population() const;
+    bool has_excess_population() const;
 
     bool needs_repair() const;
+    std::uint32_t repair_count_needed() const;
 
     bool was_recently_captured() const;
     void set_just_captured();

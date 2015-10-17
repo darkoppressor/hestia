@@ -91,6 +91,27 @@ bool Tile::needs_repair() const{
     return health<get_health_max();
 }
 
+uint32_t Tile::repair_count_needed() const{
+    if(needs_repair()){
+        int16_t health_needed=get_health_max()-health;
+
+        int16_t denominator=100/Game_Constants::BUILDING_REPAIR_AMOUNT;
+
+        int16_t repair_amount=get_health_max()/denominator;
+
+        int16_t repairs_needed=health_needed/repair_amount;
+
+        if(health_needed%repair_amount!=0){
+            repairs_needed++;
+        }
+
+        return (uint32_t)repairs_needed;
+    }
+    else{
+        return 0;
+    }
+}
+
 void Tile::repair(){
     int16_t denominator=100/Game_Constants::BUILDING_REPAIR_AMOUNT;
 

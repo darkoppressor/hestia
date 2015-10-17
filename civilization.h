@@ -26,6 +26,14 @@ private:
 
     Inventory inventory;
 
+    //The amount of each item that is needed
+    std::uint32_t need_wheat;
+    std::uint32_t need_tree;
+
+    //The amount of each item that is desired for surplus (OVER the needed amount)
+    std::uint32_t surplus_wheat;
+    std::uint32_t surplus_tree;
+
 public:
 
     Civilization();
@@ -57,6 +65,13 @@ public:
     bool is_friends_with(std::uint32_t civilization_index) const;
     bool is_enemies_with(std::uint32_t civilization_index) const;
     bool is_neutral_towards(std::uint32_t civilization_index) const;
+
+    std::uint32_t get_item_need(Inventory::Item_Type item_type) const;
+    std::uint32_t get_item_desire(Inventory::Item_Type item_type) const;
+    bool is_item_needed(Inventory::Item_Type item_type) const;
+    bool is_item_desired(Inventory::Item_Type item_type) const;
+    bool allowed_to_update_needs(std::uint32_t frame,std::uint32_t index) const;
+    void update_needs(std::uint32_t frame,std::uint32_t index);
 
     void write_info_string(std::string& text) const;
 };

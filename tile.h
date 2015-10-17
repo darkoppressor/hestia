@@ -48,6 +48,7 @@ public:
     bool is_alive() const;
     bool health_low() const;
     bool needs_repair() const;
+    std::uint32_t repair_count_needed() const;
     void repair();
     void capture_heal();
     void damage(std::int16_t attack);

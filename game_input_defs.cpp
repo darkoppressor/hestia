@@ -271,11 +271,7 @@ bool Game_Manager::handle_input_events_gui(){
                     if(Game::has_order()){
                         int32_t leader=Game::get_our_leader();
                         if(leader>=0){
-                            Game_Order current_order(Game::get_order(),Game::get_mouse_coords_tiles(),(uint32_t)leader);
-
-                            if(current_order.is_valid()){
-                                Game::issue_order(current_order);
-                            }
+                            Game::issue_order(Game_Order(Game::get_order(),Game::get_mouse_coords_tiles(),(uint32_t)leader));
                         }
 
                         Game::clear_order();
@@ -357,12 +353,14 @@ bool Game_Manager::handle_input_events_gui(){
                                                 //If the tile is of type BUILDING_CITY, its parent is a City
                                                 const City& city=Game::get_city(tile.get_parent());
 
-                                                Collision_Rect<int32_t> box_tile(tile.get_x(x),tile.get_x(y),tile.get_size(),tile.get_size());
+                                                if(city.get_exists()){
+                                                    Collision_Rect<int32_t> box_tile(tile.get_x(x),tile.get_x(y),tile.get_size(),tile.get_size());
 
-                                                //If the city is a member of our civilization
-                                                if(city.get_parent_civilization()==leader.get_civilization() && Collision::check_rect(box,box_tile)){
-                                                    city_found=true;
-                                                    city_index=tile.get_parent();
+                                                    //If the city is a member of our civilization
+                                                    if(city.get_parent_civilization()==leader.get_civilization() && Collision::check_rect(box,box_tile)){
+                                                        city_found=true;
+                                                        city_index=tile.get_parent();
+                                                    }
                                                 }
                                             }
                                         }

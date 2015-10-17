@@ -4,17 +4,31 @@
 
 #include "civilization.h"
 #include "game.h"
+#include "game_constants.h"
 
 #include <engine_strings.h>
+#include <engine.h>
 
 using namespace std;
 
 Civilization::Civilization(){
     parent_leader=0;
+
+    need_wheat=0;
+    need_tree=0;
+
+    surplus_wheat=0;
+    surplus_tree=0;
 }
 
 Civilization::Civilization(uint32_t new_parent){
     parent_leader=new_parent;
+
+    need_wheat=0;
+    need_tree=0;
+
+    surplus_wheat=0;
+    surplus_tree=0;
 }
 
 uint32_t Civilization::get_parent_leader() const{
@@ -121,7 +135,9 @@ uint32_t Civilization::get_population() const{
     for(size_t i=0;i<cities.size();i++){
         const City& city=Game::get_city(cities[i]);
 
-        population+=city.get_population();
+        if(city.get_exists()){
+            population+=city.get_population();
+        }
     }
 
     return population;
@@ -155,6 +171,122 @@ bool Civilization::is_neutral_towards(uint32_t civilization_index) const{
     return leader.is_neutral_towards(civilization.get_parent_leader());
 }
 
+uint32_t Civilization::get_item_need(Inventory::Item_Type item_type) const{
+    if(item_type==Inventory::Item_Type::WHEAT){
+        return need_wheat;
+    }
+    else if(item_type==Inventory::Item_Type::TREE){
+        return need_tree;
+    }
+    else{
+        return 0;
+    }
+}
+
+uint32_t Civilization::get_item_desire(Inventory::Item_Type item_type) const{
+    if(item_type==Inventory::Item_Type::WHEAT){
+        return surplus_wheat;
+    }
+    else if(item_type==Inventory::Item_Type::TREE){
+        return surplus_tree;
+    }
+    else{
+        return 0;
+    }
+}
+
+bool Civilization::is_item_needed(Inventory::Item_Type item_type) const{
+    return get_item_need(item_type)>0;
+}
+
+bool Civilization::is_item_desired(Inventory::Item_Type item_type) const{
+    return get_item_desire(item_type)>0;
+}
+
+bool Civilization::allowed_to_update_needs(uint32_t frame,uint32_t index) const{
+    if((frame+(index%Engine::UPDATE_RATE))%Game_Constants::CIVILIZATION_NEEDS_UPDATE_PERIOD==0){
+        return true;
+    }
+    else{
+        return false;
+    }
+}
+
+void Civilization::update_needs(uint32_t frame,uint32_t index){
+    if(allowed_to_update_needs(frame,index)){
+        need_wheat=0;
+        need_tree=0;
+
+        surplus_wheat=0;
+        surplus_tree=0;
+
+        //Determine needed item counts
+
+        uint32_t population=get_population();
+
+        need_wheat+=population;
+
+        need_tree+=(uint32_t)unfinished_buildings.size()*Game_Constants::COST_BUILD;
+
+        uint32_t repairs_needed=0;
+
+        for(size_t i=0;i<cities.size();i++){
+            const City& city=Game::get_city(cities[i]);
+
+            if(city.get_exists()){
+                repairs_needed+=city.repair_count_needed();
+            }
+        }
+
+        need_tree+=repairs_needed*Game_Constants::COST_REPAIR;
+
+        //Determine desired surpluses
+
+        uint32_t denominator=100/Game_Constants::SURPLUS_WHEAT;
+        surplus_wheat+=need_wheat/denominator;
+
+        denominator=100/Game_Constants::SURPLUS_TREE;
+        surplus_tree+=need_tree/denominator;
+
+        //Adjust needs and desired surpluses based on items currently held
+
+        uint32_t item_count_wheat=get_item_count(Inventory::Item_Type::WHEAT);
+        uint32_t item_count_tree=get_item_count(Inventory::Item_Type::TREE);
+
+        if(need_wheat<=item_count_wheat){
+            uint32_t adjusted_item_count=item_count_wheat-need_wheat;
+
+            if(surplus_wheat<=adjusted_item_count){
+                surplus_wheat=0;
+            }
+            else{
+                surplus_wheat-=adjusted_item_count;
+            }
+
+            need_wheat=0;
+        }
+        else{
+            need_wheat-=item_count_wheat;
+        }
+
+        if(need_tree<=item_count_tree){
+            uint32_t adjusted_item_count=item_count_tree-need_tree;
+
+            if(surplus_tree<=adjusted_item_count){
+                surplus_tree=0;
+            }
+            else{
+                surplus_tree-=adjusted_item_count;
+            }
+
+            need_tree=0;
+        }
+        else{
+            need_tree-=item_count_tree;
+        }
+    }
+}
+
 void Civilization::write_info_string(string& text) const{
     text+="Cities: "+Strings::num_to_string(cities.size())+"\n";
 
@@ -169,6 +301,16 @@ void Civilization::write_info_string(string& text) const{
     vector<Inventory::Item_Type> item_types=Inventory::get_item_types();
 
     for(size_t i=0;i<item_types.size();i++){
-        text+=Inventory::get_item_type_string(item_types[i])+": "+Strings::num_to_string(get_item_count(item_types[i]))+"\n";
+        text+=Inventory::get_item_type_string(item_types[i])+": "+Strings::num_to_string(get_item_count(item_types[i]));
+
+        uint32_t item_need=get_item_need(item_types[i]);
+        uint32_t item_desire=get_item_desire(item_types[i]);
+        uint32_t item_total=item_need+item_desire;
+
+        if(item_total>0){
+            text+=" ("+Strings::num_to_string(item_total)+" desired)";
+        }
+
+        text+="\n";
     }
 }

@@ -85,13 +85,49 @@ bool Game_Order::is_valid() const{
             if(!building_within_city_space){
                 return true;
             }
-            else{
-                return false;
+        }
+
+        return false;
+    }
+    else if(type==Type::REPOPULATE_CITY){
+        uint32_t city_index=coords.x;
+
+        if(city_index<Game::get_city_count()){
+            const City& city=Game::get_city(city_index);
+
+            if(city.get_exists()){
+                const Civilization& civilization=Game::get_civilization(city.get_parent_civilization());
+
+                uint32_t leader_index=civilization.get_parent_leader();
+
+                //If the city is owned by the order's leader
+                if(leader==leader_index){
+                    return true;
+                }
             }
         }
-        else{
-            return false;
+
+        return false;
+    }
+    else if(type==Type::ABANDON_CITY){
+        uint32_t city_index=coords.x;
+
+        if(city_index<Game::get_city_count()){
+            const City& city=Game::get_city(city_index);
+
+            if(city.get_exists()){
+                const Civilization& civilization=Game::get_civilization(city.get_parent_civilization());
+
+                uint32_t leader_index=civilization.get_parent_leader();
+
+                //If the city is owned by the order's leader and its parent civilization has at least one other city
+                if(leader==leader_index && civilization.get_cities().size()>1){
+                    return true;
+                }
+            }
         }
+
+        return false;
     }
     else{
         return false;
@@ -99,13 +135,21 @@ bool Game_Order::is_valid() const{
 }
 
 void Game_Order::execute(){
-    if(type==Type::BUILD_CITY){
-        const Leader& order_leader=Game::get_leader(leader);
+    if(is_valid()){
+        if(type==Type::BUILD_CITY){
+            const Leader& order_leader=Game::get_leader(leader);
 
-        uint32_t civilization_index=order_leader.get_civilization();
+            uint32_t civilization_index=order_leader.get_civilization();
 
-        Game::new_tiles.emplace(std::piecewise_construct,
-                                std::forward_as_tuple(coords),std::forward_as_tuple(civilization_index,get_tile_type()));
+            Game::new_tiles.emplace(std::piecewise_construct,
+                                    std::forward_as_tuple(coords),std::forward_as_tuple(civilization_index,get_tile_type()));
+        }
+        else if(type==Type::REPOPULATE_CITY){
+            Game::repopulate_city(coords.x);
+        }
+        else if(type==Type::ABANDON_CITY){
+            Game::abandon_city(coords.x);
+        }
     }
 }
 

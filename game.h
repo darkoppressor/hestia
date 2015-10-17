@@ -30,6 +30,18 @@
 #include <map>
 #include <queue>
 
+class Game_City_Distance{
+public:
+
+    std::uint32_t index;
+
+    std::uint64_t distance;
+
+    Game_City_Distance(std::uint32_t new_index,std::uint64_t new_distance);
+
+    bool operator<=(const Game_City_Distance& game_city_distance) const;
+};
+
 class Game{
 public:
 
@@ -61,6 +73,7 @@ private:
     static std::vector<Person> people;
     static std::map<Coords<std::uint32_t>,Tile,tile_compare> tiles;
 
+    static std::queue<std::uint32_t> dead_cities;
     static std::queue<std::uint32_t> dead_people;
 
     static Quadtree<std::int32_t,std::uint32_t> quadtree;
@@ -151,6 +164,8 @@ public:
     static void repair_tile(const Coords<std::uint32_t>& tile_coords);
 
     static void handle_city_capture(const Coords<std::uint32_t>& tile_coords,std::uint32_t capturing_civilization_index);
+    static void repopulate_city(std::uint32_t city_index);
+    static void abandon_city(std::uint32_t city_index);
 
     //pixels^2
     static uint64_t distance_to_nearest_city(const Coords<std::int32_t>& coords);

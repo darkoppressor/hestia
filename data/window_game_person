@@ -1,6 +1,6 @@
 <window>
 	name:game_person
-	starting_position:-1,-1
+	starting_position:0,503
 	width:300
 	height:217
 	title:Person

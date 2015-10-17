@@ -130,14 +130,26 @@ void Person::consider_ignoring(vector<AI_Choice>& choices) const{
 void Person::consider_gathering(vector<AI_Choice>& choices) const{
     if(goal.gather_can_interrupt()){
         if(has_inventory_space()){
-            const City& city=Game::get_city(parent_city);
+            const City& city=Game::get_city(get_parent_city());
+
+            const Civilization& civilization=Game::get_civilization(get_parent_civilization());
 
             if(city.get_gather_zone_tile_count(Tile::Type::WHEAT)>0){
-                choices.push_back(AI_Choice(AI_Goal::Type::GATHER_WHEAT,Game_Constants::PRIORITY_GATHER));
+                if(civilization.is_item_needed(Inventory::Item_Type::WHEAT)){
+                    choices.push_back(AI_Choice(AI_Goal::Type::GATHER_WHEAT,Game_Constants::PRIORITY_GATHER));
+                }
+                else if(civilization.is_item_desired(Inventory::Item_Type::WHEAT)){
+                    choices.push_back(AI_Choice(AI_Goal::Type::GATHER_WHEAT,Game_Constants::PRIORITY_GATHER_SURPLUS));
+                }
             }
 
             if(city.get_gather_zone_tile_count(Tile::Type::TREE)>0){
-                choices.push_back(AI_Choice(AI_Goal::Type::GATHER_TREE,Game_Constants::PRIORITY_GATHER));
+                if(civilization.is_item_needed(Inventory::Item_Type::TREE)){
+                    choices.push_back(AI_Choice(AI_Goal::Type::GATHER_TREE,Game_Constants::PRIORITY_GATHER));
+                }
+                else if(civilization.is_item_desired(Inventory::Item_Type::TREE)){
+                    choices.push_back(AI_Choice(AI_Goal::Type::GATHER_TREE,Game_Constants::PRIORITY_GATHER_SURPLUS));
+                }
             }
         }
     }
@@ -473,7 +485,7 @@ void Person::set_new_goal(RNG& rng,AI_Goal::Type new_goal_type,Target_Scan_Resul
     if(goal.is_gather()){
         vector<Coords<uint32_t>> gather_chunk_coords;
 
-        const City& city=Game::get_city(parent_city);
+        const City& city=Game::get_city(get_parent_city());
 
         if(city.get_gather_zone_tile_count(goal.get_goal_tile_type())>0){
             gather_chunk_coords=Chunk::get_zone_chunk_coords(city.get_chunk_x(),city.get_chunk_y(),Game_Constants::GATHER_ZONE_RANGE);

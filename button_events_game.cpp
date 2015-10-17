@@ -41,6 +41,34 @@ bool Button_Events::handle_button_event_game(string button_event,Window* parent_
 
         return true;
     }
+    else if(button_event=="repopulate_city"){
+        if(Game::started){
+            Game_Selection selection=Game::get_selection();
+
+            if(selection.type==Game_Selection::Type::CITY){
+                int32_t leader=Game::get_our_leader();
+                if(leader>=0){
+                    Game::issue_order(Game_Order(Game_Order::Type::REPOPULATE_CITY,Coords<uint32_t>(selection.index,0),(uint32_t)leader));
+                }
+            }
+        }
+
+        return true;
+    }
+    else if(button_event=="abandon_city"){
+        if(Game::started){
+            Game_Selection selection=Game::get_selection();
+
+            if(selection.type==Game_Selection::Type::CITY){
+                int32_t leader=Game::get_our_leader();
+                if(leader>=0){
+                    Game::issue_order(Game_Order(Game_Order::Type::ABANDON_CITY,Coords<uint32_t>(selection.index,0),(uint32_t)leader));
+                }
+            }
+        }
+
+        return true;
+    }
 
     return false;
 }

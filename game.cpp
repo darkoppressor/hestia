@@ -20,8 +20,19 @@
 #include <engine_strings.h>
 #include <engine.h>
 #include <window_manager.h>
+#include <sorting.h>
 
 using namespace std;
+
+Game_City_Distance::Game_City_Distance(uint32_t new_index,uint64_t new_distance){
+    index=new_index;
+
+    distance=new_distance;
+}
+
+bool Game_City_Distance::operator<=(const Game_City_Distance& game_city_distance) const{
+    return distance<=game_city_distance.distance;
+}
 
 Game_Order::Type Game::order=Game_Order::Type::NONE;
 
@@ -38,6 +49,7 @@ vector<City> Game::cities;
 vector<Person> Game::people;
 map<Coords<uint32_t>,Tile,Game::tile_compare> Game::tiles;
 
+queue<uint32_t> Game::dead_cities;
 queue<uint32_t> Game::dead_people;
 
 Quadtree<int32_t,uint32_t> Game::quadtree;
@@ -89,15 +101,26 @@ void Game::add_remove_objects(){
     }
 
     for(size_t i=0;i<new_cities.size();i++){
-        cities.push_back(new_cities[i]);
+        uint32_t city_index=0;
 
-        uint32_t city_index=cities.size()-1;
+        if(dead_cities.empty()){
+            cities.push_back(new_cities[i]);
 
-        uint32_t parent_civilization=cities.back().get_parent_civilization();
+            city_index=cities.size()-1;
+        }
+        else{
+            city_index=dead_cities.front();
+
+            dead_cities.pop();
+
+            cities[city_index]=new_cities[i];
+        }
+
+        uint32_t parent_civilization=cities[city_index].get_parent_civilization();
 
         civilizations[parent_civilization].add_city(city_index);
 
-        Coords<uint32_t> tile_coords=cities.back().get_tile();
+        Coords<uint32_t> tile_coords=cities[city_index].get_tile();
 
         civilizations[parent_civilization].remove_unfinished_building(tile_coords);
 
@@ -225,6 +248,7 @@ void Game::clear_world(){
     people.clear();
     tiles.clear();
 
+    dead_cities={};
     dead_people={};
 
     quadtree.clear_tree();
@@ -707,6 +731,14 @@ void Game::repair_tile(const Coords<uint32_t>& tile_coords){
 void Game::handle_city_capture(const Coords<uint32_t>& tile_coords,uint32_t capturing_civilization_index){
     tiles.at(tile_coords).capture_heal();
 
+    for(size_t i=0;i<people.size();i++){
+        Person& person=people[i];
+
+        if(person.is_alive()){
+            person.abandon_goal();
+        }
+    }
+
     //If the tile's type is a city building, its parent is a city
     uint32_t city_index=tiles.at(tile_coords).get_parent();
 
@@ -725,17 +757,152 @@ void Game::handle_city_capture(const Coords<uint32_t>& tile_coords,uint32_t capt
     }
 }
 
+void Game::repopulate_city(uint32_t city_index){
+    City& passed_city=cities[city_index];
+
+    const Civilization& civilization=get_civilization(passed_city.get_parent_civilization());
+
+    vector<uint32_t> city_list=civilization.get_cities();
+
+    //If the passed city's civilization has more cities than just the passed city
+    if(city_list.size()>1 && !passed_city.has_maximum_population()){
+        int32_t city_x=passed_city.get_center_x();
+        int32_t city_y=passed_city.get_center_y();
+
+        //List of cities in passed city's civilization, paired with their distance to the passed city
+        //The passed city is not included in this list
+        vector<Game_City_Distance> city_distance_list;
+
+        for(size_t i=0;i<city_list.size();i++){
+            if(city_list[i]!=city_index){
+                const City& city=get_city(city_list[i]);
+
+                if(city.get_exists()){
+                    city_distance_list.push_back(Game_City_Distance(city_list[i],Int_Math::distance_between_points_no_sqrt(city_x,city_y,city.get_center_x(),city.get_center_y())));
+                }
+            }
+        }
+
+        if(city_distance_list.size()>0){
+            Sorting::quick_sort(city_distance_list);
+
+            for(size_t i=city_distance_list.size()-1;;){
+                City& city=cities[city_distance_list[i].index];
+
+                if(city.has_excess_population()){
+                    uint32_t excess_population=city.get_excess_population();
+
+                    uint32_t desired_population=Game_Constants::CITY_POPULATION_MAX-passed_city.get_population();
+
+                    uint32_t population_to_move=0;
+
+                    if(excess_population>=desired_population){
+                        population_to_move=desired_population;
+                    }
+                    else{
+                        population_to_move=excess_population;
+                    }
+
+                    vector<uint32_t> city_people=city.get_people();
+
+                    for(size_t n=0,people_moved=0;n<city_people.size() && people_moved<population_to_move;n++){
+                        uint32_t person_index=city_people[n];
+
+                        Person& person=people[person_index];
+
+                        if(person.is_alive()){
+                            person.set_parent_city(city_index);
+
+                            city.remove_person(person_index);
+
+                            passed_city.add_person(person_index);
+
+                            people_moved++;
+                        }
+                    }
+
+                    desired_population=Game_Constants::CITY_POPULATION_MAX-passed_city.get_population();
+
+                    if(desired_population==0){
+                        break;
+                    }
+                }
+
+                if(i==0){
+                    break;
+                }
+                else{
+                    i--;
+                }
+            }
+        }
+    }
+}
+
+void Game::abandon_city(uint32_t city_index){
+    City& passed_city=cities[city_index];
+
+    Civilization& civilization=civilizations[passed_city.get_parent_civilization()];
+
+    vector<uint32_t> city_list=civilization.get_cities();
+
+    //If the passed city's civilization has more cities than just the passed city
+    if(city_list.size()>1){
+        vector<uint32_t> city_people=passed_city.get_people();
+
+        while(city_people.size()>0){
+            for(size_t i=0;i<city_list.size();i++){
+                if(city_list[i]!=city_index){
+                    uint32_t person_index=city_people[0];
+
+                    Person& person=people[person_index];
+
+                    if(person.is_alive()){
+                        City& city=cities[city_list[i]];
+
+                        person.set_parent_city(city_list[i]);
+
+                        passed_city.remove_person(person_index);
+
+                        city.add_person(person_index);
+                    }
+
+                    city_people.erase(city_people.begin());
+
+                    if(city_people.size()==0){
+                        break;
+                    }
+                }
+            }
+        }
+
+        kill_tile(passed_city.get_tile());
+
+        civilization.remove_city(city_index);
+
+        passed_city.set_exists(false);
+
+        dead_cities.push(city_index);
+
+        if(selection.type==Game_Selection::Type::CITY && selection.index==city_index){
+            clear_selection();
+        }
+    }
+}
+
 uint64_t Game::distance_to_nearest_city(const Coords<int32_t>& coords){
     bool no_city_found=true;
     uint64_t nearest=0;
 
     for(size_t i=0;i<cities.size();i++){
-        uint64_t distance=Int_Math::distance_between_points_no_sqrt(coords.x,coords.y,cities[i].get_center_x(),cities[i].get_center_y());
+        if(cities[i].get_exists()){
+            uint64_t distance=Int_Math::distance_between_points_no_sqrt(coords.x,coords.y,cities[i].get_center_x(),cities[i].get_center_y());
 
-        if(no_city_found || distance<nearest){
-            no_city_found=false;
+            if(no_city_found || distance<nearest){
+                no_city_found=false;
 
-            nearest=distance;
+                nearest=distance;
+            }
         }
     }
 
@@ -821,11 +988,13 @@ void Game::clear_order(){
 }
 
 void Game::issue_order(const Game_Order& new_order){
-    if(Network_Engine::status=="server"){
-        server_game_orders.push_back(new_order);
-    }
-    else if(Network_Engine::status=="client"){
-        Network_Game::send_client_game_order(new_order);
+    if(new_order.is_valid()){
+        if(Network_Engine::status=="server"){
+            server_game_orders.push_back(new_order);
+        }
+        else if(Network_Engine::status=="client"){
+            Network_Game::send_client_game_order(new_order);
+        }
     }
 }
 
@@ -855,9 +1024,7 @@ void Game::clear_client_game_orders(){
 
 void Game::execute_client_game_orders(){
     for(size_t i=0;i<client_game_orders.size();i++){
-        if(client_game_orders[i].is_valid()){
-            client_game_orders[i].execute();
-        }
+        client_game_orders[i].execute();
     }
 
     clear_client_game_orders();
@@ -937,6 +1104,10 @@ void Game::events(){
 
         ///QQQ move into separate thread
         update_minimap();
+
+        for(size_t i=0;i<civilizations.size();i++){
+            civilizations[i].update_needs(frame,(uint32_t)i);
+        }
 
         for(size_t i=0;i<cities.size();i++){
             cities[i].update_gather_zone(frame,(uint32_t)i);

@@ -17,10 +17,12 @@ uint32_t Game_Constants::PERSON_SIZE=0;
 
 uint32_t Game_Constants::AI_GOAL_SELECTION_PERIOD=0;
 uint32_t Game_Constants::CITY_GATHER_ZONE_UPDATE_PERIOD=0;
+uint32_t Game_Constants::CIVILIZATION_NEEDS_UPDATE_PERIOD=0;
 
 uint32_t Game_Constants::DAY_LENGTH=0;
 
 uint32_t Game_Constants::CITY_POPULATION_MAX=0;
+uint32_t Game_Constants::CITY_POPULATION_DESIRED=0;
 uint32_t Game_Constants::CITY_POPULATION_START=0;
 uint32_t Game_Constants::BREEDING_RATE=0;
 uint32_t Game_Constants::CAPTURE_COOLDOWN=0;
@@ -47,6 +49,9 @@ int16_t Game_Constants::BUILDING_CAPTURED_HEALTH_PERCENTAGE=0;
 
 uint32_t Game_Constants::COST_BUILD=0;
 uint32_t Game_Constants::COST_REPAIR=0;
+
+uint32_t Game_Constants::SURPLUS_WHEAT=0;
+uint32_t Game_Constants::SURPLUS_TREE=0;
 
 uint8_t Game_Constants::HUNGER_FULL=0;
 uint8_t Game_Constants::HUNGER_HUNGRY=0;
@@ -76,6 +81,7 @@ int32_t Game_Constants::AI_COMBAT_SCORE_RATIO_OVERWHELMING=0;
 
 int32_t Game_Constants::PRIORITY_IGNORE=0;
 int32_t Game_Constants::PRIORITY_GATHER=0;
+int32_t Game_Constants::PRIORITY_GATHER_SURPLUS=0;
 int32_t Game_Constants::PRIORITY_EMPTY_INVENTORY_FULL=0;
 int32_t Game_Constants::PRIORITY_EMPTY_INVENTORY_ALMOST_FULL=0;
 int32_t Game_Constants::PRIORITY_EMPTY_INVENTORY=0;
@@ -142,6 +148,9 @@ void Game_Constants_Loader::set_game_constant(string name,string value){
     else if(name=="city_gather_zone_update_period"){
         Game_Constants::CITY_GATHER_ZONE_UPDATE_PERIOD=Strings::string_to_unsigned_long(value);
     }
+    else if(name=="civilization_needs_update_period"){
+        Game_Constants::CIVILIZATION_NEEDS_UPDATE_PERIOD=Strings::string_to_unsigned_long(value);
+    }
 
     else if(name=="day_length"){
         Game_Constants::DAY_LENGTH=Strings::string_to_unsigned_long(value);
@@ -149,6 +158,9 @@ void Game_Constants_Loader::set_game_constant(string name,string value){
 
     else if(name=="city_population_max"){
         Game_Constants::CITY_POPULATION_MAX=Strings::string_to_unsigned_long(value);
+    }
+    else if(name=="city_population_desired"){
+        Game_Constants::CITY_POPULATION_DESIRED=Strings::string_to_unsigned_long(value);
     }
     else if(name=="city_population_start"){
         Game_Constants::CITY_POPULATION_START=Strings::string_to_unsigned_long(value);
@@ -216,6 +228,13 @@ void Game_Constants_Loader::set_game_constant(string name,string value){
     }
     else if(name=="cost_repair"){
         Game_Constants::COST_REPAIR=Strings::string_to_unsigned_long(value);
+    }
+
+    else if(name=="surplus_wheat"){
+        Game_Constants::SURPLUS_WHEAT=Strings::string_to_unsigned_long(value);
+    }
+    else if(name=="surplus_tree"){
+        Game_Constants::SURPLUS_TREE=Strings::string_to_unsigned_long(value);
     }
 
     else if(name=="hunger_full"){
@@ -287,6 +306,9 @@ void Game_Constants_Loader::set_game_constant(string name,string value){
     }
     else if(name=="priority_gather"){
         Game_Constants::PRIORITY_GATHER=Strings::string_to_long(value);
+    }
+    else if(name=="priority_gather_surplus"){
+        Game_Constants::PRIORITY_GATHER_SURPLUS=Strings::string_to_long(value);
     }
     else if(name=="priority_empty_inventory_full"){
         Game_Constants::PRIORITY_EMPTY_INVENTORY_FULL=Strings::string_to_long(value);
