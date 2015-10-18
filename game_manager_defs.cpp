@@ -3,6 +3,7 @@
 /* See the file docs/LICENSE.txt for the full license text. */
 
 #include "game.h"
+#include "game_options.h"
 
 #include <game_manager.h>
 #include <options.h>
@@ -65,7 +66,7 @@ void Game_Manager::set_camera(){
 
     Game_Selection selection=Game::get_selection();
 
-    if(/**selection.type==Game_Selection::Type::PERSON*/false){
+    if(selection.follow && selection.type==Game_Selection::Type::PERSON){
         const Person& person=Game::get_person(selection.index);
 
         Collision_Rect<int32_t> box_person=person.get_box();
@@ -101,6 +102,37 @@ void Game_Manager::set_camera(){
         else if(cam_state=="left_down"){
             camera.x-=camera_speed/(double)Engine::UPDATE_RATE;
             camera.y+=camera_speed/(double)Engine::UPDATE_RATE;
+        }
+
+        if(Game_Options::edge_scrolling){
+            if(Game::edge_scroll_state=="left"){
+                camera.x-=Game::edge_scroll_speed/(double)Engine::UPDATE_RATE;
+            }
+            else if(Game::edge_scroll_state=="up"){
+                camera.y-=Game::edge_scroll_speed/(double)Engine::UPDATE_RATE;
+            }
+            else if(Game::edge_scroll_state=="right"){
+                camera.x+=Game::edge_scroll_speed/(double)Engine::UPDATE_RATE;
+            }
+            else if(Game::edge_scroll_state=="down"){
+                camera.y+=Game::edge_scroll_speed/(double)Engine::UPDATE_RATE;
+            }
+            else if(Game::edge_scroll_state=="left_up"){
+                camera.x-=Game::edge_scroll_speed/(double)Engine::UPDATE_RATE;
+                camera.y-=Game::edge_scroll_speed/(double)Engine::UPDATE_RATE;
+            }
+            else if(Game::edge_scroll_state=="right_up"){
+                camera.x+=Game::edge_scroll_speed/(double)Engine::UPDATE_RATE;
+                camera.y-=Game::edge_scroll_speed/(double)Engine::UPDATE_RATE;
+            }
+            else if(Game::edge_scroll_state=="right_down"){
+                camera.x+=Game::edge_scroll_speed/(double)Engine::UPDATE_RATE;
+                camera.y+=Game::edge_scroll_speed/(double)Engine::UPDATE_RATE;
+            }
+            else if(Game::edge_scroll_state=="left_down"){
+                camera.x-=Game::edge_scroll_speed/(double)Engine::UPDATE_RATE;
+                camera.y+=Game::edge_scroll_speed/(double)Engine::UPDATE_RATE;
+            }
         }
     }
 

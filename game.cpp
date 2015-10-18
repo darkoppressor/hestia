@@ -185,6 +185,12 @@ bool Game::started=false;
 
 uint32_t Game::frame=0;
 
+string Game::edge_scroll_state="none";
+double Game::edge_scroll_speed=0.0;
+
+bool Game::camera_drag_main=false;
+bool Game::camera_drag_minimap=false;
+
 uint32_t Game::option_rng_seed=0;
 uint32_t Game::option_world_width=0;
 uint32_t Game::option_world_height=0;
@@ -958,6 +964,17 @@ void Game::set_selection(Game_Selection::Type type,uint32_t index){
     }
 }
 
+void Game::toggle_selection_follow(){
+    if(selection.follow){
+        selection.follow=false;
+    }
+    else{
+        if(selection.type==Game_Selection::Type::PERSON){
+            selection.follow=true;
+        }
+    }
+}
+
 void Game::clear_selection(){
     selection.clear_type();
 
@@ -1028,6 +1045,44 @@ void Game::execute_client_game_orders(){
     }
 
     clear_client_game_orders();
+}
+
+bool Game::is_mouse_over_minimap(){
+    int mouse_x=0;
+    int mouse_y=0;
+    Engine::get_mouse_state(&mouse_x,&mouse_y);
+
+    Collision_Rect<double> box_mouse((double)mouse_x,(double)mouse_y,1.0,1.0);
+    Collision_Rect<double> box_minimap=minimap.get_box();
+
+    if(Collision::check_rect(box_mouse,box_minimap)){
+        return true;
+    }
+    else{
+        return false;
+    }
+}
+
+void Game::center_camera_on_minimap_position(){
+    int mouse_x=0;
+    int mouse_y=0;
+    Engine::get_mouse_state(&mouse_x,&mouse_y);
+
+    Collision_Rect<double> box_mouse((double)mouse_x,(double)mouse_y,1.0,1.0);
+    Collision_Rect<double> box_minimap=minimap.get_box();
+
+    Collision_Rect<double> box_position(Math::abs(box_minimap.x-box_mouse.x)/(box_minimap.w/(double)get_world_width()),
+                           Math::abs(box_minimap.y-box_mouse.y)/(box_minimap.h/(double)get_world_height()),0.0,0.0);
+
+    if(box_mouse.x<box_minimap.x){
+        box_position.x=0.0;
+    }
+
+    if(box_mouse.y<box_minimap.y){
+        box_position.y=0.0;
+    }
+
+    Game_Manager::center_camera(box_position);
 }
 
 void Game::tick(){
@@ -1223,6 +1278,31 @@ bool Game::move_input_state(string direction){
         return true;
     }
     else if(direction=="right" && Object_Manager::game_command_state("move_stick_horizontal")>Engine_Data::controller_dead_zone){
+        return true;
+    }
+
+    return false;
+}
+
+bool Game::edge_scroll_input_state(string direction){
+    int mouse_x=0;
+    int mouse_y=0;
+    Engine::get_mouse_state(&mouse_x,&mouse_y);
+
+    int window_width=0;
+    int window_height=0;
+    Game_Window::get_renderer_output_size(&window_width,&window_height);
+
+    if(direction=="up" && mouse_y<=1){
+        return true;
+    }
+    else if(direction=="down" && mouse_y>=window_height-2){
+        return true;
+    }
+    else if(direction=="left" && mouse_x<=1){
+        return true;
+    }
+    else if(direction=="right" && mouse_x>=window_width-2){
         return true;
     }
 

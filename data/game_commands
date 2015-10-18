@@ -107,3 +107,53 @@
 	controller_button:
 	controller_axis:
 </game_command>
+
+<game_command>
+	name:camera_speed_mod_fast
+	title:Camera Speed Modifier - Fast
+	description:Hold to speed up camera movement
+	developer:false
+	key:Left Shift
+	controller_button:
+	controller_axis:
+</game_command>
+
+<game_command>
+	name:camera_speed_mod_fast
+	title:Camera Speed Modifier - Fast
+	description:Hold to speed up camera movement
+	developer:false
+	key:Right Shift
+	controller_button:
+	controller_axis:
+</game_command>
+
+<game_command>
+	name:camera_speed_mod_slow
+	title:Camera Speed Modifier - Slow
+	description:Hold to slow down camera movement
+	developer:false
+	key:Left Ctrl
+	controller_button:
+	controller_axis:
+</game_command>
+
+<game_command>
+	name:camera_speed_mod_slow
+	title:Camera Speed Modifier - Slow
+	description:Hold to slow down camera movement
+	developer:false
+	key:Right Ctrl
+	controller_button:
+	controller_axis:
+</game_command>
+
+<game_command>
+	name:follow_selection
+	title:Follow Selection
+	description:Lock the camera to the selected object
+	developer:false
+	key:f
+	controller_button:
+	controller_axis:
+</game_command>

@@ -21,6 +21,8 @@ public:
 
     std::uint32_t index;
 
+    bool follow;
+
     Game_Selection();
 
     void clear_type();

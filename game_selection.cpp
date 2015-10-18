@@ -10,8 +10,14 @@ Game_Selection::Game_Selection(){
     type=Type::NONE;
 
     index=0;
+
+    follow=false;
 }
 
 void Game_Selection::clear_type(){
     type=Type::NONE;
+
+    index=0;
+
+    follow=false;
 }

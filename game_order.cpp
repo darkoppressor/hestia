@@ -154,25 +154,27 @@ void Game_Order::execute(){
 }
 
 void Game_Order::render() const{
-    //pixels
-    double x=Tile::get_x(coords.x);
-    double y=Tile::get_y(coords.y);
+    if(!Game::is_mouse_over_minimap()){
+        //pixels
+        double x=Tile::get_x(coords.x);
+        double y=Tile::get_y(coords.y);
 
-    string color="order_valid";
-    if(!is_valid()){
-        color="order_invalid";
-    }
+        string color="order_valid";
+        if(!is_valid()){
+            color="order_invalid";
+        }
 
-    if(type==Type::BUILD_CITY){
-        double tile_size=(double)Tile::get_tile_type_size(get_tile_type());
+        if(type==Type::BUILD_CITY){
+            double tile_size=(double)Tile::get_tile_type_size(get_tile_type());
 
-        Render::render_rectangle_empty(x*Game_Manager::camera_zoom-Game_Manager::camera.x,
-                                       y*Game_Manager::camera_zoom-Game_Manager::camera.y,
-                                       tile_size*Game_Manager::camera_zoom,
-                                       tile_size*Game_Manager::camera_zoom,
-                                       1.0,color,Game_Constants::RENDER_BUILDING_COLOR_BORDER*Game_Manager::camera_zoom);
+            Render::render_rectangle_empty(x*Game_Manager::camera_zoom-Game_Manager::camera.x,
+                                           y*Game_Manager::camera_zoom-Game_Manager::camera.y,
+                                           tile_size*Game_Manager::camera_zoom,
+                                           tile_size*Game_Manager::camera_zoom,
+                                           1.0,color,Game_Constants::RENDER_BUILDING_COLOR_BORDER*Game_Manager::camera_zoom);
 
-        Render::render_texture(x*Game_Manager::camera_zoom-Game_Manager::camera.x,y*Game_Manager::camera_zoom-Game_Manager::camera.y,
-                               Image_Manager::get_image("tile_building_unfinished"),0.75,Game_Manager::camera_zoom,Game_Manager::camera_zoom,0.0,color);
+            Render::render_texture(x*Game_Manager::camera_zoom-Game_Manager::camera.x,y*Game_Manager::camera_zoom-Game_Manager::camera.y,
+                                   Image_Manager::get_image("tile_building_unfinished"),0.75,Game_Manager::camera_zoom,Game_Manager::camera_zoom,0.0,color);
+        }
     }
 }

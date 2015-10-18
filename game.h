@@ -94,6 +94,11 @@ public:
     //Valid values: 0 to UPDATE_RATE-1
     static std::uint32_t frame;
 
+    static std::string edge_scroll_state;
+    static double edge_scroll_speed;
+    static bool camera_drag_main;
+    static bool camera_drag_minimap;
+
     static std::uint32_t option_rng_seed;
 
     //chunks
@@ -175,6 +180,7 @@ public:
 
     static Game_Selection get_selection();
     static void set_selection(Game_Selection::Type type,std::uint32_t index);
+    static void toggle_selection_follow();
     static void clear_selection();
     static void close_selection_windows();
 
@@ -193,6 +199,9 @@ public:
     static void clear_client_game_orders();
     static void execute_client_game_orders();
 
+    static bool is_mouse_over_minimap();
+    static void center_camera_on_minimap_position();
+
     static void tick();
     static void ai();
     static void movement();
@@ -206,6 +215,7 @@ public:
     static void render_background();
 
     static bool move_input_state(std::string direction);
+    static bool edge_scroll_input_state(std::string direction);
 };
 
 #endif

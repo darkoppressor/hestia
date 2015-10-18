@@ -139,9 +139,6 @@ void Minimap::update(){
                 tile_height=1;
             }
 
-            ///tile_width*=8;
-            ///tile_height*=8;
-
             if(SDL_BlitSurface(surface,0,surface_final,0)!=0){
                 string msg="Error blitting to surface for minimap update: ";
                 msg+=SDL_GetError();
@@ -221,24 +218,29 @@ void Minimap::clear_map(){
     clear_image_data();
 }
 
+Collision_Rect<double> Minimap::get_box(){
+    return Collision_Rect<double>((double)Game_Window::width()-(double)width-Game_Constants::RENDER_MINIMAP_BORDER,
+                                  (double)Game_Window::height()-(double)height-Game_Constants::RENDER_MINIMAP_BORDER,
+                                  (double)width,(double)height);
+}
+
 void Minimap::render(){
-    double x=(double)Game_Window::width()-(double)width;
-    double y=(double)Game_Window::height()-(double)height;
+    Collision_Rect<double> box=get_box();
 
     double map_scale_x=(double)width/double(Game::option_world_width*Game_Constants::CHUNK_SIZE*Game_Constants::TILE_SIZE);
     double map_scale_y=(double)height/double(Game::option_world_height*Game_Constants::CHUNK_SIZE*Game_Constants::TILE_SIZE);
 
     //Render the border
-    Render::render_rectangle(x-Game_Constants::RENDER_MINIMAP_BORDER*2.0,y-Game_Constants::RENDER_MINIMAP_BORDER*2.0,
+    Render::render_rectangle(box.x-Game_Constants::RENDER_MINIMAP_BORDER,box.y-Game_Constants::RENDER_MINIMAP_BORDER,
                              (double)width+Game_Constants::RENDER_MINIMAP_BORDER*2.0,(double)height+Game_Constants::RENDER_MINIMAP_BORDER*2.0,
                              1.0,"minimap_border");
 
     //Render the texture
-    Render::render_texture(x-Game_Constants::RENDER_MINIMAP_BORDER,y-Game_Constants::RENDER_MINIMAP_BORDER,&image_data);
+    Render::render_texture(box.x,box.y,&image_data);
 
     //Render the camera rectangle
-    Render::render_rectangle_empty(x-Game_Constants::RENDER_MINIMAP_BORDER+(Game_Manager::camera.x*map_scale_x)/Game_Manager::camera_zoom,
-                                   y-Game_Constants::RENDER_MINIMAP_BORDER+(Game_Manager::camera.y*map_scale_y)/Game_Manager::camera_zoom,
+    Render::render_rectangle_empty(box.x+(Game_Manager::camera.x*map_scale_x)/Game_Manager::camera_zoom,
+                                   box.y+(Game_Manager::camera.y*map_scale_y)/Game_Manager::camera_zoom,
                                    (Game_Manager::camera.w*map_scale_x)/Game_Manager::camera_zoom,(Game_Manager::camera.h*map_scale_y)/Game_Manager::camera_zoom,
                                    1.0,"minimap_camera_rectangle",Game_Constants::RENDER_MINIMAP_CAMERA_RECTANGLE);
 }

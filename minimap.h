@@ -6,6 +6,7 @@
 #define minimap_h
 
 #include <image_data.h>
+#include <collision.h>
 
 #include <cstdint>
 
@@ -37,6 +38,8 @@ public:
     void generate_surface(std::uint32_t new_width,std::uint32_t new_height);
     void update();
     void clear_map();
+
+    Collision_Rect<double> get_box();
 
     void render();
 };

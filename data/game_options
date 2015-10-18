@@ -29,9 +29,51 @@
 </game_option>
 
 <game_option>
+	name:cl_camera_speed_mod_fast
+	default:3.0
+	description:the speed modifier for faster camera movement with the directional keys in pixels/second
+</game_option>
+
+<game_option>
+	name:cl_camera_speed_mod_slow
+	default:0.25
+	description:the speed modifier for slower camera movement with the directional keys in pixels/second
+</game_option>
+
+<game_option>
 	name:cl_camera_zoom
 	default:2.0
 	description:the starting zoom level of the camera
+</game_option>
+
+<game_option>
+	name:cl_edge_scrolling
+	default:true
+	description:scroll the camera when the mouse is at the edge of the screen
+</game_option>
+
+<game_option>
+	name:cl_edge_scroll_speed
+	default:960.0
+	description:the speed of camera movement from edge scrolling in pixels/second
+</game_option>
+
+<game_option>
+	name:cl_edge_scroll_speed_mod_fast
+	default:3.0
+	description:the speed modifier for faster camera movement from edge scrolling in pixels/second
+</game_option>
+
+<game_option>
+	name:cl_edge_scroll_speed_mod_slow
+	default:0.25
+	description:the speed modifier for slower camera movement from edge scrolling in pixels/second
+</game_option>
+
+<game_option>
+	name:cl_zoom_to_cursor
+	default:true
+	description:when zooming, center on cursor position instead of camera position
 </game_option>
 
 <game_option>
