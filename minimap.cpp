@@ -114,6 +114,9 @@ void Minimap::update(){
         SDL_Surface* surface_final=SDL_CreateRGBSurface(0,(int)width,(int)height,32,rmask,gmask,bmask,amask);
 
         if(surface_final!=0){
+            double map_scale_x=(double)width/double(Game::option_world_width*Game_Constants::CHUNK_SIZE*Game_Constants::TILE_SIZE);
+            double map_scale_y=(double)height/double(Game::option_world_height*Game_Constants::CHUNK_SIZE*Game_Constants::TILE_SIZE);
+
             //pixels
             uint32_t city_width=(double(Game_Constants::BUILDING_SIZE*Game_Constants::TILE_SIZE)/double(Game_Constants::CHUNK_SIZE*Game_Constants::TILE_SIZE))*(double)chunk_width;
             uint32_t city_height=(double(Game_Constants::BUILDING_SIZE*Game_Constants::TILE_SIZE)/double(Game_Constants::CHUNK_SIZE*Game_Constants::TILE_SIZE))*(double)chunk_height;
@@ -127,17 +130,6 @@ void Minimap::update(){
 
             city_width*=8;
             city_height*=8;
-
-            //pixels
-            uint32_t tile_width=((double)Game_Constants::TILE_SIZE/double(Game_Constants::CHUNK_SIZE*Game_Constants::TILE_SIZE))*(double)chunk_width;
-            uint32_t tile_height=((double)Game_Constants::TILE_SIZE/double(Game_Constants::CHUNK_SIZE*Game_Constants::TILE_SIZE))*(double)chunk_height;
-
-            if(tile_width==0){
-                tile_width=1;
-            }
-            if(tile_height==0){
-                tile_height=1;
-            }
 
             if(SDL_BlitSurface(surface,0,surface_final,0)!=0){
                 string msg="Error blitting to surface for minimap update: ";
@@ -153,8 +145,60 @@ void Minimap::update(){
                 }
             }
 
-            double map_scale_x=(double)width/double(Game::option_world_width*Game_Constants::CHUNK_SIZE*Game_Constants::TILE_SIZE);
-            double map_scale_y=(double)height/double(Game::option_world_height*Game_Constants::CHUNK_SIZE*Game_Constants::TILE_SIZE);
+            const map<Coords<uint32_t>,Tile,Game::tile_compare>& tiles=Game::get_tiles();
+
+            for(const auto& it : tiles){
+                if(it.second.is_alive()){
+                    bool render_tile=false;
+
+                    if(it.second.get_type()==Tile::Type::BUILDING_UNFINISHED){
+                        int32_t leader_index=Game::get_our_leader();
+                        //If the tile is of type BUILDING_UNFINISHED, its parent is a Civilization
+                        if(leader_index>=0 && it.second.get_parent()==(uint32_t)leader_index){
+                            render_tile=true;
+                        }
+                    }
+                    else if(!it.second.is_building()){
+                        render_tile=true;
+                    }
+
+                    if(render_tile){
+                        Color* color=Tile::get_type_color(it.second.get_type());
+
+                        uint32_t x=(double)it.second.get_x(it.first.x)*map_scale_x;
+                        uint32_t y=(double)it.second.get_y(it.first.y)*map_scale_y;
+
+                        //pixels
+                        uint32_t tile_width=((double)Tile::get_tile_type_size(it.second.get_type())/double(Game_Constants::CHUNK_SIZE*Game_Constants::TILE_SIZE))*(double)chunk_width;
+                        uint32_t tile_height=((double)Tile::get_tile_type_size(it.second.get_type())/double(Game_Constants::CHUNK_SIZE*Game_Constants::TILE_SIZE))*(double)chunk_height;
+
+                        if(tile_width==0){
+                            tile_width=1;
+                        }
+                        if(tile_height==0){
+                            tile_height=1;
+                        }
+
+                        if(it.second.get_type()==Tile::Type::BUILDING_UNFINISHED){
+                            //If the tile is of type BUILDING_UNFINISHED, its parent is a Civilization
+                            const Civilization& civilization=Game::get_civilization(it.second.get_parent());
+
+                            color=Object_Manager::get_color(civilization.get_color());
+
+                            tile_width*=4;
+                            tile_height*=4;
+                        }
+
+                        for(uint32_t tile_x=x;tile_x<x+tile_width;tile_x++){
+                            for(uint32_t tile_y=y;tile_y<y+tile_height;tile_y++){
+                                if(tile_x<width && tile_y<height){
+                                    Pixels::surface_put_pixel(surface_final,tile_x,tile_y,*color);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
 
             for(uint32_t i=0;i<Game::get_city_count();i++){
                 const City& city=Game::get_city(i);
@@ -171,25 +215,6 @@ void Minimap::update(){
                         for(uint32_t city_y=y;city_y<y+city_height;city_y++){
                             if(city_x<width && city_y<height){
                                 Pixels::surface_put_pixel(surface_final,city_x,city_y,*Object_Manager::get_color(color));
-                            }
-                        }
-                    }
-                }
-            }
-
-            const map<Coords<uint32_t>,Tile,Game::tile_compare>& tiles=Game::get_tiles();
-
-            for(const auto& it : tiles){
-                if(it.second.is_alive() && !it.second.is_building()){
-                    Color* color=Tile::get_type_color(it.second.get_type());
-
-                    uint32_t x=(double)it.second.get_x(it.first.x)*map_scale_x;
-                    uint32_t y=(double)it.second.get_y(it.first.y)*map_scale_y;
-
-                    for(uint32_t tile_x=x;tile_x<x+tile_width;tile_x++){
-                        for(uint32_t tile_y=y;tile_y<y+tile_height;tile_y++){
-                            if(tile_x<width && tile_y<height){
-                                Pixels::surface_put_pixel(surface_final,tile_x,tile_y,*color);
                             }
                         }
                     }
