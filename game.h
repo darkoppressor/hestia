@@ -214,6 +214,8 @@ public:
     static void update_background();
     static void render_background();
 
+    static std::uint32_t get_checksum();
+
     static bool move_input_state(std::string direction);
     static bool edge_scroll_input_state(std::string direction);
 };

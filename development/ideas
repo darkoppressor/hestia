@@ -172,8 +172,6 @@ Parent city has just been conquered and thus the conquered cooldown is active
 
 Phase 3:
 
-Desync detection
-
 When a civ has no cities remaining, it is defeated
 A defeated civ is unlinked from its leader
 The leader is then unable to control anything in the game, but can still watch

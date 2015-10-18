@@ -22,6 +22,8 @@
 #include <window_manager.h>
 #include <sorting.h>
 
+#include <boost/crc.hpp>
+
 using namespace std;
 
 Game_City_Distance::Game_City_Distance(uint32_t new_index,uint64_t new_distance){
@@ -427,7 +429,7 @@ void Game::generate_world(){
     for(uint32_t leader=0;leader<leaders.size();leader++){
         civilizations.push_back(Civilization(leader));
         uint32_t civilization=civilizations.size()-1;
-        leaders.back().set_civilization(civilization);
+        leaders[leader].set_civilization(civilization);
 
         cities.push_back(City(civilization));
         uint32_t city=cities.size()-1;
@@ -1261,6 +1263,40 @@ void Game::render_background(){
     if(started){
         Render::render_rectangle(0,0,Game_Window::width(),Game_Window::height(),1.0,"ui_black");
     }
+}
+
+uint32_t Game::get_checksum(){
+    uint32_t data_size=20;
+
+    uint32_t data[data_size];
+
+    data[0]=regions.size();
+    data[1]=chunks.size();
+    data[2]=leaders.size();
+    data[3]=civilizations.size();
+    data[4]=cities.size();
+    data[5]=people.size();
+    data[6]=tiles.size();
+    data[7]=dead_cities.size();
+    data[8]=dead_people.size();
+    data[9]=new_cities.size();
+    data[10]=new_people.size();
+    data[11]=new_tiles.size();
+    data[12]=option_rng_seed;
+    data[13]=option_world_width;
+    data[14]=option_world_height;
+    data[15]=option_region_min;
+    data[16]=option_region_max;
+    data[17]=option_initial_tile_growth;
+    data[18]=option_max_leaders;
+
+    data[19]=rng.random_range(0,UINT32_MAX);
+
+    boost::crc_32_type checksum;
+
+    checksum.process_bytes(data,data_size*4);
+
+    return (uint32_t)checksum.checksum();
 }
 
 bool Game::move_input_state(string direction){
