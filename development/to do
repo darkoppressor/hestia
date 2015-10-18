@@ -28,3 +28,20 @@ The current constants for these will become the default values
 Expand the color palette
 The current stuff is for ground and most stuff
 The new set of colors is for "foreground" stuff like tiles and people
+
+Shoot for surplus even if need is 0
+
+Dragging map with mouse cancels order
+
+Order to cancel unfinished building
+
+Build city order isn't checking for overlapping tiles correctly
+
+Unfinished buildings should not affect placement of unfinished buildings
+When an unfinished building is built, all other unfinished buildings in range of it are destroyed
+
+When building new city, if city is in range, draw line showing it
+
+Add more data to checksum
+
+Cost of building city could increase per city
