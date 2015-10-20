@@ -1014,6 +1014,8 @@ void Game::issue_order(const Game_Order& new_order){
         else if(Network_Engine::status=="client"){
             Network_Game::send_client_game_order(new_order);
         }
+
+        clear_order();
     }
 }
 

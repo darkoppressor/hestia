@@ -425,8 +425,6 @@ bool Game_Manager::handle_input_events_gui(){
                                 if(leader>=0){
                                     Game::issue_order(Game_Order(Game::get_order(),Game::get_mouse_coords_tiles(),(uint32_t)leader));
                                 }
-
-                                Game::clear_order();
                             }
                             else{
                                 //Check for clicks on game objects that can be selected
@@ -528,6 +526,13 @@ bool Game_Manager::handle_input_events_gui(){
                                     }
                                 }
                             }
+                        }
+
+                        event_consumed=true;
+                    }
+                    else if(!event_consumed && Engine_Input::event.button.button==SDL_BUTTON_RIGHT){
+                        if(Game::has_order()){
+                            Game::clear_order();
                         }
 
                         event_consumed=true;
