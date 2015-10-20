@@ -18,6 +18,8 @@ double Game_Options::edge_scroll_speed_mod_slow=0.0;
 
 bool Game_Options::zoom_to_cursor=false;
 
+bool Game_Options::minimap_show_resources=false;
+
 bool Game_Options::get_option(string name,string& value){
     if(name=="cl_camera_speed_mod_fast"){
         value=Strings::num_to_string(camera_speed_mod_fast);
@@ -57,6 +59,12 @@ bool Game_Options::get_option(string name,string& value){
         return true;
     }
 
+    else if(name=="cl_minimap_show_resources"){
+        value=Strings::bool_to_string(minimap_show_resources);
+
+        return true;
+    }
+
     return false;
 }
 
@@ -83,5 +91,9 @@ void Game_Options::set_option(string name,string value){
 
     else if(name=="cl_zoom_to_cursor"){
         zoom_to_cursor=Strings::string_to_bool(value);
+    }
+
+    else if(name=="cl_minimap_show_resources"){
+        minimap_show_resources=Strings::string_to_bool(value);
     }
 }

@@ -77,6 +77,12 @@
 </game_option>
 
 <game_option>
+	name:cl_minimap_show_resources
+	default:true
+	description:show resources on the minimap
+</game_option>
+
+<game_option>
 	name:cl_name
 	default:Newbie
 	description:your name

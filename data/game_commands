@@ -89,26 +89,6 @@
 </game_command>
 
 <game_command>
-	name:build_city
-	title:Build City
-	description:Build a city
-	developer:false
-	key:b
-	controller_button:
-	controller_axis:
-</game_command>
-
-<game_command>
-	name:select_civilization
-	title:Open Civilization Window
-	description:Open the management window for our civilization
-	developer:false
-	key:c
-	controller_button:
-	controller_axis:
-</game_command>
-
-<game_command>
 	name:camera_speed_mod_fast
 	title:Camera Speed Modifier - Fast
 	description:Hold to speed up camera movement
@@ -149,11 +129,41 @@
 </game_command>
 
 <game_command>
+	name:select_civilization
+	title:Open Civilization Window
+	description:Open the management window for our civilization
+	developer:false
+	key:c
+	controller_button:
+	controller_axis:
+</game_command>
+
+<game_command>
+	name:build_city
+	title:Build City
+	description:Build a city
+	developer:false
+	key:b
+	controller_button:
+	controller_axis:
+</game_command>
+
+<game_command>
 	name:follow_selection
 	title:Follow Selection
 	description:Lock the camera to the selected object
 	developer:false
 	key:f
+	controller_button:
+	controller_axis:
+</game_command>
+
+<game_command>
+	name:minimap_show_resources
+	title:Toggle minimap resource display
+	description:Toggle the display of resources on the minimap
+	developer:false
+	key:r
 	controller_button:
 	controller_axis:
 </game_command>

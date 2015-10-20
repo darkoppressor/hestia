@@ -16,6 +16,7 @@
 #include <engine_data.h>
 #include <math_vector.h>
 #include <game_window.h>
+#include <engine_strings.h>
 
 using namespace std;
 
@@ -276,6 +277,11 @@ bool Game_Manager::handle_game_command_gui(string command_name){
         }
         else if(command_name=="follow_selection"){
             Game::toggle_selection_follow();
+
+            return true;
+        }
+        else if(command_name=="minimap_show_resources"){
+            Game_Options::set_option("cl_minimap_show_resources",Strings::bool_to_string(!Game_Options::minimap_show_resources));
 
             return true;
         }

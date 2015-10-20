@@ -20,6 +20,8 @@ public:
 
     static bool zoom_to_cursor;
 
+    static bool minimap_show_resources;
+
     static bool get_option(std::string name,std::string& value);
     static void set_option(std::string name,std::string value);
 };

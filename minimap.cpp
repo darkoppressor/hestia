@@ -5,6 +5,7 @@
 #include "minimap.h"
 #include "game_constants.h"
 #include "game.h"
+#include "game_options.h"
 
 #include <pixels.h>
 #include <log.h>
@@ -144,7 +145,7 @@ void Minimap::update(){
                             render_tile=true;
                         }
                     }
-                    else if(!it.second.is_building()){
+                    else if(!it.second.is_building() && Game_Options::minimap_show_resources){
                         render_tile=true;
                     }
 
