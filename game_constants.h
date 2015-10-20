@@ -51,7 +51,9 @@ public:
     static std::uint32_t COST_REPAIR;
 
     static std::uint32_t SURPLUS_WHEAT;
+    static std::uint32_t SURPLUS_BASE_WHEAT;
     static std::uint32_t SURPLUS_TREE;
+    static std::uint32_t SURPLUS_BASE_TREE;
 
     static std::uint8_t HUNGER_FULL;
     static std::uint8_t HUNGER_HUNGRY;

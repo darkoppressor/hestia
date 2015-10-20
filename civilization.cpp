@@ -217,8 +217,8 @@ void Civilization::update_needs(uint32_t frame,uint32_t index){
         need_wheat=0;
         need_tree=0;
 
-        surplus_wheat=0;
-        surplus_tree=0;
+        surplus_wheat=Game_Constants::SURPLUS_BASE_WHEAT;
+        surplus_tree=Game_Constants::SURPLUS_BASE_TREE;
 
         //Determine needed item counts
 

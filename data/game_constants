@@ -192,7 +192,7 @@
 <game_constant>
 	//trees
 	name:cost_build
-	value:100
+	value:25
 </game_constant>
 
 <game_constant>
@@ -208,9 +208,19 @@
 </game_constant>
 
 <game_constant>
+	name:surplus_base_wheat
+	value:10
+</game_constant>
+
+<game_constant>
 	//integer percentage
 	name:surplus_tree
 	value:20
+</game_constant>
+
+<game_constant>
+	name:surplus_base_tree
+	value:50
 </game_constant>
 
 <game_constant>

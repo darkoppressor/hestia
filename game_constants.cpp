@@ -51,7 +51,9 @@ uint32_t Game_Constants::COST_BUILD=0;
 uint32_t Game_Constants::COST_REPAIR=0;
 
 uint32_t Game_Constants::SURPLUS_WHEAT=0;
+uint32_t Game_Constants::SURPLUS_BASE_WHEAT=0;
 uint32_t Game_Constants::SURPLUS_TREE=0;
+uint32_t Game_Constants::SURPLUS_BASE_TREE=0;
 
 uint8_t Game_Constants::HUNGER_FULL=0;
 uint8_t Game_Constants::HUNGER_HUNGRY=0;
@@ -233,8 +235,14 @@ void Game_Constants_Loader::set_game_constant(string name,string value){
     else if(name=="surplus_wheat"){
         Game_Constants::SURPLUS_WHEAT=Strings::string_to_unsigned_long(value);
     }
+    else if(name=="surplus_base_wheat"){
+        Game_Constants::SURPLUS_BASE_WHEAT=Strings::string_to_unsigned_long(value);
+    }
     else if(name=="surplus_tree"){
         Game_Constants::SURPLUS_TREE=Strings::string_to_unsigned_long(value);
+    }
+    else if(name=="surplus_base_tree"){
+        Game_Constants::SURPLUS_BASE_TREE=Strings::string_to_unsigned_long(value);
     }
 
     else if(name=="hunger_full"){
