@@ -117,20 +117,6 @@ void Minimap::update(){
             double map_scale_x=(double)width/double(Game::option_world_width*Game_Constants::CHUNK_SIZE*Game_Constants::TILE_SIZE);
             double map_scale_y=(double)height/double(Game::option_world_height*Game_Constants::CHUNK_SIZE*Game_Constants::TILE_SIZE);
 
-            //pixels
-            uint32_t city_width=(double(Game_Constants::BUILDING_SIZE*Game_Constants::TILE_SIZE)/double(Game_Constants::CHUNK_SIZE*Game_Constants::TILE_SIZE))*(double)chunk_width;
-            uint32_t city_height=(double(Game_Constants::BUILDING_SIZE*Game_Constants::TILE_SIZE)/double(Game_Constants::CHUNK_SIZE*Game_Constants::TILE_SIZE))*(double)chunk_height;
-
-            if(city_width==0){
-                city_width=1;
-            }
-            if(city_height==0){
-                city_height=1;
-            }
-
-            city_width*=8;
-            city_height*=8;
-
             if(SDL_BlitSurface(surface,0,surface_final,0)!=0){
                 string msg="Error blitting to surface for minimap update: ";
                 msg+=SDL_GetError();
@@ -165,9 +151,6 @@ void Minimap::update(){
                     if(render_tile){
                         Color* color=Tile::get_type_color(it.second.get_type());
 
-                        uint32_t x=(double)it.second.get_x(it.first.x)*map_scale_x;
-                        uint32_t y=(double)it.second.get_y(it.first.y)*map_scale_y;
-
                         //pixels
                         uint32_t tile_width=((double)Tile::get_tile_type_size(it.second.get_type())/double(Game_Constants::CHUNK_SIZE*Game_Constants::TILE_SIZE))*(double)chunk_width;
                         uint32_t tile_height=((double)Tile::get_tile_type_size(it.second.get_type())/double(Game_Constants::CHUNK_SIZE*Game_Constants::TILE_SIZE))*(double)chunk_height;
@@ -185,8 +168,25 @@ void Minimap::update(){
 
                             color=Object_Manager::get_color(civilization.get_color());
 
-                            tile_width*=4;
-                            tile_height*=4;
+                            tile_width*=6;
+                            tile_height*=6;
+                        }
+
+                        uint32_t x=(double)it.second.get_x(it.first.x)*map_scale_x;
+                        uint32_t y=(double)it.second.get_y(it.first.y)*map_scale_y;
+
+                        if(x>tile_width/2){
+                            x-=tile_width/2;
+                        }
+                        else{
+                            x=0;
+                        }
+
+                        if(y>tile_height/2){
+                            y-=tile_height/2;
+                        }
+                        else{
+                            y=0;
                         }
 
                         for(uint32_t tile_x=x;tile_x<x+tile_width;tile_x++){
@@ -200,6 +200,20 @@ void Minimap::update(){
                 }
             }
 
+            //pixels
+            uint32_t city_width=(double(Game_Constants::BUILDING_SIZE*Game_Constants::TILE_SIZE)/double(Game_Constants::CHUNK_SIZE*Game_Constants::TILE_SIZE))*(double)chunk_width;
+            uint32_t city_height=(double(Game_Constants::BUILDING_SIZE*Game_Constants::TILE_SIZE)/double(Game_Constants::CHUNK_SIZE*Game_Constants::TILE_SIZE))*(double)chunk_height;
+
+            if(city_width==0){
+                city_width=1;
+            }
+            if(city_height==0){
+                city_height=1;
+            }
+
+            city_width*=8;
+            city_height*=8;
+
             for(uint32_t i=0;i<Game::get_city_count();i++){
                 const City& city=Game::get_city(i);
 
@@ -210,6 +224,20 @@ void Minimap::update(){
 
                     uint32_t x=(double)city.get_x()*map_scale_x;
                     uint32_t y=(double)city.get_y()*map_scale_y;
+
+                    if(x>city_width/2){
+                        x-=city_width/2;
+                    }
+                    else{
+                        x=0;
+                    }
+
+                    if(y>city_height/2){
+                        y-=city_height/2;
+                    }
+                    else{
+                        y=0;
+                    }
 
                     for(uint32_t city_x=x;city_x<x+city_width;city_x++){
                         for(uint32_t city_y=y;city_y<y+city_height;city_y++){
