@@ -37,52 +37,25 @@ Coords<int32_t> Game_Order::get_pixel_coords() const{
 }
 
 bool Game_Order::is_city_build_area_clear() const{
-    uint32_t city_spacing=Game_Constants::CITY_SPACING;
+    Collision_Rect<uint32_t> city_spacing_area=Game::get_city_spacing_area(coords);
 
-    uint32_t tile_start_x=coords.x;
-    uint32_t tile_start_y=coords.y;
+    bool city_within_city_space=false;
 
-    if(tile_start_x>city_spacing){
-        tile_start_x-=city_spacing;
-    }
-    else{
-        tile_start_x=0;
-    }
-
-    if(tile_start_y>city_spacing){
-        tile_start_y-=city_spacing;
-    }
-    else{
-        tile_start_y=0;
-    }
-
-    uint32_t tile_end_x=tile_start_x+city_spacing*2;
-    uint32_t tile_end_y=tile_start_y+city_spacing*2;
-
-    if(tile_end_x>=Game::get_world_width_tiles()){
-        tile_end_x=Game::get_world_width_tiles()-1;
-    }
-    if(tile_end_y>=Game::get_world_height_tiles()){
-        tile_end_y=Game::get_world_height_tiles()-1;
-    }
-
-    bool building_within_city_space=false;
-
-    for(uint32_t x=tile_start_x;x<=tile_end_x && !building_within_city_space;x++){
-        for(uint32_t y=tile_start_y;y<=tile_end_y && !building_within_city_space;y++){
+    for(uint32_t x=city_spacing_area.x;x<=city_spacing_area.x+city_spacing_area.w && !city_within_city_space;x++){
+        for(uint32_t y=city_spacing_area.y;y<=city_spacing_area.y+city_spacing_area.h && !city_within_city_space;y++){
             Coords<uint32_t> tile_coords(x,y);
 
             if(Game::tile_exists(tile_coords)){
                 const Tile& tile=Game::get_tile(tile_coords);
 
-                if(tile.is_alive() && tile.is_building()){
-                    building_within_city_space=true;
+                if(tile.is_alive() && tile.get_type()==Tile::Type::BUILDING_CITY){
+                    city_within_city_space=true;
                 }
             }
         }
     }
 
-    if(!building_within_city_space){
+    if(!city_within_city_space){
         return true;
     }
     else{

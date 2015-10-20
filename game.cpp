@@ -722,6 +722,57 @@ void Game::kill_tile(const Coords<uint32_t>& tile_coords){
     }
 }
 
+Collision_Rect<uint32_t> Game::get_city_spacing_area(const Coords<uint32_t>& tile_coords){
+    uint32_t city_spacing=Game_Constants::CITY_SPACING;
+
+    uint32_t tile_start_x=tile_coords.x;
+    uint32_t tile_start_y=tile_coords.y;
+
+    if(tile_start_x>city_spacing){
+        tile_start_x-=city_spacing;
+    }
+    else{
+        tile_start_x=0;
+    }
+
+    if(tile_start_y>city_spacing){
+        tile_start_y-=city_spacing;
+    }
+    else{
+        tile_start_y=0;
+    }
+
+    uint32_t tile_end_x=tile_start_x+city_spacing*2;
+    uint32_t tile_end_y=tile_start_y+city_spacing*2;
+
+    if(tile_end_x>=get_world_width_tiles()){
+        tile_end_x=get_world_width_tiles()-1;
+    }
+    if(tile_end_y>=get_world_height_tiles()){
+        tile_end_y=get_world_height_tiles()-1;
+    }
+
+    return Collision_Rect<uint32_t>(tile_start_x,tile_start_y,tile_end_x-tile_start_x,tile_end_y-tile_start_y);
+}
+
+void Game::clear_new_city_area(const Coords<uint32_t>& tile_coords){
+    Collision_Rect<uint32_t> city_spacing_area=get_city_spacing_area(tile_coords);
+
+    for(uint32_t x=city_spacing_area.x;x<=city_spacing_area.x+city_spacing_area.w;x++){
+        for(uint32_t y=city_spacing_area.y;y<=city_spacing_area.y+city_spacing_area.h;y++){
+            Coords<uint32_t> coords(x,y);
+
+            if(coords!=tile_coords && tile_exists(coords)){
+                const Tile& tile=get_tile(coords);
+
+                if(tile.is_alive() && tile.get_type()==Tile::Type::BUILDING_UNFINISHED){
+                    kill_tile(coords);
+                }
+            }
+        }
+    }
+}
+
 uint32_t Game::add_civilization_item(uint32_t index,Inventory::Item_Type item_type,uint32_t amount){
     if(index<civilizations.size()){
         return civilizations[index].add_item(item_type,amount);

@@ -364,7 +364,7 @@
 
 <game_constant>
 	name:priority_empty_inventory
-	value:5
+	value:1
 </game_constant>
 
 <game_constant>
