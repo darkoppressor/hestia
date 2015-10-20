@@ -14,6 +14,8 @@
 #include <engine_input.h>
 #include <window_manager.h>
 #include <engine_data.h>
+#include <math_vector.h>
+#include <game_window.h>
 
 using namespace std;
 
@@ -356,8 +358,21 @@ bool Game_Manager::handle_input_events_gui(){
                         if(Game_Options::zoom_to_cursor){
                             //pixels
                             Coords<int32_t> mouse_position=Game::get_mouse_coords_pixels();
+                            Collision_Rect<double> box_mouse((double)mouse_position.x*Game_Manager::camera_zoom,(double)mouse_position.y*Game_Manager::camera_zoom,1.0,1.0);
+                            Collision_Rect<double> box_camera(Game_Manager::camera.center_x(),Game_Manager::camera.center_y(),1.0,1.0);
 
-                            zoom_camera_in(Collision_Rect<double>((double)mouse_position.x*Game_Manager::camera_zoom,(double)mouse_position.y*Game_Manager::camera_zoom,0.0,0.0));
+                            int screen_width=0;
+                            int screen_height=0;
+                            Game_Window::get_renderer_output_size(&screen_width,&screen_height);
+                            double screen_distance=((double)screen_width+(double)screen_height)/4.0;
+                            double magnitude=50.0/(Game_Manager::camera_zoom/(Math::distance_between_points(box_camera.x,box_camera.y,box_mouse.x,box_mouse.y)/screen_distance));
+
+                            Vector vector_camera(magnitude,Collision::get_angle_to_rect(box_camera,box_mouse));
+                            Vector_Components vc=vector_camera.get_components();
+                            box_camera.x+=vc.a;
+                            box_camera.y+=vc.b;
+
+                            zoom_camera_in(Collision_Rect<double>(box_camera.x,box_camera.y,0.0,0.0));
                         }
                         else{
                             zoom_camera_in(camera);
