@@ -35,6 +35,16 @@ Dragging map with mouse cancels order
 
 Order to cancel unfinished building
 
+Resources needed + surplus is confusing
+
+Set default_touch_controller_state to false
+
+Laptop has weird green crap on mouseover cursor
+
+No speed mods for zooming
+
+Zoom to cursor needs to work better
+
 Build city order isn't checking for overlapping tiles correctly
 
 Unfinished buildings should not affect placement of unfinished buildings
