@@ -654,36 +654,61 @@ bool Game::tile_coords_are_valid(Tile::Type type,const Coords<uint32_t>& tile_co
         tile_size=Game_Constants::BUILDING_SIZE;
     }
 
-    if(tile_coords.x+(tile_size-1)>=(uint32_t)get_world_width_tiles() || tile_coords.y+(tile_size-1)>=(uint32_t)get_world_height_tiles()){
+    //Tile is invalid if outside of the world
+    if(tile_coords.x+(tile_size-1)>=get_world_width_tiles() || tile_coords.y+(tile_size-1)>=get_world_height_tiles()){
         return false;
     }
 
-    uint32_t x=tile_coords.x;
-    uint32_t y=tile_coords.y;
+    //Tile is invalid if it contains an existing tile, or if it is contained in an existing tile
 
-    if(x>=Game_Constants::BUILDING_SIZE-1){
-        x-=Game_Constants::BUILDING_SIZE-1;
+    uint32_t x_start=tile_coords.x;
+    uint32_t y_start=tile_coords.y;
+
+    if(x_start>Game_Constants::BUILDING_SIZE){
+        x_start-=Game_Constants::BUILDING_SIZE;
     }
     else{
-        x=0;
+        x_start=0;
     }
-    if(y>=Game_Constants::BUILDING_SIZE-1){
-        y-=Game_Constants::BUILDING_SIZE-1;
+
+    if(y_start>Game_Constants::BUILDING_SIZE){
+        y_start-=Game_Constants::BUILDING_SIZE;
     }
     else{
-        y=0;
+        y_start=0;
     }
 
-    uint32_t x_end=tile_coords.x+tile_size-1;
-    uint32_t y_end=tile_coords.y+tile_size-1;
+    for(uint32_t x=x_start;x<tile_coords.x+tile_size;x++){
+        for(uint32_t y=y_start;y<tile_coords.y+tile_size;y++){
+            Coords<uint32_t> check_coords(x,y);
 
-    for(;x<=x_end;x++){
-        for(;y<=y_end;y++){
-            if(tile_exists(Coords<uint32_t>(x,y))){
-                return false;
+            if(tile_exists(check_coords)){
+                //tiles
+                uint32_t check_size=1;
+                if(tiles.at(check_coords).is_building()){
+                    check_size=Game_Constants::BUILDING_SIZE;
+                }
+
+                Collision_Rect<uint32_t> box_tile_1(tile_coords.x,tile_coords.y,tile_size,tile_size);
+                Collision_Rect<uint32_t> box_tile_2(x,y,check_size-1,check_size-1);
+
+                if(Collision::check_rect(box_tile_1,box_tile_2)){
+                    return false;
+                }
             }
-            else if(new_tiles.count(Coords<uint32_t>(x,y))){
-                return false;
+            else if(new_tiles.count(check_coords)){
+                //tiles
+                uint32_t check_size=1;
+                if(new_tiles.at(check_coords).is_building()){
+                    check_size=Game_Constants::BUILDING_SIZE;
+                }
+
+                Collision_Rect<uint32_t> box_tile_1(tile_coords.x,tile_coords.y,tile_size,tile_size);
+                Collision_Rect<uint32_t> box_tile_2(x,y,check_size-1,check_size-1);
+
+                if(Collision::check_rect(box_tile_1,box_tile_2)){
+                    return false;
+                }
             }
         }
     }

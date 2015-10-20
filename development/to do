@@ -35,10 +35,6 @@ Resources needed + surplus is confusing
 
 Laptop has weird green crap on mouseover cursor
 
-Add toggle for showing resources on minimap
-
-Build city order isn't checking for overlapping tiles correctly
-
 Unfinished buildings should not affect placement of unfinished buildings
 When an unfinished building is built, all other unfinished buildings in range of it are destroyed
 
