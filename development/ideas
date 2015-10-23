@@ -176,14 +176,29 @@ When a civ has no cities remaining, it is defeated
 A defeated civ is unlinked from its leader
 The leader is then unable to control anything in the game, but can still watch
 
-Victory condition(s)?
+The game has victory conditions (well, one for now)
+If all VCs are off, the game has no end
+Conquest victory condition: Be the only civilization left undefeated
 
 Campaigns with armies
 Need to read my previous stuff on this
 One thing I know is that armies should act a lot like a city, in the sense that the people in the army get their civ inv food from the general instead of the city building tile, the general is treated as their "home location", and their orders from AI levels higher than person come from the general, not their city or civ
 Also, if a person in an army has its parent city change ownership, they are assigned a new parent city in their parent civ
+When a civ is defeated, its armies should be given to ... someone
 
 Per city order to stay near city?
 
 Need something to prevent city spam
 Is there also a hard max?
+
+Phase 4:
+
+Have domination, and time VCs
+Need a game option for ending year
+Each leader needs a score
+
+Farming
+One piece of wheat could be used to plant a square of wheat tiles
+
+Building maintenance
+Buildings should not degrade if they were recently damaged
