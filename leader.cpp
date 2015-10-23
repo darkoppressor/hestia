@@ -22,6 +22,21 @@ Leader::Leader(uint32_t new_parent){
     civilization=0;
 }
 
+void Leader::add_checksum_data(vector<uint32_t>& data) const{
+    data.push_back((uint32_t)player_controlled);
+    data.push_back(parent_player);
+    data.push_back(civilization);
+
+    data.push_back((uint32_t)color.get_red());
+    data.push_back((uint32_t)color.get_green());
+    data.push_back((uint32_t)color.get_blue());
+    data.push_back((uint32_t)color.get_alpha());
+
+    for(size_t i=0;i<diplomacy_states.size();i++){
+        data.push_back((uint32_t)diplomacy_states[i]);
+    }
+}
+
 bool Leader::is_player_controlled() const{
     return player_controlled;
 }

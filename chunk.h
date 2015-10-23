@@ -44,6 +44,8 @@ public:
 
     Chunk();
 
+    void add_checksum_data(std::vector<std::uint32_t>& data) const;
+
     std::uint32_t get_parent_region() const;
     void set_parent_region(std::uint32_t new_parent);
 

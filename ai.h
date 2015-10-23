@@ -46,6 +46,8 @@ public:
 
     AI_Goal();
 
+    void add_checksum_data(std::vector<std::uint32_t>& data) const;
+
     std::string get_type_string() const;
 
     bool is_in_progress() const;

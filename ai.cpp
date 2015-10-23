@@ -15,6 +15,13 @@ AI_Goal::AI_Goal(){
     counter=0;
 }
 
+void AI_Goal::add_checksum_data(vector<uint32_t>& data) const{
+    data.push_back((uint32_t)type);
+    data.push_back(coords.x);
+    data.push_back(coords.y);
+    data.push_back(counter);
+}
+
 string AI_Goal::get_type_string() const{
     if(is_gather_wheat()){
         return "Gather wheat";

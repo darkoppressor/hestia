@@ -182,7 +182,9 @@ Conquest victory condition: Be the only civilization left undefeated
 
 Campaigns with armies
 Need to read my previous stuff on this
-One thing I know is that armies should act a lot like a city, in the sense that the people in the army get their civ inv food from the general instead of the city building tile, the general is treated as their "home location", and their orders from AI levels higher than person come from the general, not their city or civ
+One thing I know is that armies should act a lot like a city,
+in the sense that the people in the army get their civ inv food from the general instead of the city building tile,
+the general is treated as their "home location", and their orders from AI levels higher than person come from the general, not their city or civ
 Also, if a person in an army has its parent city change ownership, they are assigned a new parent city in their parent civ
 When a civ is defeated, its armies should be given to ... someone
 

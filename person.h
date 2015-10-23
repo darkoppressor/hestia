@@ -46,6 +46,8 @@ public:
     Person();
     Person(std::uint32_t new_parent,const Collision_Rect<std::int32_t>& new_box);
 
+    void add_checksum_data(std::vector<std::uint32_t>& data) const;
+
     std::uint32_t get_parent_city() const;
     void set_parent_city(std::uint32_t new_parent);
 

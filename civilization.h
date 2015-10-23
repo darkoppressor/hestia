@@ -39,6 +39,8 @@ public:
     Civilization();
     Civilization(std::uint32_t new_parent);
 
+    void add_checksum_data(std::vector<std::uint32_t>& data) const;
+
     std::uint32_t get_parent_leader() const;
     void set_parent_leader(std::uint32_t new_parent);
 

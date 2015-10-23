@@ -39,6 +39,8 @@ public:
     Leader();
     Leader(std::uint32_t new_parent);
 
+    void add_checksum_data(std::vector<std::uint32_t>& data) const;
+
     bool is_player_controlled() const;
     std::uint32_t get_parent_player() const;
     void set_parent_player(std::uint32_t new_parent);

@@ -31,6 +31,34 @@ Civilization::Civilization(uint32_t new_parent){
     surplus_tree=0;
 }
 
+void Civilization::add_checksum_data(vector<uint32_t>& data) const{
+    data.push_back(parent_leader);
+
+    for(size_t i=0;i<cities.size();i++){
+        data.push_back(cities[i]);
+    }
+
+    for(size_t i=0;i<unfinished_buildings.size();i++){
+        data.push_back(unfinished_buildings[i].x);
+        data.push_back(unfinished_buildings[i].y);
+    }
+
+    for(size_t i=0;i<unfinished_building_flags.size();i++){
+        data.push_back((uint32_t)unfinished_building_flags[i]);
+    }
+
+    vector<Inventory::Item_Type> item_types=Inventory::get_item_types();
+    for(size_t i=0;i<item_types.size();i++){
+        data.push_back(inventory.get_item_count(item_types[i]));
+    }
+
+    data.push_back(need_wheat);
+    data.push_back(need_tree);
+
+    data.push_back(surplus_wheat);
+    data.push_back(surplus_tree);
+}
+
 uint32_t Civilization::get_parent_leader() const{
     return parent_leader;
 }

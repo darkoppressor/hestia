@@ -81,6 +81,15 @@ Chunk::Chunk(){
     parent_region=0;
 }
 
+void Chunk::add_checksum_data(vector<uint32_t>& data) const{
+    data.push_back(parent_region);
+
+    data.push_back(tile_counts.get(Tile::Type::WHEAT));
+    data.push_back(tile_counts.get(Tile::Type::TREE));
+    data.push_back(tile_counts.get(Tile::Type::BUILDING_UNFINISHED));
+    data.push_back(tile_counts.get(Tile::Type::BUILDING_CITY));
+}
+
 uint32_t Chunk::get_parent_region() const{
     return parent_region;
 }

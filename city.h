@@ -38,6 +38,8 @@ public:
     City();
     City(std::uint32_t new_parent);
 
+    void add_checksum_data(std::vector<std::uint32_t>& data) const;
+
     bool get_exists() const;
     void set_exists(bool new_exists);
 

@@ -53,6 +53,14 @@ Tile::Tile(uint32_t new_parent,Type new_type){
     }
 }
 
+void Tile::add_checksum_data(vector<uint32_t>& data) const{
+    data.push_back(parent);
+
+    data.push_back((uint32_t)type);
+
+    data.push_back((uint32_t)health);
+}
+
 uint32_t Tile::get_parent() const{
     return parent;
 }

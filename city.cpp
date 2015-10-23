@@ -35,6 +35,25 @@ City::City(uint32_t new_parent){
     gather_zone_tree=0;
 }
 
+void City::add_checksum_data(vector<uint32_t>& data) const{
+    data.push_back((uint32_t)exists);
+
+    data.push_back(parent_civilization);
+
+    data.push_back(tile.x);
+    data.push_back(tile.y);
+
+    for(size_t i=0;i<people.size();i++){
+        data.push_back(people[i]);
+    }
+
+    data.push_back(breeding_counter);
+    data.push_back(captured_counter);
+
+    data.push_back(gather_zone_wheat);
+    data.push_back(gather_zone_tree);
+}
+
 bool City::get_exists() const{
     return exists;
 }

@@ -25,14 +25,12 @@ It kind of seems like this isn't working right
 Add controls (sliders, buttons, idk) for surplus percentages
 The current constants for these will become the default values
 
+Laptop has weird green crap on mouseover cursor
+
+Add pause network command for clients
+
 Expand the color palette
 The current stuff is for ground and most stuff
 The new set of colors is for "foreground" stuff like tiles and people
 
 Order to cancel unfinished building
-
-Resources needed + surplus is confusing
-
-Laptop has weird green crap on mouseover cursor
-
-Add more data to checksum

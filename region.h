@@ -46,6 +46,8 @@ public:
 
     Region();
 
+    void add_checksum_data(std::vector<std::uint32_t>& data) const;
+
     void add_chunk(const Coords<std::uint32_t>& coords);
 
     Biome get_biome() const;

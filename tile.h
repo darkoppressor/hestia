@@ -9,6 +9,7 @@
 
 #include <cstdint>
 #include <string>
+#include <vector>
 
 class Tile{
 public:
@@ -36,6 +37,8 @@ public:
     Tile();
     Tile(Type new_type);
     Tile(std::uint32_t new_parent,Type new_type);
+
+    void add_checksum_data(std::vector<std::uint32_t>& data) const;
 
     std::uint32_t get_parent() const;
     void set_parent(std::uint32_t new_parent);

@@ -40,6 +40,33 @@ Person::Person(uint32_t new_parent,const Collision_Rect<int32_t>& new_box){
     hunger=Game_Constants::HUNGER_FULL;
 }
 
+void Person::add_checksum_data(vector<uint32_t>& data) const{
+    data.push_back(parent_city);
+
+    data.push_back((uint32_t)box.x);
+    data.push_back((uint32_t)box.y);
+    data.push_back((uint32_t)box.w);
+    data.push_back((uint32_t)box.h);
+
+    data.push_back((uint32_t)velocity.magnitude);
+    data.push_back((uint32_t)velocity.direction);
+
+    data.push_back((uint32_t)force.magnitude);
+    data.push_back((uint32_t)force.direction);
+
+    vector<Inventory::Item_Type> item_types=Inventory::get_item_types();
+    for(size_t i=0;i<item_types.size();i++){
+        data.push_back(inventory.get_item_count(item_types[i]));
+    }
+
+    goal.add_checksum_data(data);
+
+    data.push_back((uint32_t)exists);
+
+    data.push_back((uint32_t)health);
+    data.push_back((uint32_t)hunger);
+}
+
 uint32_t Person::get_parent_city() const{
     return parent_city;
 }

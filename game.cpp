@@ -1359,35 +1359,66 @@ void Game::render_background(){
 }
 
 uint32_t Game::get_checksum(){
-    uint32_t data_size=20;
+    vector<uint32_t> data;
 
-    uint32_t data[data_size];
+    data.push_back(option_rng_seed);
+    data.push_back(option_world_width);
+    data.push_back(option_world_height);
+    data.push_back(option_region_min);
+    data.push_back(option_region_max);
+    data.push_back(option_initial_tile_growth);
+    data.push_back((uint32_t)option_vc_conquest);
 
-    data[0]=regions.size();
-    data[1]=chunks.size();
-    data[2]=leaders.size();
-    data[3]=civilizations.size();
-    data[4]=cities.size();
-    data[5]=people.size();
-    data[6]=tiles.size();
-    data[7]=dead_cities.size();
-    data[8]=dead_people.size();
-    data[9]=new_cities.size();
-    data[10]=new_people.size();
-    data[11]=new_tiles.size();
-    data[12]=option_rng_seed;
-    data[13]=option_world_width;
-    data[14]=option_world_height;
-    data[15]=option_region_min;
-    data[16]=option_region_max;
-    data[17]=option_initial_tile_growth;
-    data[18]=option_max_leaders;
+    data.push_back(rng.random_range(0,UINT32_MAX));
 
-    data[19]=rng.random_range(0,UINT32_MAX);
+    for(size_t i=0;i<regions.size();i++){
+        regions[i].add_checksum_data(data);
+    }
+
+    for(size_t x=0;x<chunks.size();x++){
+        for(size_t y=0;y<chunks[x].size();y++){
+            chunks[x][y].add_checksum_data(data);
+        }
+    }
+
+    for(size_t i=0;i<leaders.size();i++){
+        leaders[i].add_checksum_data(data);
+    }
+
+    for(size_t i=0;i<civilizations.size();i++){
+        civilizations[i].add_checksum_data(data);
+    }
+
+    for(size_t i=0;i<cities.size();i++){
+        cities[i].add_checksum_data(data);
+    }
+
+    for(size_t i=0;i<people.size();i++){
+        people[i].add_checksum_data(data);
+    }
+
+    for(const auto& it : tiles){
+        it.second.add_checksum_data(data);
+    }
+
+    data.push_back(dead_cities.size());
+    data.push_back(dead_people.size());
+
+    for(size_t i=0;i<new_cities.size();i++){
+        new_cities[i].add_checksum_data(data);
+    }
+
+    for(size_t i=0;i<new_people.size();i++){
+        new_people[i].add_checksum_data(data);
+    }
+
+    for(const auto& it : new_tiles){
+        it.second.add_checksum_data(data);
+    }
 
     boost::crc_32_type checksum;
 
-    checksum.process_bytes(data,data_size*4);
+    checksum.process_bytes(data.data(),data.size()*4);
 
     return (uint32_t)checksum.checksum();
 }

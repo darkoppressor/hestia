@@ -17,6 +17,15 @@ Region::Region(){
     biome=Biome::FREEZING_GRASSLAND;
 }
 
+void Region::add_checksum_data(vector<uint32_t>& data) const{
+    for(size_t i=0;i<chunks.size();i++){
+        data.push_back(chunks[i].x);
+        data.push_back(chunks[i].y);
+    }
+
+    data.push_back((uint32_t)biome);
+}
+
 void Region::add_chunk(const Coords<uint32_t>& coords){
     chunks.push_back(coords);
 }
