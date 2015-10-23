@@ -176,6 +176,9 @@ public:
     static void repopulate_city(std::uint32_t city_index);
     static void abandon_city(std::uint32_t city_index);
 
+    //Returns a vector of size 1 containing the nearest city data if a city was found
+    //If no city was found, returns an empty vector
+    static std::vector<Game_City_Distance> get_nearest_city(const Coords<std::int32_t>& coords);
     //pixels^2
     static uint64_t distance_to_nearest_city(const Coords<std::int32_t>& coords);
 

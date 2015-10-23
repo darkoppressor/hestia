@@ -977,23 +977,35 @@ void Game::abandon_city(uint32_t city_index){
     }
 }
 
-uint64_t Game::distance_to_nearest_city(const Coords<int32_t>& coords){
-    bool no_city_found=true;
-    uint64_t nearest=0;
+vector<Game_City_Distance> Game::get_nearest_city(const Coords<int32_t>& coords){
+    vector<Game_City_Distance> city;
 
     for(size_t i=0;i<cities.size();i++){
         if(cities[i].get_exists()){
             uint64_t distance=Int_Math::distance_between_points_no_sqrt(coords.x,coords.y,cities[i].get_center_x(),cities[i].get_center_y());
 
-            if(no_city_found || distance<nearest){
-                no_city_found=false;
-
-                nearest=distance;
+            if(city.size()==0){
+                city.push_back(Game_City_Distance((uint32_t)i,distance));
+            }
+            else if(distance<city[0].distance){
+                city[0].index=(uint32_t)i;
+                city[0].distance=distance;
             }
         }
     }
 
-    return nearest;
+    return city;
+}
+
+uint64_t Game::distance_to_nearest_city(const Coords<int32_t>& coords){
+    vector<Game_City_Distance> nearest_city=get_nearest_city(coords);
+
+    if(nearest_city.size()>0){
+        return nearest_city[0].distance;
+    }
+    else{
+        return 0;
+    }
 }
 
 Coords<int32_t> Game::get_mouse_coords_pixels(){

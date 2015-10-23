@@ -146,6 +146,8 @@ void Game_Order::render() const{
             color="order_invalid";
         }
 
+        double opacity=0.75;
+
         if(type==Type::BUILD_CITY){
             double tile_size=(double)Tile::get_tile_type_size(get_tile_type());
 
@@ -156,12 +158,27 @@ void Game_Order::render() const{
                                            1.0,color,Game_Constants::RENDER_BUILDING_COLOR_BORDER*Game_Manager::camera_zoom);
 
             Render::render_texture(x*Game_Manager::camera_zoom-Game_Manager::camera.x,y*Game_Manager::camera_zoom-Game_Manager::camera.y,
-                                   Image_Manager::get_image("tile_building_unfinished"),0.75,Game_Manager::camera_zoom,Game_Manager::camera_zoom,0.0,color);
+                                   Image_Manager::get_image("tile_building_unfinished"),opacity,Game_Manager::camera_zoom,Game_Manager::camera_zoom,0.0,color);
 
             if(!is_valid() && !is_city_build_area_clear()){
+                //pixels
+                int32_t center_x=Tile::get_center_x(coords.x,(int32_t)tile_size);
+                int32_t center_y=Tile::get_center_y(coords.y,(int32_t)tile_size);
+
+                vector<Game_City_Distance> nearest_city=Game::get_nearest_city(Coords<int32_t>(center_x,center_y));
+
+                if(nearest_city.size()>0){
+                    const City& city=Game::get_city(nearest_city[0].index);
+
+                    Render::render_line((double)center_x*Game_Manager::camera_zoom-Game_Manager::camera.x,
+                                        (double)center_y*Game_Manager::camera_zoom-Game_Manager::camera.y,
+                                        (double)city.get_center_x()*Game_Manager::camera_zoom-Game_Manager::camera.x,
+                                        (double)city.get_center_y()*Game_Manager::camera_zoom-Game_Manager::camera.y,opacity,color);
+                }
+
                 Bitmap_Font* font=Object_Manager::get_font("standard");
 
-                string message="Too close to building";
+                string message="Too close to city";
 
                 double message_x=x+tile_size/2.0-((message.length()*font->spacing_x)/2.0)/Game_Manager::camera_zoom;
 
