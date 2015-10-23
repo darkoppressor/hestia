@@ -97,6 +97,8 @@ bool Civilization::get_unfinished_building_flag(Coords<uint32_t> tile_coords) co
             return unfinished_building_flags[i];
         }
     }
+
+    return false;
 }
 
 void Civilization::set_unfinished_building_flag(Coords<uint32_t> tile_coords,bool new_flag){
