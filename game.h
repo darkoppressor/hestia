@@ -109,6 +109,8 @@ public:
     static std::uint32_t option_region_max;
     static std::uint32_t option_initial_tile_growth;
 
+    static bool option_vc_conquest;
+
     static std::uint32_t option_max_leaders;
 
     static RNG rng;

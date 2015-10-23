@@ -199,6 +199,7 @@ uint32_t Game::option_world_height=0;
 uint32_t Game::option_region_min=0;
 uint32_t Game::option_region_max=0;
 uint32_t Game::option_initial_tile_growth=0;
+bool Game::option_vc_conquest=0;
 uint32_t Game::option_max_leaders=0;
 
 RNG Game::rng;
@@ -231,6 +232,8 @@ void Game::clear_world(){
     option_region_min=4;
     option_region_max=8;
     option_initial_tile_growth=1440;
+
+    option_vc_conquest=true;
 
     //chunks
     uint32_t MAX_WORLD_SIZE=(uint32_t)INT32_MAX/(Game_Constants::CHUNK_SIZE*Game_Constants::TILE_SIZE);

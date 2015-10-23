@@ -136,6 +136,7 @@ void Network_Game::send_game_start_data(){
         bitstream.WriteCompressed(Game::option_region_min);
         bitstream.WriteCompressed(Game::option_region_max);
         bitstream.WriteCompressed(Game::option_initial_tile_growth);
+        bitstream.WriteCompressed(Game::option_vc_conquest);
 
         bitstream.WriteCompressed(Game::get_leader_count());
         for(uint32_t i=0;i<Game::get_leader_count();i++){
@@ -177,6 +178,7 @@ void Network_Game::receive_game_start_data(){
     bitstream.ReadCompressed(Game::option_region_min);
     bitstream.ReadCompressed(Game::option_region_max);
     bitstream.ReadCompressed(Game::option_initial_tile_growth);
+    bitstream.ReadCompressed(Game::option_vc_conquest);
 
     uint32_t leaders_size=0;
     bitstream.ReadCompressed(leaders_size);
