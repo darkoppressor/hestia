@@ -87,6 +87,8 @@ public:
     static std::string get_type_string(Type type_to_check);
     static Color* get_type_color(Type type_to_check);
 
+    void write_info_string(std::string& text) const;
+
     void render(std::uint32_t tile_x,std::uint32_t tile_y,bool selected) const;
 };
 

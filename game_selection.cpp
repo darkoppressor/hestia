@@ -19,5 +19,8 @@ void Game_Selection::clear_type(){
 
     index=0;
 
+    tile_coordinates.x=0;
+    tile_coordinates.y=0;
+
     follow=false;
 }

@@ -187,8 +187,10 @@ public:
 
     static Game_Selection get_selection();
     static void set_selection(Game_Selection::Type type,std::uint32_t index);
+    static void set_selection(Game_Selection::Type type,const Coords<std::uint32_t>& tile_coords);
     static void toggle_selection_follow();
     static void clear_selection();
+    static void open_selection_window();
     static void close_selection_windows();
 
     static Game_Order::Type get_order();

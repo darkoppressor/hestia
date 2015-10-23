@@ -93,6 +93,10 @@ void Game::add_remove_objects(){
                 uint32_t parent_civilization=it->second.get_parent();
 
                 civilizations[parent_civilization].remove_unfinished_building(Coords<uint32_t>(it->first.x,it->first.y));
+
+                if(selection.type==Game_Selection::Type::UNFINISHED_BUILDING && selection.tile_coordinates==it->first){
+                    clear_selection();
+                }
             }
 
             it=tiles.erase(it);
@@ -759,6 +763,10 @@ Collision_Rect<uint32_t> Game::get_city_spacing_area(const Coords<uint32_t>& til
 }
 
 void Game::clear_new_city_area(const Coords<uint32_t>& tile_coords){
+    if(selection.type==Game_Selection::Type::UNFINISHED_BUILDING && selection.tile_coordinates==tile_coords){
+        clear_selection();
+    }
+
     Collision_Rect<uint32_t> city_spacing_area=get_city_spacing_area(tile_coords);
 
     for(uint32_t x=city_spacing_area.x;x<=city_spacing_area.x+city_spacing_area.w;x++){
@@ -1046,15 +1054,16 @@ void Game::set_selection(Game_Selection::Type type,uint32_t index){
 
     close_selection_windows();
 
-    if(selection.type==Game_Selection::Type::PERSON){
-        Window_Manager::get_window("game_person")->toggle_on(true,true);
-    }
-    else if(selection.type==Game_Selection::Type::CITY){
-        Window_Manager::get_window("game_city")->toggle_on(true,true);
-    }
-    else if(selection.type==Game_Selection::Type::CIVILIZATION){
-        Window_Manager::get_window("game_civilization")->toggle_on(true,true);
-    }
+    open_selection_window();
+}
+
+void Game::set_selection(Game_Selection::Type type,const Coords<uint32_t>& tile_coords){
+    selection.type=type;
+    selection.tile_coordinates=tile_coords;
+
+    close_selection_windows();
+
+    open_selection_window();
 }
 
 void Game::toggle_selection_follow(){
@@ -1075,9 +1084,25 @@ void Game::clear_selection(){
     close_selection_windows();
 }
 
+void Game::open_selection_window(){
+    if(selection.type==Game_Selection::Type::PERSON){
+        Window_Manager::get_window("game_person")->toggle_on(true,true);
+    }
+    else if(selection.type==Game_Selection::Type::CITY){
+        Window_Manager::get_window("game_city")->toggle_on(true,true);
+    }
+    else if(selection.type==Game_Selection::Type::UNFINISHED_BUILDING){
+        Window_Manager::get_window("game_unfinished_building")->toggle_on(true,true);
+    }
+    else if(selection.type==Game_Selection::Type::CIVILIZATION){
+        Window_Manager::get_window("game_civilization")->toggle_on(true,true);
+    }
+}
+
 void Game::close_selection_windows(){
     Window_Manager::get_window("game_person")->toggle_on(true,false);
     Window_Manager::get_window("game_city")->toggle_on(true,false);
+    Window_Manager::get_window("game_unfinished_building")->toggle_on(true,false);
     Window_Manager::get_window("game_civilization")->toggle_on(true,false);
 }
 
@@ -1308,6 +1333,13 @@ void Game::render(){
                             if(tiles.at(tile_coords).is_alive() && tiles.at(tile_coords).get_type()==Tile::Type::BUILDING_CITY){
                                 //If the tile is of type BUILDING_CITY, its parent is a City
                                 if(selection.index==tiles.at(tile_coords).get_parent()){
+                                    selected=true;
+                                }
+                            }
+                        }
+                        else if(selection.type==Game_Selection::Type::UNFINISHED_BUILDING){
+                            if(selection.tile_coordinates==tile_coords){
+                                if(tiles.at(tile_coords).is_alive() && tiles.at(tile_coords).get_type()==Tile::Type::BUILDING_UNFINISHED){
                                     selected=true;
                                 }
                             }

@@ -35,6 +35,17 @@ string Special_Info::get_special_info_text(string special_info){
                 city.write_info_string(text);
             }
         }
+        else if(special_info=="unfinished_building"){
+            Game_Selection selection=Game::get_selection();
+
+            if(selection.type==Game_Selection::Type::UNFINISHED_BUILDING){
+                if(Game::tile_exists(selection.tile_coordinates)){
+                    const Tile& tile=Game::get_tile(selection.tile_coordinates);
+
+                    tile.write_info_string(text);
+                }
+            }
+        }
         else if(special_info=="civilization"){
             Game_Selection selection=Game::get_selection();
 

@@ -18,7 +18,8 @@ public:
         NONE,
         BUILD_CITY,
         REPOPULATE_CITY,
-        ABANDON_CITY
+        ABANDON_CITY,
+        CANCEL_UNFINISHED_BUILDING
     };
 
     Type type;
@@ -27,6 +28,7 @@ public:
     //BUILD_CITY: the tile coordinates of the new unfinished building tile
     //REPOPULATE_CITY: x represents the city's index, y is unused
     //ABANDON_CITY: x represents the city's index, y is unused
+    //CANCEL_UNFINISHED_BUILDING: the tile coordinates of the unfinished building tile to cancel
     Coords<std::uint32_t> coords;
 
     std::uint32_t leader;

@@ -69,6 +69,20 @@ bool Button_Events::handle_button_event_game(string button_event,Window* parent_
 
         return true;
     }
+    else if(button_event=="cancel_unfinished_building"){
+        if(Game::started){
+            Game_Selection selection=Game::get_selection();
+
+            if(selection.type==Game_Selection::Type::UNFINISHED_BUILDING){
+                int32_t leader=Game::get_our_leader();
+                if(leader>=0){
+                    Game::issue_order(Game_Order(Game_Order::Type::CANCEL_UNFINISHED_BUILDING,selection.tile_coordinates,(uint32_t)leader));
+                }
+            }
+        }
+
+        return true;
+    }
 
     return false;
 }

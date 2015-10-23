@@ -111,6 +111,25 @@ bool Game_Order::is_valid() const{
 
         return false;
     }
+    else if(type==Type::CANCEL_UNFINISHED_BUILDING){
+        if(Game::tile_exists(coords)){
+            const Tile& tile=Game::get_tile(coords);
+
+            if(tile.is_alive() && tile.get_type()==Tile::Type::BUILDING_UNFINISHED){
+                //If the tile is of type BUILDING_UNFINISHED, its parent is a Civilization
+                const Civilization& civilization=Game::get_civilization(tile.get_parent());
+
+                uint32_t leader_index=civilization.get_parent_leader();
+
+                //If the tile is owned by the order's leader
+                if(leader==leader_index){
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
     else{
         return false;
     }
@@ -131,6 +150,9 @@ void Game_Order::execute(){
         }
         else if(type==Type::ABANDON_CITY){
             Game::abandon_city(coords.x);
+        }
+        else if(type==Type::CANCEL_UNFINISHED_BUILDING){
+            Game::kill_tile(coords);
         }
     }
 }

@@ -5,6 +5,8 @@
 #ifndef game_selection_h
 #define game_selection_h
 
+#include <coords.h>
+
 #include <cstdint>
 
 class Game_Selection{
@@ -14,12 +16,15 @@ public:
         NONE,
         PERSON,
         CITY,
+        UNFINISHED_BUILDING,
         CIVILIZATION
     };
 
     Type type;
 
     std::uint32_t index;
+
+    Coords<std::uint32_t> tile_coordinates;
 
     bool follow;
 

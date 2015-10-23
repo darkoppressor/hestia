@@ -262,6 +262,12 @@ Color* Tile::get_type_color(Type type_to_check){
     }
 }
 
+void Tile::write_info_string(string& text) const{
+    if(type==Type::BUILDING_UNFINISHED){
+        text+="Health: "+Strings::num_to_string(get_health())+"/"+Strings::num_to_string(get_health_max())+"\n";
+    }
+}
+
 void Tile::render(uint32_t tile_x,uint32_t tile_y,bool selected) const{
     if(is_alive()){
         //pixels

@@ -1,0 +1,21 @@
+<window>
+	name:game_unfinished_building
+	starting_position:0,591
+	width:300
+	height:129
+	title:Unfinished Building
+
+	<button>
+		location:2,36
+		text:Cancel
+		event:cancel_unfinished_building
+		sound_moused:moused_1
+		sound_click:click_1
+	</button>
+
+	<info>
+		location:2,80
+		special_text:unfinished_building
+	</info>
+
+</window>
