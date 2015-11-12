@@ -166,6 +166,7 @@ public:
     static std::uint32_t add_civilization_item(std::uint32_t index,Inventory::Item_Type item_type,std::uint32_t amount);
     static void remove_civilization_item(std::uint32_t index,Inventory::Item_Type item_type,std::uint32_t amount);
     static void set_civilization_unfinished_building_flag(std::uint32_t index,Coords<std::uint32_t> tile_coords,bool new_flag);
+    static void clear_civilization_unfinished_buildings(std::uint32_t index);
 
     static void damage_person(std::uint32_t index,std::int16_t attack);
     static void damage_tile(const Coords<std::uint32_t>& tile_coords,std::int16_t attack);

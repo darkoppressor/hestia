@@ -64,6 +64,12 @@ bool Game_Order::is_city_build_area_clear() const{
 }
 
 bool Game_Order::is_valid() const{
+    const Leader& order_leader=Game::get_leader(leader);
+
+    if(order_leader.is_defeated()){
+        return false;
+    }
+
     if(type==Type::BUILD_CITY){
         if(Game::tile_coords_are_valid(get_tile_type(),coords)){
             return is_city_build_area_clear();

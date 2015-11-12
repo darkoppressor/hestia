@@ -67,6 +67,10 @@ void Civilization::set_parent_leader(uint32_t new_parent){
     parent_leader=new_parent;
 }
 
+bool Civilization::is_defeated() const{
+    return cities.size()==0;
+}
+
 vector<uint32_t> Civilization::get_cities() const{
     return cities;
 }
@@ -243,7 +247,7 @@ bool Civilization::allowed_to_update_needs(uint32_t frame,uint32_t index) const{
 }
 
 void Civilization::update_needs(uint32_t frame,uint32_t index){
-    if(allowed_to_update_needs(frame,index)){
+    if(!is_defeated() && allowed_to_update_needs(frame,index)){
         need_wheat=0;
         need_tree=0;
 

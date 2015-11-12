@@ -3,6 +3,7 @@
 /* See the file docs/LICENSE.txt for the full license text. */
 
 #include "leader.h"
+#include "game.h"
 
 #include <engine_strings.h>
 
@@ -134,4 +135,10 @@ bool Leader::is_neutral_towards(uint32_t leader_index) const{
     else{
         return false;
     }
+}
+
+bool Leader::is_defeated() const{
+    const Civilization& child_civilization=Game::get_civilization(civilization);
+
+    return child_civilization.is_defeated();
 }

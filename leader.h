@@ -61,6 +61,8 @@ public:
     bool is_friends_with(std::uint32_t leader_index) const;
     bool is_enemies_with(std::uint32_t leader_index) const;
     bool is_neutral_towards(std::uint32_t leader_index) const;
+
+    bool is_defeated() const;
 };
 
 #endif

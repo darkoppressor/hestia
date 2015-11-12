@@ -805,6 +805,24 @@ void Game::set_civilization_unfinished_building_flag(uint32_t index,Coords<uint3
     }
 }
 
+void Game::clear_civilization_unfinished_buildings(uint32_t index){
+    if(index<civilizations.size()){
+        vector<Coords<uint32_t>> unfinished_buildings=civilizations[index].get_unfinished_buildings();
+
+        for(size_t i=0;i<unfinished_buildings.size();i++){
+            Coords<uint32_t> coords=unfinished_buildings[i];
+
+            if(tile_exists(coords)){
+                const Tile& tile=get_tile(coords);
+
+                if(tile.is_alive() && tile.get_type()==Tile::Type::BUILDING_UNFINISHED){
+                    kill_tile(coords);
+                }
+            }
+        }
+    }
+}
+
 void Game::damage_person(uint32_t index,int16_t attack){
     if(index<people.size()){
         people[index].damage(attack);
@@ -846,6 +864,11 @@ void Game::handle_city_capture(const Coords<uint32_t>& tile_coords,uint32_t capt
     cities[city_index].set_parent_civilization(capturing_civilization_index);
 
     cities[city_index].set_just_captured();
+
+    //If this city was the losing civilization's last city
+    if(civilizations[losing_civilization_index].is_defeated()){
+        clear_civilization_unfinished_buildings(losing_civilization_index);
+    }
 
     if(selection.type==Game_Selection::Type::CITY && selection.index==city_index){
         clear_selection();
