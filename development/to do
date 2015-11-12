@@ -34,18 +34,5 @@ The current stuff is for ground and most stuff
 The new set of colors is for "foreground" stuff like tiles and people
 
 ********
-Maybe production of new people should cost food from the civ inventory
-Every constant amount of time, if food is available, consume one and tick towards new person birth
-This would need to be factored into wheat need calculation
-
-Building should add to the unfinished  building's HP instead of insta finishing it
-Multiple people could now build
-Might not need flagging anymore
-Could use flagging to affect build order priority
-If a building is flagged, another person is less likely to work on it
-This change would mean a need to change how tree need is calculated
-
-Reconsider combat cooldown
-
 I want simulated projectiles
 ********

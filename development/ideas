@@ -188,12 +188,6 @@ the general is treated as their "home location", and their orders from AI levels
 Also, if a person in an army has its parent city change ownership, they are assigned a new parent city in their parent civ
 When a civ is defeated, its armies should be given to ... someone
 
-Per city order to stay near city?
-
-Need something to prevent city spam
-Is there also a hard max?
-Cost of building city could increase per city
-
 Phase 4:
 
 Have domination, and time VCs
@@ -205,3 +199,22 @@ One piece of wheat could be used to plant a square of wheat tiles
 
 Building maintenance
 Buildings should not degrade if they were recently damaged
+
+Maybe production of new people should cost food from the civ inventory
+Every constant amount of time, if food is available, consume one and tick towards new person birth
+This would need to be factored into wheat need calculation
+
+Building should add to the unfinished building's HP instead of insta finishing it
+Multiple people could now build
+Might not need flagging anymore
+Could use flagging to affect build order priority
+If a building is flagged, another person is less likely to work on it
+This change would mean a need to change how tree need is calculated
+
+Reconsider combat cooldown
+
+Per city order to stay near city?
+
+Need something to prevent city spam
+Is there also a hard max?
+Cost of building city could increase per city
