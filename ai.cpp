@@ -131,7 +131,7 @@ bool AI_Goal::gather_can_interrupt() const{
 }
 
 bool AI_Goal::empty_inventory_can_interrupt() const{
-    if(!is_in_progress() || is_gather()){
+    if(!is_in_progress()){
         return true;
     }
     else{
