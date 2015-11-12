@@ -919,6 +919,10 @@ void Person::render(bool selected) const{
             Render::render_rectangle((double)box_sight.x*Game_Manager::camera_zoom-Game_Manager::camera.x,
                                      (double)box_sight.y*Game_Manager::camera_zoom-Game_Manager::camera.y,
                                      (double)box_sight.w*Game_Manager::camera_zoom,(double)box_sight.h*Game_Manager::camera_zoom,0.25,"red");*/
+            /**Bitmap_Font* font=Object_Manager::get_font("standard");
+            string message="";
+            write_info_string(message);
+            font->show(x*Game_Manager::camera_zoom-Game_Manager::camera.x,(y+box.h)*Game_Manager::camera_zoom-Game_Manager::camera.y,message,"red");*/
             ///
         }
     }
