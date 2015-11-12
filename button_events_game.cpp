@@ -10,6 +10,7 @@
 #include <window.h>
 #include <window_manager.h>
 #include <game_world.h>
+#include <game_manager.h>
 
 using namespace std;
 
@@ -79,6 +80,19 @@ bool Button_Events::handle_button_event_game(string button_event,Window* parent_
                     Game::issue_order(Game_Order(Game_Order::Type::CANCEL_UNFINISHED_BUILDING,selection.tile_coordinates,(uint32_t)leader));
                 }
             }
+        }
+
+        return true;
+    }
+    else if(button_event=="game_over"){
+        if(Game::started){
+            Window_Manager::close_all_windows();
+
+            Game_Manager::stop();
+
+            Window_Manager::get_window("main_menu")->toggle_on();
+
+            window_opened_on_top=true;
         }
 
         return true;

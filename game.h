@@ -30,6 +30,25 @@
 #include <map>
 #include <queue>
 
+class Game_Over{
+public:
+
+    enum class Victory_Condition : std::uint8_t{
+        NONE,
+        CONQUEST
+    };
+
+    Victory_Condition victory_condition;
+
+    std::uint32_t winning_leader;
+
+    Game_Over();
+
+    void reset();
+
+    void update(Victory_Condition new_victory_condition,std::uint32_t new_winning_leader);
+};
+
 class Game_City_Distance{
 public:
 
@@ -79,6 +98,8 @@ private:
     static Quadtree<std::int32_t,std::uint32_t> quadtree;
 
     static Minimap minimap;
+
+    static Game_Over game_over;
 
     static void add_remove_objects();
 
@@ -149,6 +170,8 @@ public:
     //or -1 if our leader could not be determined
     static std::int32_t get_our_leader();
 
+    static Game_Over get_game_over();
+
     //pixels
     static std::int32_t get_world_width();
     static std::int32_t get_world_height();
@@ -167,6 +190,7 @@ public:
     static void remove_civilization_item(std::uint32_t index,Inventory::Item_Type item_type,std::uint32_t amount);
     static void set_civilization_unfinished_building_flag(std::uint32_t index,Coords<std::uint32_t> tile_coords,bool new_flag);
     static void clear_civilization_unfinished_buildings(std::uint32_t index);
+    static void defeat_civilization(std::uint32_t index);
 
     static void damage_person(std::uint32_t index,std::int16_t attack);
     static void damage_tile(const Coords<std::uint32_t>& tile_coords,std::int16_t attack);

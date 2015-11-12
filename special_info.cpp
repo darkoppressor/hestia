@@ -7,6 +7,7 @@
 #include <special_info.h>
 #include <log.h>
 #include <object_manager.h>
+#include <network_engine.h>
 
 using namespace std;
 
@@ -53,6 +54,48 @@ string Special_Info::get_special_info_text(string special_info){
                 const Civilization& civilization=Game::get_civilization(selection.index);
 
                 civilization.write_info_string(text);
+            }
+        }
+        else if(special_info=="game_over"){
+            if(Game::started){
+                Game_Over game_over=Game::get_game_over();
+
+                int32_t leader_index=Game::get_our_leader();
+
+                if(leader_index>=0){
+                    if(leader_index==game_over.winning_leader){
+                        text+="Victory!\n";
+                    }
+                    else{
+                        text+="Defeat!\n";
+                    }
+                }
+                else{
+                    text+="Game Over!\n";
+                }
+
+                text+="\n";
+
+                const Leader& leader=Game::get_leader(game_over.winning_leader);
+
+                if(leader.is_player_controlled()){
+                    uint32_t player_index=leader.get_parent_player();
+
+                    vector<Client_Data*> players=Network_Engine::get_players();
+
+                    text+=players[player_index]->name;
+                }
+                else{
+                    text+="Computer";
+                }
+
+                text+=" has won a ";
+
+                if(game_over.victory_condition==Game_Over::Victory_Condition::CONQUEST){
+                    text+="conquest";
+                }
+
+                text+=" victory\n";
             }
         }
         else{

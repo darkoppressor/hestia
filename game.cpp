@@ -26,6 +26,22 @@
 
 using namespace std;
 
+Game_Over::Game_Over(){
+    reset();
+}
+
+void Game_Over::reset(){
+    victory_condition=Victory_Condition::NONE;
+
+    winning_leader=0;
+}
+
+void Game_Over::update(Victory_Condition new_victory_condition,uint32_t new_winning_leader){
+    victory_condition=new_victory_condition;
+
+    winning_leader=new_winning_leader;
+}
+
 Game_City_Distance::Game_City_Distance(uint32_t new_index,uint64_t new_distance){
     index=new_index;
 
@@ -57,6 +73,8 @@ queue<uint32_t> Game::dead_people;
 Quadtree<int32_t,uint32_t> Game::quadtree;
 
 Minimap Game::minimap;
+
+Game_Over Game::game_over;
 
 void Game::add_remove_objects(){
     for(size_t i=0;i<people.size();i++){
@@ -269,6 +287,8 @@ void Game::clear_world(){
     quadtree.clear_tree();
 
     clear_minimap();
+
+    game_over.reset();
 
     new_cities.clear();
     new_people.clear();
@@ -629,6 +649,10 @@ int32_t Game::get_our_leader(){
     return get_player_leader(Network_Engine::get_our_player_number());
 }
 
+Game_Over Game::get_game_over(){
+    return game_over;
+}
+
 int32_t Game::get_world_width(){
     return int32_t(option_world_width*Game_Constants::CHUNK_SIZE*Game_Constants::TILE_SIZE);
 }
@@ -823,6 +847,33 @@ void Game::clear_civilization_unfinished_buildings(uint32_t index){
     }
 }
 
+void Game::defeat_civilization(uint32_t index){
+    clear_civilization_unfinished_buildings(index);
+
+    if(option_vc_conquest){
+        uint32_t undefeated_civs=0;
+
+        for(size_t i=0;i<civilizations.size();i++){
+            if(!civilizations[i].is_defeated()){
+                undefeated_civs++;
+            }
+        }
+
+        //If only one civilization remains undefeated
+        if(undefeated_civs==1){
+            for(size_t i=0;i<civilizations.size();i++){
+                if(!civilizations[i].is_defeated()){
+                    game_over.update(Game_Over::Victory_Condition::CONQUEST,civilizations[i].get_parent_leader());
+
+                    break;
+                }
+            }
+
+            Window_Manager::get_window("game_over")->toggle_on(true,true);
+        }
+    }
+}
+
 void Game::damage_person(uint32_t index,int16_t attack){
     if(index<people.size()){
         people[index].damage(attack);
@@ -867,7 +918,7 @@ void Game::handle_city_capture(const Coords<uint32_t>& tile_coords,uint32_t capt
 
     //If this city was the losing civilization's last city
     if(civilizations[losing_civilization_index].is_defeated()){
-        clear_civilization_unfinished_buildings(losing_civilization_index);
+        defeat_civilization(losing_civilization_index);
     }
 
     if(selection.type==Game_Selection::Type::CITY && selection.index==city_index){
