@@ -27,6 +27,8 @@ Person::Person(){
 
     health=get_health_max();
     hunger=Game_Constants::HUNGER_FULL;
+
+    setup_sprites();
 }
 
 Person::Person(uint32_t new_parent,const Collision_Rect<int32_t>& new_box){
@@ -38,6 +40,20 @@ Person::Person(uint32_t new_parent,const Collision_Rect<int32_t>& new_box){
 
     health=get_health_max();
     hunger=Game_Constants::HUNGER_FULL;
+
+    setup_sprites();
+}
+
+void Person::setup_sprites(){
+    sprite_body_left.set_name("person_body_left");
+    sprite_body_right.set_name("person_body_right");
+    sprite_body_up.set_name("person_body_up");
+    sprite_body_down.set_name("person_body_down");
+
+    sprite_shirt_left.set_name("person_shirt_left");
+    sprite_shirt_right.set_name("person_shirt_right");
+    sprite_shirt_up.set_name("person_shirt_up");
+    sprite_shirt_down.set_name("person_shirt_down");
 }
 
 void Person::add_checksum_data(vector<uint32_t>& data) const{
@@ -854,6 +870,55 @@ void Person::write_info_string(string& text) const{
     }
 }
 
+string Person::get_facing_direction() const{
+    int32_t angle=velocity.direction;
+
+    Int_Math::clamp_angle(angle);
+
+    if(angle>=0 && angle<=45 && angle<=359 && angle>=315){
+        return "right";
+    }
+    else if(angle>45 && angle<135){
+        return "up";
+    }
+    else if(angle>=135 && angle<=225){
+        return "left";
+    }
+    else if(angle>225 && angle<315){
+        return "down";
+    }
+    else{
+        return "right";
+    }
+}
+
+void Person::animate(){
+    if(is_alive()){
+        if(velocity.magnitude!=0){
+            string facing=get_facing_direction();
+
+            int animation_speed=(double)Game_Constants::PERSON_MOVE_ANIMATION_SPEED_MAX/(Math::abs((double)velocity.magnitude)/(double)Game_Constants::PERSON_MAX_SPEED);
+
+            if(facing=="left"){
+                sprite_body_left.animate(animation_speed);
+                sprite_shirt_left.animate(animation_speed);
+            }
+            else if(facing=="right"){
+                sprite_body_right.animate(animation_speed);
+                sprite_shirt_right.animate(animation_speed);
+            }
+            else if(facing=="up"){
+                sprite_body_up.animate(animation_speed);
+                sprite_shirt_up.animate(animation_speed);
+            }
+            else if(facing=="down"){
+                sprite_body_down.animate(animation_speed);
+                sprite_shirt_down.animate(animation_speed);
+            }
+        }
+    }
+}
+
 void Person::render(bool selected) const{
     if(is_alive()){
         //pixels
@@ -863,14 +928,39 @@ void Person::render(bool selected) const{
         Collision_Rect<double> box_render(x,y,(double)box.w,(double)box.h);
 
         if(Collision::check_rect(box_render*Game_Manager::camera_zoom,Game_Manager::camera)){
-            ///QQQ should render the person graphic
-
             const Civilization& civilization=Game::get_civilization(get_parent_civilization());
 
             string color=civilization.get_color();
 
-            Render::render_rectangle(x*Game_Manager::camera_zoom-Game_Manager::camera.x,y*Game_Manager::camera_zoom-Game_Manager::camera.y,
-                                     (double)box.w*Game_Manager::camera_zoom,(double)box.h*Game_Manager::camera_zoom,1.0,color);
+            ///QQQRender::render_rectangle(x*Game_Manager::camera_zoom-Game_Manager::camera.x,y*Game_Manager::camera_zoom-Game_Manager::camera.y,
+            ///                         (double)box.w*Game_Manager::camera_zoom,(double)box.h*Game_Manager::camera_zoom,1.0,color);
+
+            string facing=get_facing_direction();
+
+            if(facing=="left"){
+                sprite_body_left.render(x*Game_Manager::camera_zoom-Game_Manager::camera.x,y*Game_Manager::camera_zoom-Game_Manager::camera.y,
+                                        1.0,Game_Manager::camera_zoom,Game_Manager::camera_zoom);
+                sprite_shirt_left.render(x*Game_Manager::camera_zoom-Game_Manager::camera.x,y*Game_Manager::camera_zoom-Game_Manager::camera.y,
+                                         1.0,Game_Manager::camera_zoom,Game_Manager::camera_zoom,0.0,color);
+            }
+            else if(facing=="right"){
+                sprite_body_right.render(x*Game_Manager::camera_zoom-Game_Manager::camera.x,y*Game_Manager::camera_zoom-Game_Manager::camera.y,
+                                         1.0,Game_Manager::camera_zoom,Game_Manager::camera_zoom);
+                sprite_shirt_right.render(x*Game_Manager::camera_zoom-Game_Manager::camera.x,y*Game_Manager::camera_zoom-Game_Manager::camera.y,
+                                          1.0,Game_Manager::camera_zoom,Game_Manager::camera_zoom,0.0,color);
+            }
+            else if(facing=="up"){
+                sprite_body_up.render(x*Game_Manager::camera_zoom-Game_Manager::camera.x,y*Game_Manager::camera_zoom-Game_Manager::camera.y,
+                                      1.0,Game_Manager::camera_zoom,Game_Manager::camera_zoom);
+                sprite_shirt_up.render(x*Game_Manager::camera_zoom-Game_Manager::camera.x,y*Game_Manager::camera_zoom-Game_Manager::camera.y,
+                                       1.0,Game_Manager::camera_zoom,Game_Manager::camera_zoom,0.0,color);
+            }
+            else if(facing=="down"){
+                sprite_body_down.render(x*Game_Manager::camera_zoom-Game_Manager::camera.x,y*Game_Manager::camera_zoom-Game_Manager::camera.y,
+                                        1.0,Game_Manager::camera_zoom,Game_Manager::camera_zoom);
+                sprite_shirt_down.render(x*Game_Manager::camera_zoom-Game_Manager::camera.x,y*Game_Manager::camera_zoom-Game_Manager::camera.y,
+                                         1.0,Game_Manager::camera_zoom,Game_Manager::camera_zoom,0.0,color);
+            }
 
             double percentage=(double)get_health()/(double)get_health_max();
             double max_bar_width=(double)box.w;

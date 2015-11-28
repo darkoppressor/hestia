@@ -38,6 +38,11 @@
 </game_constant>
 
 <game_constant>
+	name:person_move_animation_speed_max
+	value:200
+</game_constant>
+
+<game_constant>
 	//Valid range: [1,logic update rate]
 	//There will be ai_goal_selection_period - 1 frames in between each AI goal selection opportunity
 	//AI goal selection is additionally staggered among the people

@@ -15,6 +15,8 @@ public:
     static std::uint32_t BUILDING_SIZE;
     static std::uint32_t PERSON_SIZE;
 
+    static std::int32_t PERSON_MOVE_ANIMATION_SPEED_MAX;
+
     static std::uint32_t AI_GOAL_SELECTION_PERIOD;
     static std::uint32_t CITY_GATHER_ZONE_UPDATE_PERIOD;
     static std::uint32_t CIVILIZATION_NEEDS_UPDATE_PERIOD;

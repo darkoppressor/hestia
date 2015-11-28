@@ -1370,6 +1370,9 @@ void Game::events(){
 
 void Game::animate(){
     if(started){
+        for(size_t i=0;i<people.size();i++){
+            people[i].animate();
+        }
     }
 }
 

@@ -1,0 +1,63 @@
+<animation>
+	name:person_body_down
+	frame_count:4
+	animation_speed:200
+	frame_width:16
+	end_behavior:continue
+</animation>
+
+<animation>
+	name:person_body_left
+	frame_count:4
+	animation_speed:200
+	frame_width:16
+	end_behavior:continue
+</animation>
+
+<animation>
+	name:person_body_right
+	frame_count:4
+	animation_speed:200
+	frame_width:16
+	end_behavior:continue
+</animation>
+
+<animation>
+	name:person_body_up
+	frame_count:4
+	animation_speed:200
+	frame_width:16
+	end_behavior:continue
+</animation>
+
+<animation>
+	name:person_shirt_down
+	frame_count:4
+	animation_speed:200
+	frame_width:16
+	end_behavior:continue
+</animation>
+
+<animation>
+	name:person_shirt_left
+	frame_count:4
+	animation_speed:200
+	frame_width:16
+	end_behavior:continue
+</animation>
+
+<animation>
+	name:person_shirt_right
+	frame_count:4
+	animation_speed:200
+	frame_width:16
+	end_behavior:continue
+</animation>
+
+<animation>
+	name:person_shirt_up
+	frame_count:4
+	animation_speed:200
+	frame_width:16
+	end_behavior:continue
+</animation>

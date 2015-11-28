@@ -14,6 +14,7 @@
 #include <rng.h>
 #include <coords.h>
 #include <quadtree.h>
+#include <sprite.h>
 
 #include <cstdint>
 #include <vector>
@@ -41,10 +42,22 @@ private:
     std::int16_t health;
     std::uint8_t hunger;
 
+    Sprite sprite_body_left;
+    Sprite sprite_body_right;
+    Sprite sprite_body_up;
+    Sprite sprite_body_down;
+
+    Sprite sprite_shirt_left;
+    Sprite sprite_shirt_right;
+    Sprite sprite_shirt_up;
+    Sprite sprite_shirt_down;
+
 public:
 
     Person();
     Person(std::uint32_t new_parent,const Collision_Rect<std::int32_t>& new_box);
+
+    void setup_sprites();
 
     void add_checksum_data(std::vector<std::uint32_t>& data) const;
 
@@ -144,6 +157,10 @@ public:
     void movement();
 
     void write_info_string(std::string& text) const;
+
+    std::string get_facing_direction() const;
+
+    void animate();
 
     void render(bool selected) const;
 

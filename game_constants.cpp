@@ -15,6 +15,8 @@ uint32_t Game_Constants::CHUNK_SIZE=0;
 uint32_t Game_Constants::BUILDING_SIZE=0;
 uint32_t Game_Constants::PERSON_SIZE=0;
 
+int32_t Game_Constants::PERSON_MOVE_ANIMATION_SPEED_MAX=0;
+
 uint32_t Game_Constants::AI_GOAL_SELECTION_PERIOD=0;
 uint32_t Game_Constants::CITY_GATHER_ZONE_UPDATE_PERIOD=0;
 uint32_t Game_Constants::CIVILIZATION_NEEDS_UPDATE_PERIOD=0;
@@ -142,6 +144,10 @@ void Game_Constants_Loader::set_game_constant(string name,string value){
     }
     else if(name=="person_size"){
         Game_Constants::PERSON_SIZE=Strings::string_to_unsigned_long(value);
+    }
+
+    else if(name=="person_move_animation_speed_max"){
+        Game_Constants::PERSON_MOVE_ANIMATION_SPEED_MAX=Strings::string_to_long(value);
     }
 
     else if(name=="ai_goal_selection_period"){
