@@ -31,6 +31,10 @@ void Game_Manager::prepare_for_input(){
         display_scoreboard=false;
 
         if(Game::started){
+            if(Game::is_game_over()){
+                Game_Manager::paused=true;
+            }
+
             if(Game::get_selection().type==Game_Selection::Type::PERSON && !Window_Manager::get_window("game_person")->on){
                 Game::clear_selection();
             }
@@ -245,7 +249,7 @@ bool Game_Manager::handle_game_command_gui(string command_name){
     if(Game::started){
         //Multiplayer pause
         if(command_name=="pause"){
-            if(Network_Engine::status=="server"){
+            if(Network_Engine::status=="server" && !Game::is_game_over()){
                 toggle_pause();
 
                 Network_Server::send_paused();

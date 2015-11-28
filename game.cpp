@@ -42,6 +42,10 @@ void Game_Over::update(Victory_Condition new_victory_condition,uint32_t new_winn
     winning_leader=new_winning_leader;
 }
 
+bool Game_Over::is_over() const{
+    return victory_condition!=Victory_Condition::NONE;
+}
+
 Game_City_Distance::Game_City_Distance(uint32_t new_index,uint64_t new_distance){
     index=new_index;
 
@@ -653,6 +657,10 @@ Game_Over Game::get_game_over(){
     return game_over;
 }
 
+bool Game::is_game_over(){
+    return game_over.is_over();
+}
+
 int32_t Game::get_world_width(){
     return int32_t(option_world_width*Game_Constants::CHUNK_SIZE*Game_Constants::TILE_SIZE);
 }
@@ -861,6 +869,8 @@ void Game::defeat_civilization(uint32_t index){
 
         //If only one civilization remains undefeated
         if(undefeated_civs==1){
+            Game_Manager::paused=true;
+
             for(size_t i=0;i<civilizations.size();i++){
                 if(!civilizations[i].is_defeated()){
                     game_over.update(Game_Over::Victory_Condition::CONQUEST,civilizations[i].get_parent_leader());

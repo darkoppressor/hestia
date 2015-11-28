@@ -47,6 +47,8 @@ public:
     void reset();
 
     void update(Victory_Condition new_victory_condition,std::uint32_t new_winning_leader);
+
+    bool is_over() const;
 };
 
 class Game_City_Distance{
@@ -171,6 +173,7 @@ public:
     static std::int32_t get_our_leader();
 
     static Game_Over get_game_over();
+    static bool is_game_over();
 
     //pixels
     static std::int32_t get_world_width();
