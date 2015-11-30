@@ -206,7 +206,7 @@ void Game_Manager::handle_input_states_gui(){
             Game::edge_scroll_state="none";
         }
 
-        if(cam_state!="none" || Game::edge_scroll_state!="none"){
+        if(cam_state!="none" || (Game_Options::edge_scrolling && Game::edge_scroll_state!="none")){
             if(Game::get_selection().follow){
                 Game::toggle_selection_follow();
             }
