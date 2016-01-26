@@ -381,7 +381,7 @@ bool Game_Manager::handle_input_events_gui(){
                             double screen_distance=((double)screen_width+(double)screen_height)/4.0;
                             double magnitude=50.0/(Game_Manager::camera_zoom/(Math::distance_between_points(box_camera.x,box_camera.y,box_mouse.x,box_mouse.y)/screen_distance));
 
-                            Vector vector_camera(magnitude,Collision::get_angle_to_rect(box_camera,box_mouse));
+                            Vector vector_camera(magnitude,box_camera.get_angle_to_rect(box_mouse));
                             Vector_Components vc=vector_camera.get_components();
                             box_camera.x+=vc.a;
                             box_camera.y+=vc.b;
