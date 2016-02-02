@@ -4,9 +4,9 @@
 
 #include "game.h"
 #include "game_constants.h"
-#include "int_math.h"
 #include "network_game.h"
 
+#include <int_math.h>
 #include <render.h>
 #include <game_window.h>
 #include <sound_manager.h>
@@ -453,7 +453,7 @@ void Game::generate_world(){
     }
 
     //pixels
-    //We square this value, so it can be directly compared to distances returned by Int_Math::distance_between_points_no_sqrt
+    //We square this value, so it can be directly compared to distances returned by Int_Math::get_distance_between_points_no_sqrt
     uint64_t desired_distance_between_cities=(uint64_t)((get_world_width()+get_world_height())/2)/4;
     desired_distance_between_cities*=desired_distance_between_cities;
 
@@ -957,7 +957,7 @@ void Game::repopulate_city(uint32_t city_index){
                 const City& city=get_city(city_list[i]);
 
                 if(city.get_exists()){
-                    city_distance_list.push_back(Game_City_Distance(city_list[i],Int_Math::distance_between_points_no_sqrt(city_x,city_y,city.get_center_x(),city.get_center_y())));
+                    city_distance_list.push_back(Game_City_Distance(city_list[i],Int_Math::get_distance_between_points_no_sqrt(Coords<int32_t>(city_x,city_y),Coords<int32_t>(city.get_center_x(),city.get_center_y()))));
                 }
             }
         }
@@ -1074,7 +1074,7 @@ vector<Game_City_Distance> Game::get_nearest_city(const Coords<int32_t>& coords)
 
     for(size_t i=0;i<cities.size();i++){
         if(cities[i].get_exists()){
-            uint64_t distance=Int_Math::distance_between_points_no_sqrt(coords.x,coords.y,cities[i].get_center_x(),cities[i].get_center_y());
+            uint64_t distance=Int_Math::get_distance_between_points_no_sqrt(coords,Coords<int32_t>(cities[i].get_center_x(),cities[i].get_center_y()));
 
             if(city.size()==0){
                 city.push_back(Game_City_Distance((uint32_t)i,distance));
@@ -1473,7 +1473,7 @@ void Game::update_background(){
 
 void Game::render_background(){
     if(started){
-        Render::render_rectangle(0,0,Game_Window::width(),Game_Window::height(),1.0,"ui_black");
+        Render::render_rectangle(0.0,0.0,Game_Window::width(),Game_Window::height(),1.0,"ui_black");
     }
 }
 

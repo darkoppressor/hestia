@@ -406,8 +406,6 @@
 		<Unit filename="game_order.h" />
 		<Unit filename="game_selection.cpp" />
 		<Unit filename="game_selection.h" />
-		<Unit filename="int_math.cpp" />
-		<Unit filename="int_math.h" />
 		<Unit filename="inventory.cpp" />
 		<Unit filename="inventory.h" />
 		<Unit filename="leader.cpp" />

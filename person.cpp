@@ -6,6 +6,8 @@
 #include "game_constants.h"
 #include "game.h"
 
+#include <int_math.h>
+#include <int_collision.h>
 #include <engine.h>
 #include <game_manager.h>
 #include <render.h>
@@ -564,7 +566,7 @@ uint64_t Person::get_goal_distance() const{
     Coords<int32_t> goal_coords=get_goal_coords();
 
     if(goal_coords.x>=0){
-        return Int_Math::distance_between_points_no_sqrt(box.center_x(),box.center_y(),goal_coords.x,goal_coords.y);
+        return Int_Math::get_distance_between_points_no_sqrt(box.get_center(),goal_coords);
     }
     else{
         return 0;
@@ -622,7 +624,7 @@ int32_t Person::get_angle_to_goal() const{
 bool Person::is_at_home() const{
     const City& city=Game::get_city(get_parent_city());
 
-    if(Int_Math::distance_between_points_no_sqrt(box.center_x(),box.center_y(),city.get_center_x(),city.get_center_y())<=get_goal_range()){
+    if(Int_Math::get_distance_between_points_no_sqrt(box.get_center(),Coords<int32_t>(city.get_center_x(),city.get_center_y()))<=get_goal_range()){
         return true;
     }
     else{

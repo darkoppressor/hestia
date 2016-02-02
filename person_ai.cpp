@@ -6,6 +6,7 @@
 #include "game.h"
 #include "game_constants.h"
 
+#include <int_math.h>
 #include <engine.h>
 #include <sorting.h>
 
@@ -243,7 +244,7 @@ Target_Scan_Result Person::target_scan(vector<AI_Choice>& choices,RNG& rng,const
                         }
                         else if(is_enemies_with_person(targets_people[i])){
                             if(could_damage_person(person)){
-                                uint64_t person_distance=Int_Math::distance_between_points_no_sqrt(box.center_x(),box.center_y(),person.get_box().center_x(),person.get_box().center_y());
+                                uint64_t person_distance=Int_Math::get_distance_between_points_no_sqrt(box.get_center(),person.get_box().get_center());
 
                                 valid_targets.push_back(AI_Target(person_distance,person.get_health(),person.get_attack(),person.get_defense()));
                                 valid_targets.back().set_person_index(targets_people[i]);
@@ -301,7 +302,7 @@ Target_Scan_Result Person::target_scan(vector<AI_Choice>& choices,RNG& rng,const
                             }
                             else if(is_enemies_with_tile(tile_coords)){
                                 if(could_damage_tile(tile)){
-                                    uint64_t building_distance=Int_Math::distance_between_points_no_sqrt(box.center_x(),box.center_y(),tile.get_center_x(x),tile.get_center_y(y));
+                                    uint64_t building_distance=Int_Math::get_distance_between_points_no_sqrt(box.get_center(),Coords<int32_t>(tile.get_center_x(x),tile.get_center_y(y)));
 
                                     valid_targets.push_back(AI_Target(building_distance,tile.get_health(),0,tile.get_defense()));
                                     valid_targets.back().set_building_tile_coords(tile_coords);
@@ -413,8 +414,8 @@ Target_Scan_Result Person::target_scan(vector<AI_Choice>& choices,RNG& rng,const
             if(priority_retreat>0){
                 const City& city=Game::get_city(get_parent_city());
 
-                if(Int_Math::distance_between_points_no_sqrt((int32_t)get_tile_x(),(int32_t)get_tile_y(),
-                                                             (int32_t)city.get_tile_x(),(int32_t)city.get_tile_y())>Game_Constants::HOME_DEFENSE_RANGE){
+                if(Int_Math::get_distance_between_points_no_sqrt(Coords<int32_t>((int32_t)get_tile_x(),(int32_t)get_tile_y()),
+                                                                 Coords<int32_t>((int32_t)city.get_tile_x(),(int32_t)city.get_tile_y()))>Game_Constants::HOME_DEFENSE_RANGE){
                     choices.push_back(AI_Choice(AI_Goal::Type::RETREAT,priority_retreat));
                 }
             }
@@ -438,9 +439,9 @@ Coords<uint32_t> Person::consider_building(vector<AI_Choice>& choices) const{
             for(size_t i=0;i<unfinished_buildings.size();i++){
                 //If this unfinished building is not flagged
                 if(!civilization.get_unfinished_building_flag(unfinished_buildings[i])){
-                    uint64_t distance_to_building=Int_Math::distance_between_points_no_sqrt(box.center_x(),box.center_y(),
-                                                                                            Tile::get_center_x(unfinished_buildings[i].x,Tile::get_tile_type_size(Tile::Type::BUILDING_UNFINISHED)),
-                                                                                            Tile::get_center_y(unfinished_buildings[i].y,Tile::get_tile_type_size(Tile::Type::BUILDING_UNFINISHED)));
+                    uint64_t distance_to_building=Int_Math::get_distance_between_points_no_sqrt(box.get_center(),
+                                                                                                Coords<int32_t>(Tile::get_center_x(unfinished_buildings[i].x,Tile::get_tile_type_size(Tile::Type::BUILDING_UNFINISHED)),
+                                                                                                                Tile::get_center_y(unfinished_buildings[i].y,Tile::get_tile_type_size(Tile::Type::BUILDING_UNFINISHED))));
 
                     if(!some_building_looked_at || distance_to_building<nearest_unfinished_building){
                         some_building_looked_at=true;

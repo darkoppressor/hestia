@@ -5,11 +5,11 @@
 #ifndef person_h
 #define person_h
 
-#include "int_math.h"
 #include "ai.h"
 #include "inventory.h"
 #include "tile.h"
 
+#include <int_vector.h>
 #include <collision.h>
 #include <rng.h>
 #include <coords.h>
