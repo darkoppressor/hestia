@@ -49,7 +49,8 @@
 
 	logical_screen_width:1280
 	logical_screen_height:720
-	scrolling_buttons_offset:44
+	scrolling_buttons_offset:58
+	scrolling_buttons_spacing:12
 	console_height:16
 	chat_height:16
 	console_max_command_length:181
