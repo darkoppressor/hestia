@@ -285,8 +285,8 @@ void Game::clear_world(){
     people.clear();
     tiles.clear();
 
-    dead_cities={};
-    dead_people={};
+    dead_cities=queue<uint32_t>();
+    dead_people=queue<uint32_t>();
 
     quadtree.clear_tree();
 
