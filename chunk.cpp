@@ -64,7 +64,7 @@ uint32_t Tile_Counts::get(Tile::Type tile_type) const{
 void Tile_Counts::increment(Tile::Type tile_type){
     uint32_t& tile=get_tile_reference(tile_type);
 
-    if(tile<UINT32_MAX){
+    if(tile<numeric_limits<uint32_t>::max()){
         tile++;
     }
 }

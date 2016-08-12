@@ -251,7 +251,7 @@ void Game::clear_world(){
     calendar.reset();
 
     RNG rng_seeder;
-    option_rng_seed=rng_seeder.random_range(0,UINT32_MAX);
+    option_rng_seed=rng_seeder.random_range(0,numeric_limits<uint32_t>::max());
 
     option_world_width=20;
     option_world_height=20;
@@ -262,7 +262,7 @@ void Game::clear_world(){
     option_vc_conquest=true;
 
     //chunks
-    uint32_t MAX_WORLD_SIZE=(uint32_t)INT32_MAX/(Game_Constants::CHUNK_SIZE*Game_Constants::TILE_SIZE);
+    uint32_t MAX_WORLD_SIZE=(uint32_t)numeric_limits<int32_t>::max()/(Game_Constants::CHUNK_SIZE*Game_Constants::TILE_SIZE);
 
     if(option_world_width>MAX_WORLD_SIZE){
         option_world_width=MAX_WORLD_SIZE;
@@ -1488,7 +1488,7 @@ uint32_t Game::get_checksum(){
     data.push_back(option_initial_tile_growth);
     data.push_back((uint32_t)option_vc_conquest);
 
-    data.push_back(rng.random_range(0,UINT32_MAX));
+    data.push_back(rng.random_range(0,numeric_limits<uint32_t>::max()));
 
     for(size_t i=0;i<regions.size();i++){
         regions[i].add_checksum_data(data);

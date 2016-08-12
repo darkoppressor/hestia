@@ -8,6 +8,8 @@
 #include <engine_strings.h>
 #include <engine.h>
 
+#include <limits>
+
 using namespace std;
 
 uint32_t& Inventory::get_item_reference(Item_Type type){
@@ -69,13 +71,13 @@ uint32_t Inventory::get_item_count(Item_Type type) const{
 uint32_t Inventory::add_item(Item_Type type,uint32_t amount){
     uint32_t& item=get_item_reference(type);
 
-    uint32_t available_space=UINT32_MAX-item;
+    uint32_t available_space=numeric_limits<uint32_t>::max()-item;
 
     if(available_space>=amount){
         item+=amount;
     }
     else{
-        item=UINT32_MAX;
+        item=numeric_limits<uint32_t>::max();
 
         return amount-available_space;
     }
