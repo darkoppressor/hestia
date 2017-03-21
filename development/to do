@@ -1,33 +1,10 @@
-What about game orders being used a couple of turns after being distributed?
-
-Don't allow the same command to be sent multiple times
-
-Should camera speed modifiers effect zoom as well?
-
-Zoom only at certain increments, does this fix the scaling graphics issues?
-
-Add weather, just for looks right now except for wind speed below
-Regions have wind speed, affected by weather
-Tiles are animated, and animation speed is affected by wind speed of their region
-Tile animations will have to be global, so the animation speed will be, too
-It can be affected by all on-screen regions
-Only animate on-screen tiles
-
-What if one or both dimensions of the chunks on the minimap are 0?
-
-Options for minimap size and position?
-
-Move minimap updating into separate thread
-
-Make sure that a person gathering actually looks in their current chunk first
-It kind of seems like this isn't working right
-
 Add controls (sliders, buttons, idk) for surplus percentages
 The current constants for these will become the default values
 
-Laptop has weird green crap on mouseover cursor
-
 Add pause network command for clients
+This will require a new engine feature
+This feature will work much like the server pause, except it will require an option determining how much each client
+is allowed to save
 
 Expand the color palette
 The current stuff is for ground and most stuff
