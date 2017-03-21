@@ -89,7 +89,7 @@
 </game_command>
 
 <game_command>
-	name:camera_speed_mod_fast
+	name:camera_speed_mod_fast_1
 	title:Camera Speed Modifier - Fast
 	description:Hold to speed up camera movement
 	developer:false
@@ -99,7 +99,7 @@
 </game_command>
 
 <game_command>
-	name:camera_speed_mod_fast
+	name:camera_speed_mod_fast_2
 	title:Camera Speed Modifier - Fast
 	description:Hold to speed up camera movement
 	developer:false
@@ -109,7 +109,7 @@
 </game_command>
 
 <game_command>
-	name:camera_speed_mod_slow
+	name:camera_speed_mod_slow_1
 	title:Camera Speed Modifier - Slow
 	description:Hold to slow down camera movement
 	developer:false
@@ -119,7 +119,7 @@
 </game_command>
 
 <game_command>
-	name:camera_speed_mod_slow
+	name:camera_speed_mod_slow_2
 	title:Camera Speed Modifier - Slow
 	description:Hold to slow down camera movement
 	developer:false

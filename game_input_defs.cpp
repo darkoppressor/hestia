@@ -219,11 +219,11 @@ void Game_Manager::handle_input_states_gui(){
         }
 
         //Handle camera speed modifiers
-        if(Object_Manager::game_command_state("camera_speed_mod_fast")){
+        if(Object_Manager::game_command_state("camera_speed_mod_fast_1") || Object_Manager::game_command_state("camera_speed_mod_fast_2")){
             camera_speed*=Game_Options::camera_speed_mod_fast;
             Game::edge_scroll_speed*=Game_Options::edge_scroll_speed_mod_fast;
         }
-        if(Object_Manager::game_command_state("camera_speed_mod_slow")){
+        if(Object_Manager::game_command_state("camera_speed_mod_slow_1") || Object_Manager::game_command_state("camera_speed_mod_slow_2")){
             camera_speed*=Game_Options::camera_speed_mod_slow;
             Game::edge_scroll_speed*=Game_Options::edge_scroll_speed_mod_slow;
         }
