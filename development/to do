@@ -5,6 +5,7 @@ Add pause network command for clients
 This will require a new engine feature
 This feature will work much like the server pause, except it will require an option determining how much each client
 is allowed to save
+UPDATE: This might not need to be done as an engine feature
 
 Expand the color palette
 The current stuff is for ground and most stuff

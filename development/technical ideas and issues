@@ -19,7 +19,17 @@ Options for minimap size and position?
 
 Move minimap updating into separate thread
 
+Depending on how I end up designing the world, I might be able to make the minimap pregenerate as part of game startup
+and then never again
+Cities and whatever else I want rendered over the minimap would be rendered in realtime
+
 Laptop has weird green crap on mouseover cursor
+
+AI could run on the host only and send its commands much like players
+
+If a desync is found, a full resync is done (only for desynchronized clients)
+
+Hotjoin
 
 ***
 I think updating the minimap MIGHT be able to be multithreaded
