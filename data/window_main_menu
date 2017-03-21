@@ -8,7 +8,8 @@
 	<button>
 		location:-1,36
 		text:Play
-		event:start_game_window
+		event:test_start_game
+		///QQQ event:start_game_window
 		sound_moused:moused_1
 		sound_click:click_1
 	</button>

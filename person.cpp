@@ -12,11 +12,11 @@
 #include <game_manager.h>
 #include <render.h>
 #include <image_manager.h>
+#include <engine_strings.h>
 
 ///QQQ includes
 #include <object_manager.h>
 #include <font.h>
-#include <engine_strings.h>
 #include <log.h>
 ///
 

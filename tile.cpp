@@ -11,10 +11,10 @@
 #include <game_manager.h>
 #include <image_manager.h>
 #include <object_manager.h>
+#include <engine_strings.h>
 
 ///QQQ includes
 #include <font.h>
-#include <engine_strings.h>
 ///
 
 using namespace std;

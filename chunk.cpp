@@ -194,5 +194,10 @@ void Chunk::render_ground(uint32_t chunk_x,uint32_t chunk_y) const{
     if(Collision::check_rect(box_render*Game_Manager::camera_zoom,Game_Manager::camera)){
         Render::render_texture(x*Game_Manager::camera_zoom-Game_Manager::camera.x,y*Game_Manager::camera_zoom-Game_Manager::camera.y,
                                Image_Manager::get_image("ground_"+get_ground_string()),1.0,Game_Manager::camera_zoom,Game_Manager::camera_zoom);
+
+        ///QQQ dev data
+        /**Render::render_rectangle_empty(x*Game_Manager::camera_zoom-Game_Manager::camera.x,y*Game_Manager::camera_zoom-Game_Manager::camera.y,
+                                       get_size()*Game_Manager::camera_zoom,get_size()*Game_Manager::camera_zoom,0.85,"red",1.0);*/
+        ///
     }
 }

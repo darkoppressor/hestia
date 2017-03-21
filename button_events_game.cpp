@@ -12,6 +12,10 @@
 #include <game_world.h>
 #include <game_manager.h>
 
+///QQQ includes
+#include <network_server.h>
+///
+
 using namespace std;
 
 bool Button_Events::handle_button_event_game(string button_event,Window* parent_window,bool& window_opened_on_top){
@@ -27,6 +31,23 @@ bool Button_Events::handle_button_event_game(string button_event,Window* parent_
 
         return true;
     }
+    ///QQQ quick game startup for testing
+    else if(button_event=="test_start_game"){
+        Window_Manager::close_all_windows();
+
+        Game_Manager::stop();
+
+        Game_Manager::start_server_lockstep();
+
+        if(!Network_Server::start_as_server()){
+            Game_Manager::stop();
+        }
+
+        handle_button_event_game("game_start_server_lockstep",parent_window,window_opened_on_top);
+
+        return true;
+    }
+    ///
     else if(button_event=="game_start_server_lockstep"){
         if(Network_Engine::status=="server"){
             Window_Manager::close_all_windows();
