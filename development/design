@@ -203,6 +203,11 @@ Conquest victory condition: Be the only civilization left undefeated
 
 QQQ Note: I believe this is where I left off back in school
 
+Should it really be possible to abandon a city anytime?
+What if players abandon cities just before they are conquered, preventing the attacker from gaining the city and its people?
+Probably not allowing city abandoning when the city is under attack would work
+How to determine if a city is under attack? Maybe just if hostile units are nearby?
+
 Building maintenance
 Buildings should not degrade if they were recently damaged
 

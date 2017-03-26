@@ -107,6 +107,8 @@ Eating from the army inventory fills food and supply for a soldier, and uses up 
 Soldier supply shares the same max value and decreases at the same rate as hunger
 Hunger affects a soldier just as any other person
 Supply can have additional combat or even AI penalties
+Caravans should also remember what resources they took and "converted" into supply
+This will be used when they are killed, to determine what they drop
 
 When an army is in its gathering period, it should also fill its army inventory from the civ inventory
 
@@ -252,6 +254,7 @@ Fighting could have a Combat skill
 Being in an army could have a Soldiering skill
 Leading an army (do generals exist?) could have a Leadership skill
 Etc.
+Another city type could exist for training soldiers
 
 Each player needs to have their own territory of their color
 This spreads out in a rectangle or some simple shape from each city
