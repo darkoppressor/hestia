@@ -5,84 +5,67 @@
 #ifndef game_constants_h
 #define game_constants_h
 
+#include <string>
 #include <cstdint>
 
 class Game_Constants{
 public:
 
+    /// BEGIN SCRIPT-GENERATED CONSTANT DECLARATIONS
     static std::uint32_t TILE_SIZE;
     static std::uint32_t CHUNK_SIZE;
     static std::uint32_t BUILDING_SIZE;
     static std::uint32_t PERSON_SIZE;
-
     static std::int32_t PERSON_MOVE_ANIMATION_SPEED_MAX;
-
     static std::uint32_t AI_GOAL_SELECTION_PERIOD;
     static std::uint32_t CITY_GATHER_ZONE_UPDATE_PERIOD;
     static std::uint32_t CIVILIZATION_NEEDS_UPDATE_PERIOD;
-
     static std::uint32_t DAY_LENGTH;
-
     static std::uint32_t CITY_POPULATION_MAX;
     static std::uint32_t CITY_POPULATION_DESIRED;
     static std::uint32_t CITY_POPULATION_START;
     static std::uint32_t BREEDING_RATE;
     static std::uint32_t CAPTURE_COOLDOWN;
-
     static std::int32_t PERSON_MASS;
     static std::int32_t PERSON_MAX_SPEED;
     static std::int32_t PERSON_MAX_SPEED_COMBAT;
     static std::int32_t PERSON_MOVE_FORCE;
     static std::int32_t PERSON_MOVE_FORCE_COMBAT;
-
     static std::uint32_t INVENTORY_MAX;
     static std::uint32_t INVENTORY_ALMOST_FULL_THRESHOLD;
-
     static std::int16_t PERSON_HEALTH_MAX;
     static std::int16_t PERSON_HEALTH_CHANGE_RATE;
     static std::int16_t PERSON_ATTACK;
     static std::int16_t PERSON_DEFENSE;
-
     static std::int16_t BUILDING_HEALTH_MAX;
     static std::int16_t BUILDING_REPAIR_AMOUNT;
     static std::int16_t BUILDING_DEFENSE;
-
     static std::int16_t BUILDING_CAPTURED_HEALTH_PERCENTAGE;
-
     static std::uint32_t COST_BUILD;
     static std::uint32_t COST_REPAIR;
-
     static std::uint32_t SURPLUS_WHEAT;
     static std::uint32_t SURPLUS_BASE_WHEAT;
     static std::uint32_t SURPLUS_TREE;
     static std::uint32_t SURPLUS_BASE_TREE;
-
     static std::uint8_t HUNGER_FULL;
     static std::uint8_t HUNGER_HUNGRY;
     static std::uint8_t HUNGER_STARVING;
-
     static std::uint32_t GATHER_ZONE_RANGE;
     static std::uint32_t FORAGE_ZONE_RANGE;
-
     static std::uint64_t INTERACTION_RANGE;
     static std::int32_t SIGHT_RANGE;
     static std::uint64_t HOME_DEFENSE_RANGE;
     static std::uint32_t CITY_SPACING;
-
     static std::uint32_t MAINTAIN_TARGET_CHANCE;
-
     static std::uint32_t RETREAT_HOME_CHANCE;
     static std::int32_t RETREAT_ZONE_RANGE;
-
     static std::uint32_t AI_TARGET_SELECTION_WEIGHT_NEEDED;
     static std::uint32_t AI_TARGET_SELECTION_WEIGHT_HEALTH;
     static std::uint32_t AI_TARGET_SELECTION_WEIGHT_ATTACK;
     static std::uint32_t AI_TARGET_SELECTION_WEIGHT_DEFENSE;
     static std::uint32_t AI_TARGET_SELECTION_WEIGHT_DISTANCE;
-
     static std::int32_t AI_COMBAT_SCORE_RATIO_MAJOR;
     static std::int32_t AI_COMBAT_SCORE_RATIO_OVERWHELMING;
-
     static std::int32_t PRIORITY_IGNORE;
     static std::int32_t PRIORITY_GATHER;
     static std::int32_t PRIORITY_GATHER_SURPLUS;
@@ -100,7 +83,6 @@ public:
     static std::int32_t PRIORITY_ATTACK_MELEE_WITH_OVERWHELMING_ADVANTAGE;
     static std::int32_t PRIORITY_BUILD;
     static std::int32_t PRIORITY_REPAIR;
-
     static std::uint32_t GATHER_RATE;
     static std::uint32_t EMPTY_INVENTORY_RATE;
     static std::uint32_t EAT_RATE;
@@ -111,7 +93,6 @@ public:
     static std::uint32_t ATTACK_BUILDING_MELEE_RATE;
     static std::uint32_t BUILD_RATE;
     static std::uint32_t REPAIR_RATE;
-
     static double RENDER_BUILDING_UNFINISHED_COLOR;
     static double RENDER_BUILDING_CITY_COLOR;
     static double RENDER_BUILDING_COLOR_BORDER;
@@ -121,6 +102,7 @@ public:
     static double RENDER_SELECTION_BORDER;
     static double RENDER_MINIMAP_BORDER;
     static double RENDER_MINIMAP_CAMERA_RECTANGLE;
+    /// END SCRIPT-GENERATED CONSTANT DECLARATIONS
 };
 
 #endif

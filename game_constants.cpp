@@ -10,79 +10,61 @@
 
 using namespace std;
 
+/// BEGIN SCRIPT-GENERATED CONSTANT INITIALIZATIONS
 uint32_t Game_Constants::TILE_SIZE=0;
 uint32_t Game_Constants::CHUNK_SIZE=0;
 uint32_t Game_Constants::BUILDING_SIZE=0;
 uint32_t Game_Constants::PERSON_SIZE=0;
-
 int32_t Game_Constants::PERSON_MOVE_ANIMATION_SPEED_MAX=0;
-
 uint32_t Game_Constants::AI_GOAL_SELECTION_PERIOD=0;
 uint32_t Game_Constants::CITY_GATHER_ZONE_UPDATE_PERIOD=0;
 uint32_t Game_Constants::CIVILIZATION_NEEDS_UPDATE_PERIOD=0;
-
 uint32_t Game_Constants::DAY_LENGTH=0;
-
 uint32_t Game_Constants::CITY_POPULATION_MAX=0;
 uint32_t Game_Constants::CITY_POPULATION_DESIRED=0;
 uint32_t Game_Constants::CITY_POPULATION_START=0;
 uint32_t Game_Constants::BREEDING_RATE=0;
 uint32_t Game_Constants::CAPTURE_COOLDOWN=0;
-
 int32_t Game_Constants::PERSON_MASS=0;
 int32_t Game_Constants::PERSON_MAX_SPEED=0;
 int32_t Game_Constants::PERSON_MAX_SPEED_COMBAT=0;
 int32_t Game_Constants::PERSON_MOVE_FORCE=0;
 int32_t Game_Constants::PERSON_MOVE_FORCE_COMBAT=0;
-
 uint32_t Game_Constants::INVENTORY_MAX=0;
 uint32_t Game_Constants::INVENTORY_ALMOST_FULL_THRESHOLD=0;
-
 int16_t Game_Constants::PERSON_HEALTH_MAX=0;
 int16_t Game_Constants::PERSON_HEALTH_CHANGE_RATE=0;
 int16_t Game_Constants::PERSON_ATTACK=0;
 int16_t Game_Constants::PERSON_DEFENSE=0;
-
 int16_t Game_Constants::BUILDING_HEALTH_MAX=0;
 int16_t Game_Constants::BUILDING_REPAIR_AMOUNT=0;
 int16_t Game_Constants::BUILDING_DEFENSE=0;
-
 int16_t Game_Constants::BUILDING_CAPTURED_HEALTH_PERCENTAGE=0;
-
 uint32_t Game_Constants::COST_BUILD=0;
 uint32_t Game_Constants::COST_REPAIR=0;
-
 uint32_t Game_Constants::SURPLUS_WHEAT=0;
 uint32_t Game_Constants::SURPLUS_BASE_WHEAT=0;
 uint32_t Game_Constants::SURPLUS_TREE=0;
 uint32_t Game_Constants::SURPLUS_BASE_TREE=0;
-
 uint8_t Game_Constants::HUNGER_FULL=0;
 uint8_t Game_Constants::HUNGER_HUNGRY=0;
 uint8_t Game_Constants::HUNGER_STARVING=0;
-
 uint32_t Game_Constants::GATHER_ZONE_RANGE=0;
 uint32_t Game_Constants::FORAGE_ZONE_RANGE=0;
-
 uint64_t Game_Constants::INTERACTION_RANGE=0;
 int32_t Game_Constants::SIGHT_RANGE=0;
 uint64_t Game_Constants::HOME_DEFENSE_RANGE=0;
 uint32_t Game_Constants::CITY_SPACING=0;
-
 uint32_t Game_Constants::MAINTAIN_TARGET_CHANCE=0;
-
 uint32_t Game_Constants::RETREAT_HOME_CHANCE=0;
 int32_t Game_Constants::RETREAT_ZONE_RANGE=0;
-
 uint32_t Game_Constants::AI_TARGET_SELECTION_WEIGHT_NEEDED=0;
 uint32_t Game_Constants::AI_TARGET_SELECTION_WEIGHT_HEALTH=0;
 uint32_t Game_Constants::AI_TARGET_SELECTION_WEIGHT_ATTACK=0;
 uint32_t Game_Constants::AI_TARGET_SELECTION_WEIGHT_DEFENSE=0;
 uint32_t Game_Constants::AI_TARGET_SELECTION_WEIGHT_DISTANCE=0;
-
 int32_t Game_Constants::AI_COMBAT_SCORE_RATIO_MAJOR=0;
 int32_t Game_Constants::AI_COMBAT_SCORE_RATIO_OVERWHELMING=0;
-
 int32_t Game_Constants::PRIORITY_IGNORE=0;
 int32_t Game_Constants::PRIORITY_GATHER=0;
 int32_t Game_Constants::PRIORITY_GATHER_SURPLUS=0;
@@ -100,7 +82,6 @@ int32_t Game_Constants::PRIORITY_ATTACK_MELEE_WITH_MAJOR_ADVANTAGE=0;
 int32_t Game_Constants::PRIORITY_ATTACK_MELEE_WITH_OVERWHELMING_ADVANTAGE=0;
 int32_t Game_Constants::PRIORITY_BUILD=0;
 int32_t Game_Constants::PRIORITY_REPAIR=0;
-
 uint32_t Game_Constants::GATHER_RATE=0;
 uint32_t Game_Constants::EMPTY_INVENTORY_RATE=0;
 uint32_t Game_Constants::EAT_RATE=0;
@@ -111,7 +92,6 @@ uint32_t Game_Constants::ATTACK_PERSON_MELEE_RATE=0;
 uint32_t Game_Constants::ATTACK_BUILDING_MELEE_RATE=0;
 uint32_t Game_Constants::BUILD_RATE=0;
 uint32_t Game_Constants::REPAIR_RATE=0;
-
 double Game_Constants::RENDER_BUILDING_UNFINISHED_COLOR=0.0;
 double Game_Constants::RENDER_BUILDING_CITY_COLOR=0.0;
 double Game_Constants::RENDER_BUILDING_COLOR_BORDER=0.0;
@@ -121,6 +101,7 @@ double Game_Constants::RENDER_SELECTION_SIZE=0.0;
 double Game_Constants::RENDER_SELECTION_BORDER=0.0;
 double Game_Constants::RENDER_MINIMAP_BORDER=0.0;
 double Game_Constants::RENDER_MINIMAP_CAMERA_RECTANGLE=0.0;
+/// END SCRIPT-GENERATED CONSTANT INITIALIZATIONS
 
 void Game_Constants_Loader::set_game_constant(string name,string value){
     if(name=="zoom_rate"){
@@ -133,6 +114,7 @@ void Game_Constants_Loader::set_game_constant(string name,string value){
         Engine_Data::ZOOM_MAX=Strings::string_to_double(value);
     }
 
+    /// BEGIN SCRIPT-GENERATED CONSTANT SETUP
     else if(name=="tile_size"){
         Game_Constants::TILE_SIZE=Strings::string_to_unsigned_long(value);
     }
@@ -145,11 +127,9 @@ void Game_Constants_Loader::set_game_constant(string name,string value){
     else if(name=="person_size"){
         Game_Constants::PERSON_SIZE=Strings::string_to_unsigned_long(value);
     }
-
     else if(name=="person_move_animation_speed_max"){
         Game_Constants::PERSON_MOVE_ANIMATION_SPEED_MAX=Strings::string_to_long(value);
     }
-
     else if(name=="ai_goal_selection_period"){
         Game_Constants::AI_GOAL_SELECTION_PERIOD=Strings::string_to_unsigned_long(value);
     }
@@ -159,11 +139,9 @@ void Game_Constants_Loader::set_game_constant(string name,string value){
     else if(name=="civilization_needs_update_period"){
         Game_Constants::CIVILIZATION_NEEDS_UPDATE_PERIOD=Strings::string_to_unsigned_long(value);
     }
-
     else if(name=="day_length"){
         Game_Constants::DAY_LENGTH=Strings::string_to_unsigned_long(value);
     }
-
     else if(name=="city_population_max"){
         Game_Constants::CITY_POPULATION_MAX=Strings::string_to_unsigned_long(value);
     }
@@ -176,11 +154,9 @@ void Game_Constants_Loader::set_game_constant(string name,string value){
     else if(name=="breeding_rate"){
         Game_Constants::BREEDING_RATE=Strings::string_to_unsigned_long(value);
     }
-
     else if(name=="capture_cooldown"){
         Game_Constants::CAPTURE_COOLDOWN=Strings::string_to_unsigned_long(value);
     }
-
     else if(name=="person_mass"){
         Game_Constants::PERSON_MASS=Strings::string_to_long(value);
     }
@@ -196,14 +172,12 @@ void Game_Constants_Loader::set_game_constant(string name,string value){
     else if(name=="person_move_force_combat"){
         Game_Constants::PERSON_MOVE_FORCE_COMBAT=Strings::string_to_long(value);
     }
-
     else if(name=="inventory_max"){
         Game_Constants::INVENTORY_MAX=Strings::string_to_unsigned_long(value);
     }
     else if(name=="inventory_almost_full_threshold"){
         Game_Constants::INVENTORY_ALMOST_FULL_THRESHOLD=Strings::string_to_unsigned_long(value);
     }
-
     else if(name=="person_health_max"){
         Game_Constants::PERSON_HEALTH_MAX=Strings::string_to_long(value);
     }
@@ -216,7 +190,6 @@ void Game_Constants_Loader::set_game_constant(string name,string value){
     else if(name=="person_defense"){
         Game_Constants::PERSON_DEFENSE=Strings::string_to_long(value);
     }
-
     else if(name=="building_health_max"){
         Game_Constants::BUILDING_HEALTH_MAX=Strings::string_to_long(value);
     }
@@ -226,18 +199,15 @@ void Game_Constants_Loader::set_game_constant(string name,string value){
     else if(name=="building_defense"){
         Game_Constants::BUILDING_DEFENSE=Strings::string_to_long(value);
     }
-
     else if(name=="building_captured_health_percentage"){
         Game_Constants::BUILDING_CAPTURED_HEALTH_PERCENTAGE=Strings::string_to_long(value);
     }
-
     else if(name=="cost_build"){
         Game_Constants::COST_BUILD=Strings::string_to_unsigned_long(value);
     }
     else if(name=="cost_repair"){
         Game_Constants::COST_REPAIR=Strings::string_to_unsigned_long(value);
     }
-
     else if(name=="surplus_wheat"){
         Game_Constants::SURPLUS_WHEAT=Strings::string_to_unsigned_long(value);
     }
@@ -250,7 +220,6 @@ void Game_Constants_Loader::set_game_constant(string name,string value){
     else if(name=="surplus_base_tree"){
         Game_Constants::SURPLUS_BASE_TREE=Strings::string_to_unsigned_long(value);
     }
-
     else if(name=="hunger_full"){
         Game_Constants::HUNGER_FULL=Strings::string_to_unsigned_long(value);
     }
@@ -260,14 +229,12 @@ void Game_Constants_Loader::set_game_constant(string name,string value){
     else if(name=="hunger_starving"){
         Game_Constants::HUNGER_STARVING=Strings::string_to_unsigned_long(value);
     }
-
     else if(name=="gather_zone_range"){
         Game_Constants::GATHER_ZONE_RANGE=Strings::string_to_unsigned_long(value);
     }
     else if(name=="forage_zone_range"){
         Game_Constants::FORAGE_ZONE_RANGE=Strings::string_to_unsigned_long(value);
     }
-
     else if(name=="interaction_range"){
         Game_Constants::INTERACTION_RANGE=Strings::string_to_unsigned_long(value);
     }
@@ -280,18 +247,15 @@ void Game_Constants_Loader::set_game_constant(string name,string value){
     else if(name=="city_spacing"){
         Game_Constants::CITY_SPACING=Strings::string_to_unsigned_long(value);
     }
-
     else if(name=="maintain_target_chance"){
         Game_Constants::MAINTAIN_TARGET_CHANCE=Strings::string_to_unsigned_long(value);
     }
-
     else if(name=="retreat_home_chance"){
         Game_Constants::RETREAT_HOME_CHANCE=Strings::string_to_unsigned_long(value);
     }
     else if(name=="retreat_zone_range"){
         Game_Constants::RETREAT_ZONE_RANGE=Strings::string_to_long(value);
     }
-
     else if(name=="ai_target_selection_weight_needed"){
         Game_Constants::AI_TARGET_SELECTION_WEIGHT_NEEDED=Strings::string_to_unsigned_long(value);
     }
@@ -307,14 +271,12 @@ void Game_Constants_Loader::set_game_constant(string name,string value){
     else if(name=="ai_target_selection_weight_distance"){
         Game_Constants::AI_TARGET_SELECTION_WEIGHT_DISTANCE=Strings::string_to_unsigned_long(value);
     }
-
     else if(name=="ai_combat_score_ratio_major"){
         Game_Constants::AI_COMBAT_SCORE_RATIO_MAJOR=Strings::string_to_long(value);
     }
     else if(name=="ai_combat_score_ratio_overwhelming"){
         Game_Constants::AI_COMBAT_SCORE_RATIO_OVERWHELMING=Strings::string_to_long(value);
     }
-
     else if(name=="priority_ignore"){
         Game_Constants::PRIORITY_IGNORE=Strings::string_to_long(value);
     }
@@ -366,7 +328,6 @@ void Game_Constants_Loader::set_game_constant(string name,string value){
     else if(name=="priority_repair"){
         Game_Constants::PRIORITY_REPAIR=Strings::string_to_long(value);
     }
-
     else if(name=="gather_rate"){
         Game_Constants::GATHER_RATE=Strings::string_to_unsigned_long(value);
     }
@@ -397,7 +358,6 @@ void Game_Constants_Loader::set_game_constant(string name,string value){
     else if(name=="repair_rate"){
         Game_Constants::REPAIR_RATE=Strings::string_to_unsigned_long(value);
     }
-
     else if(name=="render_building_unfinished_color"){
         Game_Constants::RENDER_BUILDING_UNFINISHED_COLOR=Strings::string_to_double(value);
     }
@@ -425,4 +385,5 @@ void Game_Constants_Loader::set_game_constant(string name,string value){
     else if(name=="render_minimap_camera_rectangle"){
         Game_Constants::RENDER_MINIMAP_CAMERA_RECTANGLE=Strings::string_to_double(value);
     }
+    /// END SCRIPT-GENERATED CONSTANT SETUP
 }

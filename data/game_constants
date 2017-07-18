@@ -1,45 +1,80 @@
+// The source code generator script recognizes a few special tags/elements that are ignored by the engine:
+//
+// <script_ignore>
+// The constant is ignored completely by the script, and it is in no way added to the source code
+//
+// <script_no_declare>
+// The constant is not declared in game_constants.h, and is not given an initial value in game_constants.cpp
+//
+// type:TYPE
+// The constant is declared, initialized, and setup according to its type
+// Valid types:
+// double
+// float
+// bool
+// string
+// int64_t
+// int32_t
+// int16_t
+// int8_t
+// uint64_t
+// uint32_t
+// uint16_t
+// uint8_t
+
 <game_constant>
+	<script_ignore>
 	name:zoom_rate
 	value:0.1
+	type:double
 </game_constant>
 
 <game_constant>
+	<script_ignore>
 	name:zoom_min
 	value:0.5
+	type:double
 </game_constant>
 
 <game_constant>
+	<script_ignore>
 	name:zoom_max
 	value:4.0
+	type:double
 </game_constant>
 
 <game_constant>
 	//pixels
 	name:tile_size
 	value:16
+	type:uint32_t
 </game_constant>
 
 <game_constant>
 	//tiles
 	name:chunk_size
 	value:64
+	type:uint32_t
 </game_constant>
 
 <game_constant>
 	//tiles
 	name:building_size
 	value:2
+	type:uint32_t
 </game_constant>
 
 <game_constant>
 	//pixels
 	name:person_size
 	value:16
+	type:uint32_t
 </game_constant>
 
 <game_constant>
 	name:person_move_animation_speed_max
 	value:200
+	type:int32_t
 </game_constant>
 
 <game_constant>
@@ -48,6 +83,7 @@
 	//AI goal selection is additionally staggered among the people
 	name:ai_goal_selection_period
 	value:30
+	type:uint32_t
 </game_constant>
 
 <game_constant>
@@ -56,6 +92,7 @@
 	//City gather zone updating is additionally staggered among the cities
 	name:city_gather_zone_update_period
 	value:30
+	type:uint32_t
 </game_constant>
 
 <game_constant>
@@ -64,46 +101,54 @@
 	//Civilization needs updating is additionally staggered among the civilizations
 	name:civilization_needs_update_period
 	value:30
+	type:uint32_t
 </game_constant>
 
 <game_constant>
 	//seconds
 	name:day_length
 	value:4
+	type:uint32_t
 </game_constant>
 
 <game_constant>
 	name:city_population_max
 	value:20
+	type:uint32_t
 </game_constant>
 
 <game_constant>
 	//integer percentage
 	name:city_population_desired
 	value:25
+	type:uint32_t
 </game_constant>
 
 <game_constant>
 	name:city_population_start
 	value:5
+	type:uint32_t
 </game_constant>
 
 <game_constant>
 	//days
 	name:breeding_rate
 	value:20
+	type:uint32_t
 </game_constant>
 
 <game_constant>
 	//days
 	name:capture_cooldown
 	value:8
+	type:uint32_t
 </game_constant>
 
 <game_constant>
 	//kilograms
 	name:person_mass
 	value:40
+	type:int32_t
 </game_constant>
 
 <game_constant>
@@ -112,6 +157,7 @@
 	//Note that this needs to be >= the logic update rate,
 	//because speeds below it are rounded down to 0
 	value:160
+	type:int32_t
 </game_constant>
 
 <game_constant>
@@ -120,6 +166,7 @@
 	//Note that this needs to be >= the logic update rate,
 	//because speeds below it are rounded down to 0
 	value:192
+	type:int32_t
 </game_constant>
 
 <game_constant>
@@ -128,6 +175,7 @@
 	//Note that this should be > person_mass,
 	//because a force smaller than mass will be rounded down to 0 acceleration
 	value:640
+	type:int32_t
 </game_constant>
 
 <game_constant>
@@ -136,11 +184,13 @@
 	//Note that this should be > person_mass,
 	//because a force smaller than mass will be rounded down to 0 acceleration
 	value:768
+	type:int32_t
 </game_constant>
 
 <game_constant>
 	name:inventory_max
 	value:11
+	type:uint32_t
 </game_constant>
 
 <game_constant>
@@ -148,43 +198,51 @@
 	//Inventory is almost full when it has less than this percentage of space available
 	name:inventory_almost_full_threshold
 	value:40
+	type:uint32_t
 </game_constant>
 
 <game_constant>
 	name:person_health_max
 	value:10
+	type:int16_t
 </game_constant>
 
 <game_constant>
 	//health per day
 	name:person_health_change_rate
 	value:1
+	type:int16_t
 </game_constant>
 
 <game_constant>
 	name:person_attack
 	value:3
+	type:int16_t
 </game_constant>
 
 <game_constant>
 	name:person_defense
 	value:0
+	type:int16_t
 </game_constant>
 
 <game_constant>
 	name:building_health_max
 	value:100
+	type:int16_t
 </game_constant>
 
 <game_constant>
 	//integer percentage
 	name:building_repair_amount
 	value:10
+	type:int16_t
 </game_constant>
 
 <game_constant>
 	name:building_defense
 	value:0
+	type:int16_t
 </game_constant>
 
 <game_constant>
@@ -192,94 +250,110 @@
 	//Percentage of maximum health to restore captured city to
 	name:building_captured_health_percentage
 	value:20
+	type:int16_t
 </game_constant>
 
 <game_constant>
 	//trees
 	name:cost_build
 	value:25
+	type:uint32_t
 </game_constant>
 
 <game_constant>
 	//trees
 	name:cost_repair
 	value:2
+	type:uint32_t
 </game_constant>
 
 <game_constant>
 	//integer percentage
 	name:surplus_wheat
 	value:20
+	type:uint32_t
 </game_constant>
 
 <game_constant>
 	name:surplus_base_wheat
 	value:10
+	type:uint32_t
 </game_constant>
 
 <game_constant>
 	//integer percentage
 	name:surplus_tree
 	value:20
+	type:uint32_t
 </game_constant>
 
 <game_constant>
 	name:surplus_base_tree
 	value:50
+	type:uint32_t
 </game_constant>
 
 <game_constant>
 	//days to 0 hunger rating
 	name:hunger_full
 	value:100
+	type:uint8_t
 </game_constant>
 
 <game_constant>
 	//days to 0 hunger rating
 	name:hunger_hungry
 	value:50
+	type:uint8_t
 </game_constant>
 
 <game_constant>
 	//days to 0 hunger rating
 	name:hunger_starving
 	value:25
+	type:uint8_t
 </game_constant>
 
 <game_constant>
 	//chunks
 	name:gather_zone_range
 	value:3
+	type:uint32_t
 </game_constant>
 
 <game_constant>
 	//chunks
 	name:forage_zone_range
 	value:1
+	type:uint32_t
 </game_constant>
 
 <game_constant>
 	//pixels
 	name:interaction_range
 	value:24
+	type:uint64_t
 </game_constant>
 
 <game_constant>
 	//tiles
 	name:sight_range
 	value:48
+	type:int32_t
 </game_constant>
 
 <game_constant>
 	//tiles^2
 	name:home_defense_range
 	value:4096
+	type:uint64_t
 </game_constant>
 
 <game_constant>
 	//tiles
 	name:city_spacing
 	value:192
+	type:uint32_t
 </game_constant>
 
 <game_constant>
@@ -287,6 +361,7 @@
 	//Chance that a person will continue attacking its target
 	name:maintain_target_chance
 	value:90
+	type:uint32_t
 </game_constant>
 
 <game_constant>
@@ -295,37 +370,44 @@
 	//It represents the chance that a person will retreat to their home city as opposed to a random location
 	name:retreat_home_chance
 	value:75
+	type:uint32_t
 </game_constant>
 
 <game_constant>
 	//tiles
 	name:retreat_zone_range
 	value:128
+	type:int32_t
 </game_constant>
 
 <game_constant>
 	name:ai_target_selection_weight_needed
 	value:90
+	type:uint32_t
 </game_constant>
 
 <game_constant>
 	name:ai_target_selection_weight_health
 	value:35
+	type:uint32_t
 </game_constant>
 
 <game_constant>
 	name:ai_target_selection_weight_attack
 	value:55
+	type:uint32_t
 </game_constant>
 
 <game_constant>
 	name:ai_target_selection_weight_defense
 	value:45
+	type:uint32_t
 </game_constant>
 
 <game_constant>
 	name:ai_target_selection_weight_distance
 	value:35
+	type:uint32_t
 </game_constant>
 
 <game_constant>
@@ -333,6 +415,7 @@
 	//This should be > 1 and < ai_combat_score_ratio_overwhelming
 	name:ai_combat_score_ratio_major
 	value:3
+	type:int32_t
 </game_constant>
 
 <game_constant>
@@ -340,203 +423,240 @@
 	//This should be > ai_combat_score_ratio_major
 	name:ai_combat_score_ratio_overwhelming
 	value:6
+	type:int32_t
 </game_constant>
 
 <game_constant>
 	name:priority_ignore
 	value:100
+	type:int32_t
 </game_constant>
 
 <game_constant>
 	name:priority_gather
 	value:10
+	type:int32_t
 </game_constant>
 
 <game_constant>
 	name:priority_gather_surplus
 	value:5
+	type:int32_t
 </game_constant>
 
 <game_constant>
 	name:priority_empty_inventory_full
 	value:15
+	type:int32_t
 </game_constant>
 
 <game_constant>
 	name:priority_empty_inventory_almost_full
 	value:10
+	type:int32_t
 </game_constant>
 
 <game_constant>
 	name:priority_empty_inventory
 	value:1
+	type:int32_t
 </game_constant>
 
 <game_constant>
 	name:priority_eat
 	value:90
+	type:int32_t
 </game_constant>
 
 <game_constant>
 	name:priority_retreat_with_minor_disadvantage
 	value:5
+	type:int32_t
 </game_constant>
 
 <game_constant>
 	name:priority_retreat_with_major_disadvantage
 	value:10
+	type:int32_t
 </game_constant>
 
 <game_constant>
 	name:priority_retreat_with_overwhelming_disadvantage
 	value:20
+	type:int32_t
 </game_constant>
 
 <game_constant>
 	name:priority_retreat_with_low_health
 	value:5
+	type:int32_t
 </game_constant>
 
 <game_constant>
 	name:priority_attack_melee_with_no_advantage
 	value:15
+	type:int32_t
 </game_constant>
 
 <game_constant>
 	name:priority_attack_melee_with_minor_advantage
 	value:25
+	type:int32_t
 </game_constant>
 
 <game_constant>
 	name:priority_attack_melee_with_major_advantage
 	value:50
+	type:int32_t
 </game_constant>
 
 <game_constant>
 	name:priority_attack_melee_with_overwhelming_advantage
 	value:75
+	type:int32_t
 </game_constant>
 
 <game_constant>
 	name:priority_build
 	value:20
+	type:int32_t
 </game_constant>
 
 <game_constant>
 	name:priority_repair
 	value:15
+	type:int32_t
 </game_constant>
 
 <game_constant>
 	//milliseconds
 	name:gather_rate
 	value:1000
+	type:uint32_t
 </game_constant>
 
 <game_constant>
 	//milliseconds
 	name:empty_inventory_rate
 	value:0
+	type:uint32_t
 </game_constant>
 
 <game_constant>
 	//milliseconds
 	name:eat_rate
 	value:0
+	type:uint32_t
 </game_constant>
 
 <game_constant>
 	//milliseconds
 	name:eat_at_home_rate
 	value:0
+	type:uint32_t
 </game_constant>
 
 <game_constant>
 	//milliseconds
 	name:forage_rate
 	value:1000
+	type:uint32_t
 </game_constant>
 
 <game_constant>
 	//milliseconds
 	name:retreat_rate
 	value:0
+	type:uint32_t
 </game_constant>
 
 <game_constant>
 	//milliseconds
 	name:attack_person_melee_rate
 	value:100
+	type:uint32_t
 </game_constant>
 
 <game_constant>
 	//milliseconds
 	name:attack_building_melee_rate
 	value:100
+	type:uint32_t
 </game_constant>
 
 <game_constant>
 	//milliseconds
 	name:build_rate
 	value:10000
+	type:uint32_t
 </game_constant>
 
 <game_constant>
 	//milliseconds
 	name:repair_rate
 	value:2500
+	type:uint32_t
 </game_constant>
 
 <game_constant>
 	//pixels
 	name:render_building_unfinished_color
 	value:0.0
+	type:double
 </game_constant>
 
 <game_constant>
 	//pixels
 	name:render_building_city_color
 	value:32.0
+	type:double
 </game_constant>
 
 <game_constant>
 	//pixels
 	name:render_building_color_border
 	value:4.0
+	type:double
 </game_constant>
 
 <game_constant>
 	//pixels
 	name:render_bar_height
 	value:4.0
+	type:double
 </game_constant>
 
 <game_constant>
 	//pixels
 	name:render_bar_thickness
 	value:1.0
+	type:double
 </game_constant>
 
 <game_constant>
 	//pixels
 	name:render_selection_size
 	value:2.0
+	type:double
 </game_constant>
 
 <game_constant>
 	//pixels
 	name:render_selection_border
 	value:1.0
+	type:double
 </game_constant>
 
 <game_constant>
 	//pixels
 	name:render_minimap_border
 	value:4.0
+	type:double
 </game_constant>
 
 <game_constant>
 	//pixels
 	name:render_minimap_camera_rectangle
 	value:2.0
+	type:double
 </game_constant>
