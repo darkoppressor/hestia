@@ -156,6 +156,45 @@ Some kind of limit to number of armies allowed
 Affected by tech and or number of certain kind of city?
 Also, limit to army size
 
+Complex pathfinding for people in an army should be done by the army
+1. Army itself finds a path to the destination
+2. At any given time, based on the path (maybe stuff in the way like mountains?), and possibly modified by other factors (military techs etc.), the army has a chosen formation. One definite factor is maximum width, which is based on things like mountains
+3. People in an army maintain an army position, which is an offset from the army's current pathing position determined based on the current formation and their unit type (e.g., ranged units would be in the back, melee in the front)
+4. People in an army have a range they are allowed to be from their army position, which is determined by various things (military tech etc.)
+5. If there is an enemy unit in range (within the army position range + attack range), a person may attack the unit
+6. Otherwise, the person must move to its army position
+7. Exceptions to the army position can be added relating to morale, discipline, military techs, etc. Probably these will be combined in some way, and as they get worse, the army position range will increase, until it eventually becomes infinite. This would cause armies to start to lose cohesion and then finally break apart entirely, leading to a route.
+8. If a certain percentage of an army is routed, it should change its destination to an owned city (the nearest one, or will armies have a "home city"?)
+
+Different unit types are probably going to have different speeds
+An army should only be able to move as fast as its slowest unit
+When outside the army position range, a person should move at its unit speed
+When inside the army position range, a person should instead move at the speed of the slowest unit in the army
+
+How does an army decide when to move on to the next path node?
+Probably when a certain percentage of people are in formation
+This might be the same percentage as gathering
+
+Armies need a gathering phase of some kind
+Somehow either a "nearest city" or some designated army home city needs to be chosen as the gathering site
+The army can have an order at this point, but they are in "gathering mode" and don't do anything with it yet
+Once a certain percentage of people in the army are within the gathering area, gathering mode stops and the army follows its order, if any
+When an army retreats as above, its order (if it has one) is cleared and it re-enters gathering mode
+
+Morale determines a soldier's army position range (lower morale means greater range)
+At very low morale, the army position range is ignored and the soldier routes
+Morale can be affected by several things, including relative numbers of allies to enemies nearby, enemy positions relative to current position (flanking), and health
+Relative and positional numbers should all be weighted by strength (e.g., a tank surrounded by enemy archers isn't very worried, but an archer surrounded by enemy tanks is terrified)
+Morale's effect on army position range and routing is modified by discipline (higher discipline lowers the effect of low morale)
+Discipline might be affected by military tech, army leader, etc.
+
+A person should only be one kind of military unit at a time
+Possibilities: Melee, ranged, vehicle
+This probably means I will want to abstract the equipment stuff further
+An item will now be a set of gear
+E.g., a melee "item" might be heavy armor and a sword
+The player can control the unit makeup of an army
+
 ----------------------------------------------------------------------------------------------------------------------
 
 ----------------------------------------------------------------------------------------------------------------------
@@ -211,6 +250,15 @@ If more are needed, prefer upgrading old equipment over building new equipment
 Can have tech to increase caravan speed for both kinds of caravan
 Army inventory needs max
 Can be increased with another tech, which also increases food caravan capacity
+
+Queuing things like research up should be very easy to manage
+You need to be able to queue up every tech at the beginning of the game if you want, in whatever order you want (respecting that some techs might have prereqs of course)
+You also need to be able to easily modify the order
+
+Maybe the tech tree should have tiers, with only 1 or some limited number of techs researchable from each tier
+It is not possible to get all the techs via research
+Related to this, maybe you can acquire techs in other ways
+Not just simple trading, but maybe they trickle between civs over time, affected by things like geographic distance between civs, trade routes, war, etc
 
 ----------------------------------------------------------------------------------------------------------------------
 
@@ -304,6 +352,10 @@ They could either avoid enemy cities, or a new diplomacy option could be added f
 They create gold, they don't actually move it around like supply caravans moving wheat
 When destroyed, the caravan could give a fraction of the gold it would have delivered to the killer's civ
 They could start out only going to same civ cities, and a tech is needed for them to target other civs' cities
+
+When allied with the ai, you should be able to see some of their strategic thoughts
+At the very least who they are most interested in attacking, and the reasons for this can be displayed much like the reasons for their opinions of other players
+I also like the idea of letting players allied to ai suggest/request/order the ai to pursue a certain strategy
 
 To do:
 Finish buildings changes
