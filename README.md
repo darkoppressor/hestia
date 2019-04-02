@@ -1,5 +1,5 @@
 # hestia
-[![Build Status](http://wells-family.xyz:8080/buildStatus/icon?job=hestia/master)](http://wells-family.xyz:8080/job/hestia/job/master/)
+[![Build Status](http://wells-family.xyz:8080/jenkins/buildStatus/icon?job=hestia)](https://wells-family.xyz/jenkins/job/hestia/)
 
 A game in development by Cheese and Bacon Games
 http://cheeseandbacon.org/
