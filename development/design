@@ -23,6 +23,7 @@ Each civ begins with one city, placed at the center of a random chunk in a rando
 Cities belong to a civ
 A city's region also belongs to the its civ
 Cities exist in the world as a single city building tile, which belongs to the city
+Building tiles, both unfinished and city, are always placed in the center of their chunk
 Unfinished buildings have small civ-colored borders around them to indicate who the potential city belongs to
 People belong to a city, and to its civ
 No collision between people and tiles
@@ -56,7 +57,8 @@ Civs know their child regions by index
 Cities know their parent civ by index
 Cities are stored in a vector, and this vector can change throughout the game
 Cities know their child city building tile by tile coords
-Regions know their parent civ by index
+Regions know their parent civ by index, if they have one
+Regions with no parent are neutral territory
 
 When a city building is killed, it needs to know what civ killed it
 The parent city becomes property of the killing civ, the old and new civ are informed of this,
