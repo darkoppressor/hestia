@@ -93,7 +93,6 @@ public:
     static std::uint32_t BUILD_RATE;
     static std::uint32_t REPAIR_RATE;
     static double RENDER_BUILDING_UNFINISHED_COLOR;
-    static double RENDER_BUILDING_CITY_COLOR;
     static double RENDER_BUILDING_COLOR_BORDER;
     static double RENDER_CHUNK_BORDER_THICKNESS;
     static double RENDER_BAR_HEIGHT;

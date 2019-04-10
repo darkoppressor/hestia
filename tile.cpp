@@ -277,35 +277,20 @@ void Tile::render(uint32_t tile_x,uint32_t tile_y,bool selected) const{
         Collision_Rect<double> box_render(x,y,(double)get_size(),(double)get_size());
 
         if(Collision::check_rect(box_render*Game_Manager::camera_zoom,Game_Manager::camera)){
-            string color="white";
-            double color_size=0.0;
             if(type==Type::BUILDING_UNFINISHED){
                 const Civilization& civilization=Game::get_civilization(get_parent());
 
-                color=civilization.get_color();
+                string color=civilization.get_color();
 
-                color_size=Game_Constants::RENDER_BUILDING_UNFINISHED_COLOR;
-            }
-            else if(type==Type::BUILDING_CITY){
-                const City& city=Game::get_city(get_parent());
+                Render::render_rectangle((x-Game_Constants::RENDER_BUILDING_UNFINISHED_COLOR)*Game_Manager::camera_zoom-Game_Manager::camera.x,
+                                         (y-Game_Constants::RENDER_BUILDING_UNFINISHED_COLOR)*Game_Manager::camera_zoom-Game_Manager::camera.y,
+                                         ((double)get_size()+Game_Constants::RENDER_BUILDING_UNFINISHED_COLOR*2.0)*Game_Manager::camera_zoom,
+                                         ((double)get_size()+Game_Constants::RENDER_BUILDING_UNFINISHED_COLOR*2.0)*Game_Manager::camera_zoom,0.5,color);
 
-                const Civilization& civilization=Game::get_civilization(city.get_parent_civilization());
-
-                color=civilization.get_color();
-
-                color_size=Game_Constants::RENDER_BUILDING_CITY_COLOR;
-            }
-
-            if(is_building()){
-                Render::render_rectangle((x-color_size)*Game_Manager::camera_zoom-Game_Manager::camera.x,
-                                         (y-color_size)*Game_Manager::camera_zoom-Game_Manager::camera.y,
-                                         ((double)get_size()+color_size*2.0)*Game_Manager::camera_zoom,
-                                         ((double)get_size()+color_size*2.0)*Game_Manager::camera_zoom,0.5,color);
-
-                Render::render_rectangle_empty((x-color_size)*Game_Manager::camera_zoom-Game_Manager::camera.x,
-                                               (y-color_size)*Game_Manager::camera_zoom-Game_Manager::camera.y,
-                                               ((double)get_size()+color_size*2.0)*Game_Manager::camera_zoom,
-                                               ((double)get_size()+color_size*2.0)*Game_Manager::camera_zoom,
+                Render::render_rectangle_empty((x-Game_Constants::RENDER_BUILDING_UNFINISHED_COLOR)*Game_Manager::camera_zoom-Game_Manager::camera.x,
+                                               (y-Game_Constants::RENDER_BUILDING_UNFINISHED_COLOR)*Game_Manager::camera_zoom-Game_Manager::camera.y,
+                                               ((double)get_size()+Game_Constants::RENDER_BUILDING_UNFINISHED_COLOR*2.0)*Game_Manager::camera_zoom,
+                                               ((double)get_size()+Game_Constants::RENDER_BUILDING_UNFINISHED_COLOR*2.0)*Game_Manager::camera_zoom,
                                                1.0,color,Game_Constants::RENDER_BUILDING_COLOR_BORDER*Game_Manager::camera_zoom);
             }
 

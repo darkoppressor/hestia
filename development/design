@@ -23,7 +23,7 @@ Each civ begins with one city, placed at the center of a random chunk in a rando
 Cities belong to a civ
 A city's region also belongs to the its civ
 Cities exist in the world as a single city building tile, which belongs to the city
-Cities currently have small civ-colored borders around them, that serve no functional purpose QQQ
+Unfinished buildings have small civ-colored borders around them to indicate who the potential city belongs to
 People belong to a city, and to its civ
 No collision between people and tiles
 No collision between people and other people

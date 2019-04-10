@@ -600,13 +600,6 @@
 
 <game_constant>
 	//pixels
-	name:render_building_city_color
-	value:32.0
-	type:double
-</game_constant>
-
-<game_constant>
-	//pixels
 	name:render_building_color_border
 	value:4.0
 	type:double
