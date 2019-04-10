@@ -138,6 +138,10 @@ int32_t Chunk::get_y(uint32_t chunk_y){
     return int32_t(chunk_y*Game_Constants::CHUNK_SIZE*Game_Constants::TILE_SIZE);
 }
 
+Coords<uint32_t> Chunk::get_central_building_coords(const Coords<uint32_t>& chunk_coords){
+    return Coords<uint32_t>(chunk_coords.x*Game_Constants::CHUNK_SIZE+Game_Constants::CHUNK_SIZE/2-Game_Constants::BUILDING_SIZE/2,chunk_coords.y*Game_Constants::CHUNK_SIZE+Game_Constants::CHUNK_SIZE/2-Game_Constants::BUILDING_SIZE/2);
+}
+
 vector<Coords<uint32_t>> Chunk::get_zone_chunk_coords(uint32_t chunk_x,uint32_t chunk_y,uint32_t zone_range){
     //chunks
     uint32_t zone_x=chunk_x;
@@ -199,5 +203,20 @@ void Chunk::render_ground(uint32_t chunk_x,uint32_t chunk_y) const{
         /**Render::render_rectangle_empty(x*Game_Manager::camera_zoom-Game_Manager::camera.x,y*Game_Manager::camera_zoom-Game_Manager::camera.y,
                                        get_size()*Game_Manager::camera_zoom,get_size()*Game_Manager::camera_zoom,0.85,"red",1.0);*/
         ///
+    }
+}
+
+void Chunk::render_border_overlay(uint32_t chunk_x,uint32_t chunk_y,const string& color) const{
+    double x=get_x(chunk_x);
+    double y=get_y(chunk_y);
+
+    Collision_Rect<double> box_render(x,y,(double)get_size(),(double)get_size());
+
+    if(Collision::check_rect(box_render*Game_Manager::camera_zoom,Game_Manager::camera)){
+        Render::render_rectangle(x*Game_Manager::camera_zoom-Game_Manager::camera.x,y*Game_Manager::camera_zoom-Game_Manager::camera.y,
+                                       get_size()*Game_Manager::camera_zoom,get_size()*Game_Manager::camera_zoom,0.2,color);
+
+        Render::render_rectangle_empty(x*Game_Manager::camera_zoom-Game_Manager::camera.x,y*Game_Manager::camera_zoom-Game_Manager::camera.y,
+                                       get_size()*Game_Manager::camera_zoom,get_size()*Game_Manager::camera_zoom,1.0,color,Game_Constants::RENDER_CHUNK_BORDER_THICKNESS*Game_Manager::camera_zoom);
     }
 }

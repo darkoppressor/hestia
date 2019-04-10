@@ -150,6 +150,10 @@ void Game::add_remove_objects(){
 
         Coords<uint32_t> tile_coords=cities[city_index].get_tile();
 
+        uint32_t region_index = cities[city_index].get_region();
+        civilizations[parent_civilization].add_region(region_index);
+        regions[region_index].set_parent_civilization(parent_civilization);
+
         civilizations[parent_civilization].remove_unfinished_building(tile_coords);
 
         tiles.at(tile_coords).set_type(Tile::Type::BUILDING_CITY);
@@ -469,17 +473,23 @@ void Game::generate_world(){
         const uint32_t max_attempts=10000;
 
         for(uint32_t attempts=0;;attempts++){
-            //tiles
-            uint32_t tile_x=rng.random_range(0,(uint32_t)(get_world_width_tiles()-(int32_t)Game_Constants::BUILDING_SIZE));
-            uint32_t tile_y=rng.random_range(0,(uint32_t)(get_world_height_tiles()-(int32_t)Game_Constants::BUILDING_SIZE));
-            Coords<uint32_t> tile_coords(tile_x,tile_y);
-            Coords<int32_t> coords(Tile::get_x(tile_x)+Tile::get_tile_type_size(Tile::Type::BUILDING_CITY)/2,Tile::get_y(tile_y)+Tile::get_tile_type_size(Tile::Type::BUILDING_CITY)/2);
+            //chunks
+            uint32_t chunk_x=rng.random_range(0,option_world_width-1);
+            uint32_t chunk_y=rng.random_range(0,option_world_height-1);
+            Coords<uint32_t> chunk_coords(chunk_x,chunk_y);
 
-            if(tile_coords_are_valid(Tile::Type::BUILDING_CITY,tile_coords)){
+            Coords<uint32_t> tile_coords = Chunk::get_central_building_coords(chunk_coords);
+            Coords<int32_t> coords(Tile::get_x(tile_coords.x)+Tile::get_tile_type_size(Tile::Type::BUILDING_CITY)/2,Tile::get_y(tile_coords.y)+Tile::get_tile_type_size(Tile::Type::BUILDING_CITY)/2);
+
+            uint32_t region_index = get_chunk(chunk_coords).get_parent_region();
+
+            if(!get_region(region_index).has_parent_civilization()){
                 if(attempts>=max_attempts || distance_to_nearest_city(coords)>=desired_distance_between_cities){
                     new_tiles.emplace(std::piecewise_construct,
                                   std::forward_as_tuple(tile_coords),std::forward_as_tuple(city,Tile::Type::BUILDING_CITY));
                     cities.back().set_tile(tile_coords);
+                    regions[region_index].set_parent_civilization(civilization);
+                    civilizations.back().add_region(region_index);
 
                     break;
                 }
@@ -698,6 +708,13 @@ bool Game::tile_coords_are_valid(Tile::Type type,const Coords<uint32_t>& tile_co
         return false;
     }
 
+    //If the tile is not a building, it is invalid if it is overlapping the building sized rectangle at the center of the chunk
+    Collision_Rect<uint32_t> box_tile(tile_coords.x,tile_coords.y,tile_size,tile_size);
+    Collision_Rect<uint32_t> box_chunk_center(Tile::get_chunk_x(tile_coords.x)*Game_Constants::CHUNK_SIZE+Game_Constants::CHUNK_SIZE/2-Game_Constants::BUILDING_SIZE/2,Tile::get_chunk_y(tile_coords.y)*Game_Constants::CHUNK_SIZE+Game_Constants::CHUNK_SIZE/2-Game_Constants::BUILDING_SIZE/2,Game_Constants::BUILDING_SIZE,Game_Constants::BUILDING_SIZE);
+    if (!Tile::tile_type_is_building(type) && Collision::check_rect(box_tile,box_chunk_center)) {
+        return false;
+    }
+
     //Tile is invalid if it contains an existing tile, or if it is contained in an existing tile
 
     uint32_t x_start=tile_coords.x;
@@ -758,61 +775,6 @@ bool Game::tile_coords_are_valid(Tile::Type type,const Coords<uint32_t>& tile_co
 void Game::kill_tile(const Coords<uint32_t>& tile_coords){
     if(tile_exists(tile_coords)){
         tiles.at(tile_coords).die();
-    }
-}
-
-Collision_Rect<uint32_t> Game::get_city_spacing_area(const Coords<uint32_t>& tile_coords){
-    uint32_t city_spacing=Game_Constants::CITY_SPACING;
-
-    uint32_t tile_start_x=tile_coords.x;
-    uint32_t tile_start_y=tile_coords.y;
-
-    if(tile_start_x>city_spacing){
-        tile_start_x-=city_spacing;
-    }
-    else{
-        tile_start_x=0;
-    }
-
-    if(tile_start_y>city_spacing){
-        tile_start_y-=city_spacing;
-    }
-    else{
-        tile_start_y=0;
-    }
-
-    uint32_t tile_end_x=tile_start_x+city_spacing*2;
-    uint32_t tile_end_y=tile_start_y+city_spacing*2;
-
-    if(tile_end_x>=get_world_width_tiles()){
-        tile_end_x=get_world_width_tiles()-1;
-    }
-    if(tile_end_y>=get_world_height_tiles()){
-        tile_end_y=get_world_height_tiles()-1;
-    }
-
-    return Collision_Rect<uint32_t>(tile_start_x,tile_start_y,tile_end_x-tile_start_x,tile_end_y-tile_start_y);
-}
-
-void Game::clear_new_city_area(const Coords<uint32_t>& tile_coords){
-    if(selection.type==Game_Selection::Type::UNFINISHED_BUILDING && selection.tile_coordinates==tile_coords){
-        clear_selection();
-    }
-
-    Collision_Rect<uint32_t> city_spacing_area=get_city_spacing_area(tile_coords);
-
-    for(uint32_t x=city_spacing_area.x;x<=city_spacing_area.x+city_spacing_area.w;x++){
-        for(uint32_t y=city_spacing_area.y;y<=city_spacing_area.y+city_spacing_area.h;y++){
-            Coords<uint32_t> coords(x,y);
-
-            if(coords!=tile_coords && tile_exists(coords)){
-                const Tile& tile=get_tile(coords);
-
-                if(tile.is_alive() && tile.get_type()==Tile::Type::BUILDING_UNFINISHED){
-                    kill_tile(coords);
-                }
-            }
-        }
     }
 }
 
@@ -916,15 +878,19 @@ void Game::handle_city_capture(const Coords<uint32_t>& tile_coords,uint32_t capt
     //If the tile's type is a city building, its parent is a city
     uint32_t city_index=tiles.at(tile_coords).get_parent();
 
+    uint32_t region_index = cities[city_index].get_region();
+
     uint32_t losing_civilization_index=cities[city_index].get_parent_civilization();
 
     civilizations[losing_civilization_index].remove_city(city_index);
+    civilizations[losing_civilization_index].remove_region(region_index);
 
     civilizations[capturing_civilization_index].add_city(city_index);
-
     cities[city_index].set_parent_civilization(capturing_civilization_index);
-
     cities[city_index].set_just_captured();
+
+    civilizations[capturing_civilization_index].add_region(region_index);
+    regions[region_index].set_parent_civilization(capturing_civilization_index);
 
     //If this city was the losing civilization's last city
     if(civilizations[losing_civilization_index].is_defeated()){
@@ -1020,8 +986,10 @@ void Game::repopulate_city(uint32_t city_index){
 
 void Game::abandon_city(uint32_t city_index){
     City& passed_city=cities[city_index];
+    uint32_t civilization_index = passed_city.get_parent_civilization();
+    uint32_t region_index = passed_city.get_region();
 
-    Civilization& civilization=civilizations[passed_city.get_parent_civilization()];
+    Civilization& civilization=civilizations[civilization_index];
 
     vector<uint32_t> city_list=civilization.get_cities();
 
@@ -1062,6 +1030,9 @@ void Game::abandon_city(uint32_t city_index){
         passed_city.set_exists(false);
 
         dead_cities.push(city_index);
+
+        civilization.remove_region(region_index);
+        regions[region_index].clear_parent_civilization();
 
         if(selection.type==Game_Selection::Type::CITY && selection.index==city_index){
             clear_selection();

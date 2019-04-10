@@ -186,8 +186,6 @@ public:
     static bool tile_exists(const Coords<std::uint32_t>& tile_coords);
     static bool tile_coords_are_valid(Tile::Type type,const Coords<std::uint32_t>& tile_coords);
     static void kill_tile(const Coords<std::uint32_t>& tile_coords);
-    static Collision_Rect<std::uint32_t> get_city_spacing_area(const Coords<std::uint32_t>& tile_coords);
-    static void clear_new_city_area(const Coords<std::uint32_t>& tile_coords);
 
     static std::uint32_t add_civilization_item(std::uint32_t index,Inventory::Item_Type item_type,std::uint32_t amount);
     static void remove_civilization_item(std::uint32_t index,Inventory::Item_Type item_type,std::uint32_t amount);

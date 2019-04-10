@@ -768,7 +768,9 @@ void Person::complete_goal(RNG& rng){
                 Game::remove_civilization_item(get_parent_civilization(),Inventory::Item_Type::TREE,Game_Constants::COST_BUILD-our_materials);
             }
 
-            Game::clear_new_city_area(goal.get_coords_tiles());
+            if(Game::get_selection().type==Game_Selection::Type::UNFINISHED_BUILDING && Game::get_selection().tile_coordinates==goal.get_coords_tiles()){
+                Game::clear_selection();
+            }
         }
         else if(goal.is_repair()){
             Game::repair_tile(goal.get_coords_tiles());

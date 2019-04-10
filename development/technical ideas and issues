@@ -23,8 +23,6 @@ Depending on how I end up designing the world, I might be able to make the minim
 and then never again
 Cities and whatever else I want rendered over the minimap would be rendered in realtime
 
-Laptop has weird green crap on mouseover cursor
-
 AI could run on the host only and send its commands much like players
 
 If a desync is found, a full resync is done (only for desynchronized clients)

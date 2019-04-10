@@ -55,7 +55,6 @@ public:
     static std::uint64_t INTERACTION_RANGE;
     static std::int32_t SIGHT_RANGE;
     static std::uint64_t HOME_DEFENSE_RANGE;
-    static std::uint32_t CITY_SPACING;
     static std::uint32_t MAINTAIN_TARGET_CHANCE;
     static std::uint32_t RETREAT_HOME_CHANCE;
     static std::int32_t RETREAT_ZONE_RANGE;
@@ -96,6 +95,7 @@ public:
     static double RENDER_BUILDING_UNFINISHED_COLOR;
     static double RENDER_BUILDING_CITY_COLOR;
     static double RENDER_BUILDING_COLOR_BORDER;
+    static double RENDER_CHUNK_BORDER_THICKNESS;
     static double RENDER_BAR_HEIGHT;
     static double RENDER_BAR_THICKNESS;
     static double RENDER_SELECTION_SIZE;

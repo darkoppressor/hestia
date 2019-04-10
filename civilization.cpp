@@ -38,6 +38,10 @@ void Civilization::add_checksum_data(vector<uint32_t>& data) const{
         data.push_back(cities[i]);
     }
 
+    for(size_t i=0;i<regions.size();i++){
+        data.push_back(regions[i]);
+    }
+
     for(size_t i=0;i<unfinished_buildings.size();i++){
         data.push_back(unfinished_buildings[i].x);
         data.push_back(unfinished_buildings[i].y);
@@ -90,6 +94,31 @@ void Civilization::remove_city(uint32_t city){
     for(size_t i=0;i<cities.size();i++){
         if(cities[i]==city){
             cities.erase(cities.begin()+i);
+
+            break;
+        }
+    }
+}
+
+vector<uint32_t> Civilization::get_regions() const{
+    return regions;
+}
+
+void Civilization::add_region(uint32_t region){
+    for(size_t i=0;i<regions.size();i++){
+        if(regions[i]==region){
+            //Exit early, because this region is already in the list
+            return;
+        }
+    }
+
+    regions.push_back(region);
+}
+
+void Civilization::remove_region(uint32_t region){
+    for(size_t i=0;i<regions.size();i++){
+        if(regions[i]==region){
+            regions.erase(regions.begin()+i);
 
             break;
         }

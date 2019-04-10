@@ -37,7 +37,6 @@ public:
 
     Tile::Type get_tile_type() const;
     Coords<std::int32_t> get_pixel_coords() const;
-    bool is_city_build_area_clear() const;
     bool is_valid() const;
 
     void execute();

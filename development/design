@@ -6,7 +6,8 @@ Simulation is thus deterministic
 To that end, no floating point numbers in game code
 
 World divided into chunks, those are grouped into regions of uneven sizes and shapes
-Regions have a certain biome, which determines their ground type, for looks right now
+Regions have a maximum possible size, determined using the range: [option_region_min, option_region_max]
+Regions have a certain biome, which determines their ground type, for looks right now QQQ
 Tiles exist in some places (whole world is not made of them)
 The world is divided into an imaginary grid, with its squares being the size of the smallest tile type
 Tiles must snap to this grid, and cannot be partially out of the world
@@ -14,23 +15,25 @@ Tiles are stored in a map, with their key being their tile coords (and thus uniq
 Tiles cannot overlap
 Tile types are wheat, tree, unfinished building, city building
 Each tile type determines its size, and the buildings are bigger than wheat and trees
-World is randomly generated in a very basic way for now
-Leaders each have a unique color, randomly assigned for now
+World is randomly generated in a very basic way for now QQQ
+No tiles are placed in the center of any chunk, leaving it free for future cities
+Leaders each have a unique color, randomly assigned for now QQQ
 Each leader leads a civ
-Each civ begins with one city, randomly placed for now, cannot overlap any tiles or be off the map
+Each civ begins with one city, placed at the center of a random chunk in a random unique region
 Cities belong to a civ
+A city's region also belongs to the its civ
 Cities exist in the world as a single city building tile, which belongs to the city
-Cities currently have small civ-colored borders around them, that serve no functional purpose
+Cities currently have small civ-colored borders around them, that serve no functional purpose QQQ
 People belong to a city, and to its civ
-No collision for now between people and tiles
-Also no collision between people and other people
+No collision between people and tiles
+No collision between people and other people
 
 Maximum world size in pixels is 2^31 - 1 (max value of int32_t)
 
 Civ has inventory, infinite
 People have inventory, finite
 A person accesses their civ inventory to deposit or withdraw items by going to their parent city
-Building and repairing buildings is an exception to this currently, and people may access civ inventory in these cases
+Building and repairing buildings is an exception to this, and people may access civ inventory in these cases
 from anywhere
 
 There is a global variable max population per city
@@ -49,9 +52,11 @@ Leaders and civs persist through the whole game, and will be stored in vectors
 Leaders know their child civ by index
 Civs know their parent leader by index
 Civs know their child cities by index
+Civs know their child regions by index
 Cities know their parent civ by index
 Cities are stored in a vector, and this vector can change throughout the game
 Cities know their child city building tile by tile coords
+Regions know their parent civ by index
 
 When a city building is killed, it needs to know what civ killed it
 The parent city becomes property of the killing civ, the old and new civ are informed of this,
@@ -73,11 +78,11 @@ Cities know their child people by index (note that this list needs to be kept up
 
 People need to look at other people via a quadtree
 
-All civs are hostile to each other for now
+All civs are hostile to each other for now QQQ
 
 The Leader can order the creation of a new city by placing an unfinished building tile
 Assuming the tile placement is acceptable, the new unfinished building tile is immediately spawned at the ordered location
-When placing a new city, it cannot be within a certain radius of any other building tiles (including unfinished ones)
+When placing a new city, it cannot be within a region that is already occupied by another civ or that already contains an unfinished building
 
 The Leader can order a repopulation for a city
 If the city has less than its max population, people will be selected from other cities in the civ and changed to children of the city
@@ -86,7 +91,7 @@ People will only be sent from a city for repopulation purposes if their city has
 
 The Leader can order a city to be abandoned, if there is more than one city in the Leader's civ
 This causes the city's building to be removed, its people to be randomly evenly distributed among the civ's other cities,
-and the city to be removed
+the city to be removed, and the region that the city was in to become parentless
 
 Biomes are:
 FREEZING_GRASSLAND
@@ -209,7 +214,8 @@ Probably not allowing city abandoning when the city is under attack would work
 How to determine if a city is under attack? Maybe just if hostile units are nearby?
 
 Building maintenance
-Buildings should not degrade if they were recently damaged
+Buildings should not decay if they were recently damaged
+Buildings should have a minimum decay threshold, below which their health will not drop due to decay
 
 Building should add to the unfinished building's HP instead of insta finishing it
 Multiple people could now build

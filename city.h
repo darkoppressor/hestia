@@ -64,6 +64,8 @@ public:
     std::int32_t get_center_x() const;
     std::int32_t get_center_y() const;
 
+    std::uint32_t get_region() const;
+
     //chunks
     std::uint32_t get_chunk_x() const;
     std::uint32_t get_chunk_y() const;

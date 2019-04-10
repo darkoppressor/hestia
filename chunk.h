@@ -65,9 +65,13 @@ public:
     static std::int32_t get_x(std::uint32_t chunk_x);
     static std::int32_t get_y(std::uint32_t chunk_y);
 
+    //tile coords
+    static Coords<std::uint32_t> get_central_building_coords(const Coords<std::uint32_t>& chunk_coords);
+
     static std::vector<Coords<std::uint32_t>> get_zone_chunk_coords(std::uint32_t chunk_x,std::uint32_t chunk_y,std::uint32_t zone_range);
 
     void render_ground(std::uint32_t chunk_x,std::uint32_t chunk_y) const;
+    void render_border_overlay(std::uint32_t chunk_x,std::uint32_t chunk_y,const std::string& color) const;
 };
 
 #endif

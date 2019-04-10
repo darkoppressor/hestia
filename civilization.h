@@ -20,6 +20,8 @@ private:
 
     std::vector<std::uint32_t> cities;
 
+    std::vector<std::uint32_t> regions;
+
     std::vector<Coords<std::uint32_t>> unfinished_buildings;
     //These are all either 0 or 1, but I don't want to use a vector<bool>
     std::vector<std::uint8_t> unfinished_building_flags;
@@ -49,6 +51,10 @@ public:
     std::vector<std::uint32_t> get_cities() const;
     void add_city(std::uint32_t city);
     void remove_city(std::uint32_t city);
+
+    std::vector<std::uint32_t> get_regions() const;
+    void add_region(std::uint32_t region);
+    void remove_region(std::uint32_t region);
 
     std::vector<Coords<std::uint32_t>> get_unfinished_buildings() const;
     void add_unfinished_building(Coords<std::uint32_t> tile_coords);

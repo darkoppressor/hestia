@@ -14,10 +14,16 @@
 using namespace std;
 
 Region::Region(){
+    has_parent = false;
+    parent_civilization = 0;
+
     biome=Biome::FREEZING_GRASSLAND;
 }
 
 void Region::add_checksum_data(vector<uint32_t>& data) const{
+    data.push_back((uint32_t)has_parent);
+    data.push_back(parent_civilization);
+
     for(size_t i=0;i<chunks.size();i++){
         data.push_back(chunks[i].x);
         data.push_back(chunks[i].y);
@@ -26,8 +32,30 @@ void Region::add_checksum_data(vector<uint32_t>& data) const{
     data.push_back((uint32_t)biome);
 }
 
+bool Region::has_parent_civilization() const{
+    return has_parent;
+}
+
+uint32_t Region::get_parent_civilization() const{
+    return parent_civilization;
+}
+
+void Region::set_parent_civilization(uint32_t parent){
+    has_parent=true;
+    parent_civilization=parent;
+}
+
+void Region::clear_parent_civilization(){
+    has_parent=false;
+    parent_civilization=0;
+}
+
 void Region::add_chunk(const Coords<uint32_t>& coords){
     chunks.push_back(coords);
+}
+
+const vector<Coords<uint32_t>>& Region::get_chunks() const{
+    return chunks;
 }
 
 Region::Biome Region::get_biome() const{
@@ -105,6 +133,16 @@ Color* Region::get_ground_color() const{
     else{
         return Object_Manager::get_color("ground_grass");
     }
+}
+
+uint32_t Region::get_tile_count(Tile::Type tile_type) const{
+    uint32_t tile_count = 0;
+
+    for(size_t i=0;i<chunks.size();i++){
+        tile_count+=Game::get_chunk(chunks[i]).get_tile_count(tile_type);
+    }
+
+    return tile_count;
 }
 
 uint32_t Region::get_tile_growth_chance() const{
@@ -199,6 +237,20 @@ void Region::tile_growth(RNG& rng){
         if(Game::tile_coords_are_valid(tile_type,tile_coords)){
             Game::new_tiles.emplace(std::piecewise_construct,
                                 std::forward_as_tuple(tile_coords),std::forward_as_tuple(tile_type));
+        }
+    }
+}
+
+void Region::render_chunk_border_overlays(const string& color_override) const{
+    if (has_parent || color_override.length() > 0) {
+        string color = color_override;
+
+        if (has_parent && color.length() == 0) {
+            color = Game::get_civilization(parent_civilization).get_color();
+        }
+
+        for (const auto& it : chunks) {
+            Game::get_chunk(it).render_border_overlay(it.x,it.y,color);
         }
     }
 }

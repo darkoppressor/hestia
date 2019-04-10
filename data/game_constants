@@ -350,13 +350,6 @@
 </game_constant>
 
 <game_constant>
-	//tiles
-	name:city_spacing
-	value:192
-	type:uint32_t
-</game_constant>
-
-<game_constant>
 	//integer percentage
 	//Chance that a person will continue attacking its target
 	name:maintain_target_chance
@@ -615,6 +608,13 @@
 <game_constant>
 	//pixels
 	name:render_building_color_border
+	value:4.0
+	type:double
+</game_constant>
+
+<game_constant>
+	//pixels
+	name:render_chunk_border_thickness
 	value:4.0
 	type:double
 </game_constant>

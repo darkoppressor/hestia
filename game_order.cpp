@@ -36,33 +36,6 @@ Coords<int32_t> Game_Order::get_pixel_coords() const{
                            Tile::get_center_y(coords.y,Tile::get_tile_type_size(get_tile_type())));
 }
 
-bool Game_Order::is_city_build_area_clear() const{
-    Collision_Rect<uint32_t> city_spacing_area=Game::get_city_spacing_area(coords);
-
-    bool city_within_city_space=false;
-
-    for(uint32_t x=city_spacing_area.x;x<=city_spacing_area.x+city_spacing_area.w && !city_within_city_space;x++){
-        for(uint32_t y=city_spacing_area.y;y<=city_spacing_area.y+city_spacing_area.h && !city_within_city_space;y++){
-            Coords<uint32_t> tile_coords(x,y);
-
-            if(Game::tile_exists(tile_coords)){
-                const Tile& tile=Game::get_tile(tile_coords);
-
-                if(tile.is_alive() && tile.get_type()==Tile::Type::BUILDING_CITY){
-                    city_within_city_space=true;
-                }
-            }
-        }
-    }
-
-    if(!city_within_city_space){
-        return true;
-    }
-    else{
-        return false;
-    }
-}
-
 bool Game_Order::is_valid() const{
     const Leader& order_leader=Game::get_leader(leader);
 
@@ -71,8 +44,10 @@ bool Game_Order::is_valid() const{
     }
 
     if(type==Type::BUILD_CITY){
-        if(Game::tile_coords_are_valid(get_tile_type(),coords)){
-            return is_city_build_area_clear();
+        const Region& region = Game::get_region(Game::get_chunk(Coords<uint32_t>(Tile::get_chunk_x(coords.x),Tile::get_chunk_y(coords.y))).get_parent_region());
+
+        if (!region.has_parent_civilization() && region.get_tile_count(Tile::Type::BUILDING_UNFINISHED) == 0) {
+            return true;
         }
 
         return false;
@@ -148,8 +123,11 @@ void Game_Order::execute(){
 
             uint32_t civilization_index=order_leader.get_civilization();
 
+            Coords<uint32_t> order_chunk_coords(Tile::get_chunk_x(coords.x),Tile::get_chunk_y(coords.y));
+            Coords<uint32_t> building_tile_coords = Chunk::get_central_building_coords(order_chunk_coords);
+
             Game::new_tiles.emplace(std::piecewise_construct,
-                                    std::forward_as_tuple(coords),std::forward_as_tuple(civilization_index,get_tile_type()));
+                                    std::forward_as_tuple(building_tile_coords),std::forward_as_tuple(civilization_index,get_tile_type()));
         }
         else if(type==Type::REPOPULATE_CITY){
             Game::repopulate_city(coords.x);
@@ -165,18 +143,25 @@ void Game_Order::execute(){
 
 void Game_Order::render() const{
     if(!Game::is_mouse_over_minimap()){
-        //pixels
-        double x=Tile::get_x(coords.x);
-        double y=Tile::get_y(coords.y);
+        bool valid = is_valid();
 
         string color="order_valid";
-        if(!is_valid()){
+        if(!valid){
             color="order_invalid";
         }
 
-        double opacity=0.75;
-
         if(type==Type::BUILD_CITY){
+            Coords<uint32_t> order_chunk_coords(Tile::get_chunk_x(coords.x),Tile::get_chunk_y(coords.y));
+            const Region& region = Game::get_region(Game::get_chunk(order_chunk_coords).get_parent_region());
+
+            region.render_chunk_border_overlays(color);
+
+            Coords<uint32_t> building_tile_coords = Chunk::get_central_building_coords(order_chunk_coords);
+
+            //pixels
+            double x=Tile::get_x(building_tile_coords.x);
+            double y=Tile::get_y(building_tile_coords.y);
+
             double tile_size=(double)Tile::get_tile_type_size(get_tile_type());
 
             Render::render_rectangle_empty(x*Game_Manager::camera_zoom-Game_Manager::camera.x,
@@ -186,27 +171,12 @@ void Game_Order::render() const{
                                            1.0,color,Game_Constants::RENDER_BUILDING_COLOR_BORDER*Game_Manager::camera_zoom);
 
             Render::render_texture(x*Game_Manager::camera_zoom-Game_Manager::camera.x,y*Game_Manager::camera_zoom-Game_Manager::camera.y,
-                                   Image_Manager::get_image("tile_building_unfinished"),opacity,Game_Manager::camera_zoom,Game_Manager::camera_zoom,0.0,color);
+                                   Image_Manager::get_image("tile_"+Tile::get_type_string(get_tile_type())),0.75,Game_Manager::camera_zoom,Game_Manager::camera_zoom,0.0,color);
 
-            if(!is_valid() && !is_city_build_area_clear()){
-                //pixels
-                int32_t center_x=Tile::get_center_x(coords.x,(int32_t)tile_size);
-                int32_t center_y=Tile::get_center_y(coords.y,(int32_t)tile_size);
-
-                vector<Game_City_Distance> nearest_city=Game::get_nearest_city(Coords<int32_t>(center_x,center_y));
-
-                if(nearest_city.size()>0){
-                    const City& city=Game::get_city(nearest_city[0].index);
-
-                    Render::render_line((double)center_x*Game_Manager::camera_zoom-Game_Manager::camera.x,
-                                        (double)center_y*Game_Manager::camera_zoom-Game_Manager::camera.y,
-                                        (double)city.get_center_x()*Game_Manager::camera_zoom-Game_Manager::camera.x,
-                                        (double)city.get_center_y()*Game_Manager::camera_zoom-Game_Manager::camera.y,opacity,color);
-                }
-
+            if(!valid){
                 Bitmap_Font* font=Object_Manager::get_font("standard");
 
-                string message="Too close to city";
+                string message="Region is already occupied";
 
                 double message_x=x+tile_size/2.0-((message.length()*font->spacing_x)/2.0)/Game_Manager::camera_zoom;
 

@@ -123,6 +123,10 @@ int32_t City::get_center_y() const{
     return int32_t(tile.y*Game_Constants::TILE_SIZE)+get_size()/2;
 }
 
+uint32_t City::get_region() const{
+    return Game::get_chunk(Coords<uint32_t>(get_chunk_x(),get_chunk_y())).get_parent_region();
+}
+
 uint32_t City::get_chunk_x() const{
     return tile.x/Game_Constants::CHUNK_SIZE;
 }
