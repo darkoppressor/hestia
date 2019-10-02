@@ -8,20 +8,9 @@ Should camera speed modifiers effect zoom as well?
 
 Zoom only at certain increments, does this fix the scaling graphics issues?
 
-Add weather, just for looks right now except for wind speed below
-Regions have wind speed, affected by weather
-Tiles are animated, and animation speed is affected by wind speed of their region
-Tile animations will have to be global, so the animation speed will be, too
-It can be affected by all on-screen regions
-Only animate on-screen tiles
-
 Options for minimap size and position?
 
 Move minimap updating into separate thread
-
-Depending on how I end up designing the world, I might be able to make the minimap pregenerate as part of game startup
-and then never again
-Cities and whatever else I want rendered over the minimap would be rendered in realtime
 
 AI could run on the host only and send its commands much like players
 

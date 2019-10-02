@@ -195,22 +195,22 @@ An item will now be a set of gear
 E.g., a melee "item" might be heavy armor and a sword
 The player can control the unit makeup of an army
 
-----------------------------------------------------------------------------------------------------------------------
+Armies can be in two states: at home and deployed
+When at home, armies reinforce and don't worry about supply
+When deployed, armies cannot reinforce and DO worry about supply
+Supply needs to be controlled in a macro way though
+So as a player, you configure an army (I want X melee, Y ranged, etc.), you wait until it is at or close enough (your call) to your config from people joining up, you decide where to deploy the army to support your strategic objectives
+At this point, you just have to *somehow* handle supplying that army, in a non-micro way
+Your control over the army is "return home" (which causes a withdrawal if the army is doing OK, and a retreat if they are doing poorly), "deploy somewhere else" (which has the same two states as for returning home, i.e., either orderly or panicked), or "disband" (which is basically the same as "return home", but the army itself is then deleted and all its people go elsewhere)
+If the army is too low on numbers, you will want to return them home and let them reinforce
+When people are filling an army, they take their fighting skill into account to ensure the army has the best warriors (should this consider distance to army at all?)
+When an army is deployed but not maxed in numbers, the most eligible people could train to level their fighting skill, so they are ready to reinforce the army when it returns home
+If there are multiple armies, people prefer armies they can join immediately
 
-----------------------------------------------------------------------------------------------------------------------
-Visibility:
-----------------------------------------------------------------------------------------------------------------------
-
-Moving units should create dust clouds
-Bigger units probably create bigger dust clouds
-Dust clouds are only created in dirt/grass/stone/sand type terrains, and only when there is no rain or snow
-Should sand storms create their own dust clouds? Maybe this could even replace their previous graphic
-If there is fog of war, dust clouds can be seen even through it
-There should probably be some way to create fake dust clouds to trick the enemy
-There should also be some way to mask an army's dust clouds
-
-No black shroud on the map
-A fog of war is a good idea
+Maybe armies can be ordered to do different things at their target, like attack or pillage
+Attacking would try to attack the city
+Pillage would instead steal items or gold or something?
+Either way, forces would prioritize killing enemy units
 
 ----------------------------------------------------------------------------------------------------------------------
 

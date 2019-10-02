@@ -1,20 +1,5 @@
-Add regional borders
-Improve look of regional borders (remove the interior lines)
-People look in their home region for stuff to do
+Design visibility
 
-Update design for tile types
+Clear out the old ideas file
 
-------------------------------------------------------------------------------------------------------------------------
-
-Add controls (sliders, buttons, idk) for surplus percentages
-The current constants for these will become the default values
-
-Add pause network command for clients
-This will require a new engine feature
-This feature will work much like the server pause, except it will require an option determining how much each client
-is allowed to save
-UPDATE: This might not need to be done as an engine feature
-
-Expand the color palette
-The current stuff is for ground and most stuff
-The new set of colors is for "foreground" stuff like tiles and people
+Clear out ideas from old Hestia
