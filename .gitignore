@@ -1,5 +1,9 @@
 CMakeFiles/**
 .objs/**
+bin/**
+include/**
+lib/**
+share/**
 mods/**
 screenshots/**
 
@@ -11,6 +15,7 @@ data/sounds/**
 !data/music/.gitkeep
 !data/sounds/.gitkeep
 
+development/android/.gradle/**
 development/android/assets/**
 development/android/bin/**
 development/android/gen/**
@@ -28,11 +33,14 @@ development/android/jni/x86/**
 development/android/jni/x86_64/**
 development/android/local.properties
 
+/*lib64
+/*pyvenv.cfg
+
 /*Windows-x86_64.exe
 /*Windows-Debug-x86_64.exe
 /*Linux-x86_64
 /*Linux-Debug-x86_64
-/*OSX-x86_64
+/*macOS-x86_64
 
 /*options.cfg
 /*game_commands.cfg
@@ -51,11 +59,13 @@ docs/build-information
 /*compile_commands.json
 
 /*log-Release-Android
-/*log-Release-Release-Linux-x86_64
-/*log-Release-Release-macOS-x86_64
-/*log-Release-Release-Windows-x86_64
+/*log-Release-Linux-x86_64
+/*log-Debug-Linux-x86_64
+/*log-Release-macOS-x86_64
+/*log-Release-Windows-x86_64
 
 /*libsteam_api.so
+/*libsteam_api.dylib
 /*steam_appid.txt
 
 /*.dll
