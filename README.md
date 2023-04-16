@@ -2,7 +2,7 @@
 [![Build Status](https://wells-family.xyz/jenkins/buildStatus/icon?job=hestia)](https://wells-family.xyz/jenkins/job/hestia/)
 
 A game in development by Cheese and Bacon Games
-http://cheeseandbacon.org/
+https://cheeseandbacon.org/
 
 This is the source code for a game currently being developed by Cheese and Bacon Games.
 
