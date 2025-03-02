@@ -9,28 +9,25 @@
 
 #include <cstdint>
 
-class Game_Selection{
-public:
+class Game_Selection {
+    public:
+        enum class Type : std::uint8_t {
+            NONE,
+            PERSON,
+            CITY,
+            UNFINISHED_BUILDING,
+            CIVILIZATION
+        };
 
-    enum class Type : std::uint8_t{
-        NONE,
-        PERSON,
-        CITY,
-        UNFINISHED_BUILDING,
-        CIVILIZATION
-    };
+        Type type;
 
-    Type type;
+        std::uint32_t index;
+        Coords<std::uint32_t> tile_coordinates;
+        bool follow;
 
-    std::uint32_t index;
+        Game_Selection ();
 
-    Coords<std::uint32_t> tile_coordinates;
-
-    bool follow;
-
-    Game_Selection();
-
-    void clear_type();
+        void clear_type();
 };
 
 #endif
