@@ -12,36 +12,33 @@
 
 #include <SDL.h>
 
-class Minimap{
-private:
+class Minimap {
+    private:
+        SDL_Surface* surface;
+        Image_Data image_data;
 
-    SDL_Surface* surface;
+        std::uint32_t width;
+        std::uint32_t height;
 
-    Image_Data image_data;
+        // pixels
+        std::uint32_t chunk_width;
+        std::uint32_t chunk_height;
 
-    std::uint32_t width;
-    std::uint32_t height;
+        bool is_generated();
 
-    //pixels
-    std::uint32_t chunk_width;
-    std::uint32_t chunk_height;
+        void clear_surface();
+        void clear_image_data();
 
-    bool is_generated();
+    public:
+        Minimap ();
 
-    void clear_surface();
-    void clear_image_data();
+        void generate_surface(std::uint32_t new_width, std::uint32_t new_height);
+        void update();
+        void clear_map();
 
-public:
+        Collision_Rect<double> get_box();
 
-    Minimap();
-
-    void generate_surface(std::uint32_t new_width,std::uint32_t new_height);
-    void update();
-    void clear_map();
-
-    Collision_Rect<double> get_box();
-
-    void render();
+        void render();
 };
 
 #endif

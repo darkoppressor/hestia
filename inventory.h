@@ -9,36 +9,33 @@
 #include <vector>
 #include <string>
 
-class Inventory{
-public:
+class Inventory {
+    public:
+        enum class Item_Type : std::uint8_t {
+            WHEAT,
+            TREE
+        };
 
-    enum class Item_Type : std::uint8_t{
-        WHEAT,
-        TREE
-    };
+    private:
+        std::uint32_t& get_item_reference(Item_Type type);
 
-private:
+    public:
+        std::uint32_t wheat;
+        std::uint32_t tree;
 
-    std::uint32_t& get_item_reference(Item_Type type);
+        Inventory ();
 
-public:
+        static std::vector<Item_Type> get_item_types();
 
-    std::uint32_t wheat;
-    std::uint32_t tree;
+        static std::string get_item_type_string(Item_Type type);
 
-    Inventory();
+        std::uint32_t get_item_count() const;
+        std::uint32_t get_item_count(Item_Type type) const;
 
-    static std::vector<Item_Type> get_item_types();
+        // Returns the amount of the passed item type that COULD NOT be added
+        std::uint32_t add_item(Item_Type type, std::uint32_t amount);
 
-    static std::string get_item_type_string(Item_Type type);
-
-    std::uint32_t get_item_count() const;
-    std::uint32_t get_item_count(Item_Type type) const;
-
-    //Returns the amount of the passed item type that COULD NOT be added
-    std::uint32_t add_item(Item_Type type,std::uint32_t amount);
-
-    void remove_item(Item_Type type,std::uint32_t amount);
+        void remove_item(Item_Type type, std::uint32_t amount);
 };
 
 #endif

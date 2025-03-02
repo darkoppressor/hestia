@@ -4,7 +4,7 @@ All tiles are contained in exactly one area
 Areas can be uneven sizes and shapes
 Areas have a maximum possible size, determined using the range: [option_area_min, option_area_max]
 Areas have a climate that is determined at world gen
-Area climates are QQQ need to define these
+Area climates are TODO need to define these
 Areas have weather
 Area weather types are clear, raining, snowing
 Areas have temperature

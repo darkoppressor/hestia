@@ -14,40 +14,42 @@ if (buildAsApplication) {
 }
 
 android {
-    compileSdkVersion build_versions.target_sdk
-    buildToolsVersion build_versions.build_tools
+    namespace 'org.cheeseandbacon.hestia'
+    compileSdkVersion project.targetSdkVersion
+    buildToolsVersion project.buildToolsVersion
+    ndkVersion project.ndkVersion
 
     defaultConfig {
         if (buildAsApplication) {
             applicationId "org.cheeseandbacon.hestia"
         }
 
-        targetSdkVersion build_versions.target_sdk
-        minSdkVersion build_versions.min_sdk
+        targetSdkVersion project.targetSdkVersion
+        minSdkVersion project.minSdkVersion
 
-        versionCode deps.version_code
-        versionName deps.version_name
+        versionCode project.versionCode
+        versionName project.versionName
 
         externalNativeBuild {
             ndkBuild {
-                arguments deps.ndk_arguments
-                abiFilters 'armeabi-v7a', 'arm64-v8a', 'x86', 'x86_64'
+                arguments project.ndkArguments
+                abiFilters 'arm64-v8a', 'x86_64'
             }
         }
     }
 
     compileOptions {
-        sourceCompatibility build_versions.java
-        targetCompatibility build_versions.java
+        sourceCompatibility project.javaVersion
+        targetCompatibility project.javaVersion
     }
 
     dependencies {
         implementation fileTree(include: ['*.jar'], dir: 'libs')
 
         // Google Play Services
-        implementation deps.google_play.base
-        implementation deps.google_play.auth
-        implementation deps.google_play.games
+        implementation 'com.google.android.gms:play-services-base:17.1.0'
+        implementation 'com.google.android.gms:play-services-auth:17.0.0'
+        implementation 'com.google.android.gms:play-services-games:18.0.1'
     }
 
     lintOptions {
@@ -78,6 +80,9 @@ android {
             shrinkResources false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.release
+            ndk {
+                debugSymbolLevel 'none'
+            }
         }
 
         debug {
@@ -87,7 +92,14 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             matchingFallbacks = ['debug']
             signingConfig signingConfigs.debug
+            ndk {
+                debugSymbolLevel 'full'
+            }
         }
+    }
+
+    applicationVariants.all { variant ->
+        tasks["merge${variant.name.capitalize()}Assets"].dependsOn("externalNativeBuild${variant.name.capitalize()}")
     }
 
     if (!project.hasProperty('EXCLUDE_NATIVE_LIBS')) {

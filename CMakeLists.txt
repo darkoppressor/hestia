@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.2.2)
+cmake_minimum_required(VERSION 3.28.3)
 project(hestia)
 
 set(SOURCE_FILES
@@ -54,7 +54,7 @@ target_include_directories(Release-Linux-x86_64 PRIVATE
 /home/tails/build-server/steamworks-sdk/public/steam/
 /home/tails/build-server/linux-x86_64/SDL2/include/
 /home/tails/build-server/linux-x86_64/SDL2_image/
-/home/tails/build-server/linux-x86_64/SDL2_mixer/
+/home/tails/build-server/linux-x86_64/SDL2_mixer/include/
 /home/tails/build-server/linux-x86_64/boost/
 /home/tails/build-server/linux-x86_64/raknet/
 /home/tails/build-server/linux-x86_64/zlib/
@@ -65,18 +65,14 @@ target_link_libraries(Release-Linux-x86_64
 /home/tails/build-server/cheese-engine/libCheese-Engine-Linux-x86_64.a
 /home/tails/build-server/linux-x86_64/zlib/contrib/minizip/.libs/libminizip.a
 /home/tails/build-server/linux-x86_64/SDL2_image/.libs/libSDL2_image.a
-/home/tails/build-server/linux-x86_64/libpng/.libs/libpng.a
 /home/tails/build-server/linux-x86_64/zlib/libz.a
 /home/tails/build-server/linux-x86_64/SDL2_mixer/build/.libs/libSDL2_mixer.a
-/home/tails/build-server/linux-x86_64/libvorbis/lib/.libs/libvorbisfile.a
-/home/tails/build-server/linux-x86_64/libvorbis/lib/.libs/libvorbis.a
-/home/tails/build-server/linux-x86_64/libogg/src/.libs/libogg.a
 /home/tails/build-server/linux-x86_64/SDL2/build/.libs/libSDL2.a
 /home/tails/build-server/linux-x86_64/SDL2/build/.libs/libSDL2main.a
 /usr/lib/x86_64-linux-gnu/libGL.so
 /usr/lib/x86_64-linux-gnu/libGLU.so
-/usr/lib/x86_64-linux-gnu/libpthread.so
-/usr/lib/x86_64-linux-gnu/libdl.so
+/usr/lib/x86_64-linux-gnu/libpthread.a
+/usr/lib/x86_64-linux-gnu/libdl.a
 /home/tails/build-server/linux-x86_64/boost/stage/lib/libboost_system.a
 /home/tails/build-server/linux-x86_64/boost/stage/lib/libboost_filesystem.a
 /home/tails/build-server/linux-x86_64/raknet/raknet/Lib/LibStatic/Lib/libRakNetLibStatic.a
@@ -101,7 +97,7 @@ target_include_directories(Debug-Linux-x86_64 PRIVATE
 /home/tails/build-server/steamworks-sdk/public/steam/
 /home/tails/build-server/linux-x86_64/SDL2/include/
 /home/tails/build-server/linux-x86_64/SDL2_image/
-/home/tails/build-server/linux-x86_64/SDL2_mixer/
+/home/tails/build-server/linux-x86_64/SDL2_mixer/include/
 /home/tails/build-server/linux-x86_64/boost/
 /home/tails/build-server/linux-x86_64/raknet/
 /home/tails/build-server/linux-x86_64/zlib/
@@ -112,18 +108,14 @@ target_link_libraries(Debug-Linux-x86_64
 /home/tails/build-server/cheese-engine/libCheese-Engine-Linux-Debug-x86_64.a
 /home/tails/build-server/linux-x86_64/zlib/contrib/minizip/.libs/libminizip.a
 /home/tails/build-server/linux-x86_64/SDL2_image/.libs/libSDL2_image.a
-/home/tails/build-server/linux-x86_64/libpng/.libs/libpng.a
 /home/tails/build-server/linux-x86_64/zlib/libz.a
 /home/tails/build-server/linux-x86_64/SDL2_mixer/build/.libs/libSDL2_mixer.a
-/home/tails/build-server/linux-x86_64/libvorbis/lib/.libs/libvorbisfile.a
-/home/tails/build-server/linux-x86_64/libvorbis/lib/.libs/libvorbis.a
-/home/tails/build-server/linux-x86_64/libogg/src/.libs/libogg.a
 /home/tails/build-server/linux-x86_64/SDL2/build/.libs/libSDL2.a
 /home/tails/build-server/linux-x86_64/SDL2/build/.libs/libSDL2main.a
 /usr/lib/x86_64-linux-gnu/libGL.so
 /usr/lib/x86_64-linux-gnu/libGLU.so
-/usr/lib/x86_64-linux-gnu/libpthread.so
-/usr/lib/x86_64-linux-gnu/libdl.so
+/usr/lib/x86_64-linux-gnu/libpthread.a
+/usr/lib/x86_64-linux-gnu/libdl.a
 /home/tails/build-server/linux-x86_64/boost/stage/lib/libboost_system.a
 /home/tails/build-server/linux-x86_64/boost/stage/lib/libboost_filesystem.a
 /home/tails/build-server/linux-x86_64/raknet/raknet/Lib/LibStatic/Lib/libRakNetLibStatic.a
@@ -150,7 +142,7 @@ target_include_directories(Release-Windows-x86_64 PRIVATE
 /home/tails/build-server/steamworks-sdk/public/steam/
 /home/tails/build-server/windows-x86_64/SDL2/include/
 /home/tails/build-server/windows-x86_64/SDL2_image/
-/home/tails/build-server/windows-x86_64/SDL2_mixer/
+/home/tails/build-server/windows-x86_64/SDL2_mixer/include/
 /home/tails/build-server/windows-x86_64/boost/
 /home/tails/build-server/windows-x86_64/raknet/
 /home/tails/build-server/windows-x86_64/zlib/
@@ -162,12 +154,8 @@ target_link_libraries(Release-Windows-x86_64
 /home/tails/build-server/cheese-engine/libCheese-Engine-Windows-x86_64.a
 /home/tails/build-server/windows-x86_64/zlib/contrib/minizip/.libs/libminizip.a
 /home/tails/build-server/windows-x86_64/SDL2_image/.libs/libSDL2_image.a
-/home/tails/build-server/windows-x86_64/libpng/.libs/libpng.a
 /home/tails/build-server/windows-x86_64/zlib/libz.a
 /home/tails/build-server/windows-x86_64/SDL2_mixer/build/.libs/libSDL2_mixer.a
-/home/tails/build-server/windows-x86_64/libvorbis/lib/.libs/libvorbisfile.a
-/home/tails/build-server/windows-x86_64/libvorbis/lib/.libs/libvorbis.a
-/home/tails/build-server/windows-x86_64/libogg/src/.libs/libogg.a
 /home/tails/build-server/windows-x86_64/SDL2/build/.libs/libSDL2.a
 /home/tails/build-server/windows-x86_64/SDL2/build/.libs/libSDL2main.a
 /home/tails/build-server/windows-x86_64/boost/stage/lib/libboost_system.a
@@ -206,7 +194,7 @@ target_include_directories(Release-macOS-x86_64 PRIVATE
 /home/tails/build-server/steamworks-sdk/public/steam/
 /home/tails/build-server/osx-x86_64/SDL2/include/
 /home/tails/build-server/osx-x86_64/SDL2_image/
-/home/tails/build-server/osx-x86_64/SDL2_mixer/
+/home/tails/build-server/osx-x86_64/SDL2_mixer/include/
 /home/tails/build-server/osx-x86_64/boost/
 /home/tails/build-server/osx-x86_64/raknet/
 /home/tails/build-server/osx-x86_64/zlib/
@@ -217,19 +205,15 @@ target_link_libraries(Release-macOS-x86_64
 /home/tails/build-server/cheese-engine/libCheese-Engine-macOS-x86_64.a
 /home/tails/build-server/osx-x86_64/zlib/contrib/minizip/.libs/libminizip.a
 /home/tails/build-server/osx-x86_64/SDL2_image/.libs/libSDL2_image.a
-/home/tails/build-server/osx-x86_64/libpng/.libs/libpng.a
 /home/tails/build-server/osx-x86_64/zlib/libz.a
 /home/tails/build-server/osx-x86_64/SDL2_mixer/build/.libs/libSDL2_mixer.a
-/home/tails/build-server/osx-x86_64/libvorbis/lib/.libs/libvorbis.a
-/home/tails/build-server/osx-x86_64/libvorbis/lib/.libs/libvorbisfile.a
-/home/tails/build-server/osx-x86_64/libogg/src/.libs/libogg.a
 /home/tails/build-server/osx-x86_64/SDL2/build/.libs/libSDL2.a
 /home/tails/build-server/osx-x86_64/SDL2/build/.libs/libSDL2main.a
 /home/tails/build-server/osx-x86_64/boost/stage/lib/libboost_system.a
 /home/tails/build-server/osx-x86_64/boost/stage/lib/libboost_filesystem.a
 /home/tails/build-server/osx-x86_64/raknet/raknet/Lib/LibStatic/Lib/libRakNetLibStatic.a
 /home/tails/build-server/steamworks-sdk/redistributable_bin/osx/libsteam_api.dylib
-"-m64 -arch x86_64 -mmacosx-version-min=10.9 -stdlib=libc++ -liconv -framework CoreFoundation -framework ApplicationServices -framework IOKit -framework AppKit -framework Carbon -framework ForceFeedback -framework CoreAudio -framework AudioUnit -framework AudioToolbox -framework OpenGL -framework CoreVideo"
+"-m64 -arch x86_64 -mmacosx-version-min=10.11 -stdlib=libc++ -liconv -framework CoreFoundation -framework ApplicationServices -framework IOKit -framework AppKit -framework Carbon -framework ForceFeedback -framework CoreAudio -framework AudioUnit -framework AudioToolbox -framework OpenGL -framework CoreVideo -framework CoreHaptics -framework GameController"
 )
 
 endif()
@@ -252,7 +236,7 @@ target_include_directories(Android-NoBuild PRIVATE
 /usr/include/x86_64-linux-gnu/
 /home/tails/build-server/android/SDL2/include/
 /home/tails/build-server/android/SDL2_image/
-/home/tails/build-server/android/SDL2_mixer/
+/home/tails/build-server/android/SDL2_mixer/include/
 /home/tails/build-server/linux-x86_64/boost/
 /home/tails/build-server/android/raknet/
 )

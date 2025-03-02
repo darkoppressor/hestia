@@ -2,9 +2,9 @@ People belong to either a settlement or an army, and thus to the settlement or a
 No collision between people and tiles
 No collision between people and other people
 People are always on exactly one tile
-People are affected by the elevation, material, and features of the tile they are on QQQ define how
+People are affected by the elevation, material, and features of the tile they are on TODO define how
 People are always in exactly one area
-People are affected by the weather, temperature, and wind of the area they are in QQQ define how
+People are affected by the weather, temperature, and wind of the area they are in TODO define how
 People may access their civilization inventory if they are owned by a settlement and they are in that settlement,
 or if they are settling an area
 People may access their army inventory if they are owned by an army and they are within a certain distance of the army's

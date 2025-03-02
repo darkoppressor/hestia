@@ -5,7 +5,7 @@ A leader whose civilization is defeated is unable to control anything in the gam
 
 Orders:
 
-QQQ
+TODO
 Settlement of an unsettled area can be ordered
 This order also requires the leader to determine which type the settlement will be
 Somehow people are selected to do this (only people not in an army)
@@ -15,9 +15,9 @@ What happens if multiple civilizations are attempting to settle the same area at
 When the capture counter of the area hits 0, the area is settled
 The area becomes the child of the settling civilization
 The settling people become children of the area
-QQQ
+TODO
 
-QQQ
+TODO
 Capture of a settled unowned area can be ordered
 This order is given to an army
 Each day attacking armies, if their position is in the area and the area has none of its parent civilization's
@@ -28,11 +28,11 @@ When a settlement is captured, it needs to know what civilization captured it
 The settlement becomes the child of the capturing civilization, the old and new civilization are informed of this,
 the settlement's capture counter is restored to some fraction of its maximum,
 and the settlement's people have their conquered cooldown started
-QQQ
+TODO
 
 The Leader can order a repopulation for a settlement
 If the settlement has less than its maximum population, people will be selected from other settlements in the
-civilization and changed to children of the settlement QQQ define how the people are selected
+civilization and changed to children of the settlement TODO define how the people are selected
 People will only be sent from a settlement for repopulation purposes if their settlement has more than its minimum
 desired people
 
