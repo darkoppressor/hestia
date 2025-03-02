@@ -1,3 +1,5 @@
+# Areas
+
 World is divided into areas which are created at world gen
 Areas are defined by what tiles they contain
 All tiles are contained in exactly one area

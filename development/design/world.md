@@ -1,3 +1,5 @@
+# World
+
 Maximum world size in pixels is 2^31 - 1 (max value of int32_t)
 
 The world has a sea level

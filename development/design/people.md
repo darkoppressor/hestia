@@ -1,3 +1,5 @@
+# People
+
 People belong to either a settlement or an army, and thus to the settlement or army's parent civilization
 No collision between people and tiles
 No collision between people and other people

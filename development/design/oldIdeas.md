@@ -1,3 +1,5 @@
+# Old ideas
+
 This file is currently a giant list of thoughts on not-yet-designed aspects of the game
 Be warned that ideas here come from very different time periods and versions of the game
 

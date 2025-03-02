@@ -1,3 +1,5 @@
+# Leaders
+
 Leaders have a unique color, selected during game setup
 Each leader leads one civilization
 Leaders give orders

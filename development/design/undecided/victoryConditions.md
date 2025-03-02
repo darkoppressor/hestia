@@ -1,3 +1,5 @@
+# Victory conditions
+
 The game has victory conditions (well, one for now)
 If all VCs are off, the game has no end
 Conquest victory condition: Be the only civilization left undefeated

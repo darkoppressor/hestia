@@ -1,3 +1,5 @@
+# Technical
+
 What if one or both dimensions of the chunks on the minimap are 0?
 
 What about game orders being used a couple of turns after being distributed?

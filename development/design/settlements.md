@@ -1,3 +1,5 @@
+# Settlements
+
 Settlements belong to a civilization
 Settlements have a type
 Settlements generate new people over time if they are not at maximum population and there is food in the

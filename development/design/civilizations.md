@@ -1,3 +1,5 @@
+# Civilizations
+
 Civilizations have inventory, infinite
 All civilizations are hostile to each other
 Civilizations have allowed climates, and can only settle areas with these climates

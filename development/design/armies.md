@@ -1,3 +1,5 @@
+# Armies
+
 Armies belong to a civilization
 Armies have inventory, finite
 Armies have a position that represents the central point of the army

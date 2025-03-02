@@ -1,3 +1,5 @@
+# Ideas
+
 I want the focus to be on the "big picture", but what does that mean?
 Note that I want to stick with real time strategy, and I don't want to go full EU4 or something like that
 However, I want massive scale and macro decision making, and these things mean the game will probably need to be somewhat slow paced
