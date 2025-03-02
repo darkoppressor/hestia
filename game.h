@@ -30,229 +30,227 @@
 #include <map>
 #include <queue>
 
-class Game_Over{
-public:
+class Game_Over {
+    public:
+        enum class Victory_Condition : std::uint8_t {
+            NONE,
+            CONQUEST
+        };
 
-    enum class Victory_Condition : std::uint8_t{
-        NONE,
-        CONQUEST
-    };
+        Victory_Condition victory_condition;
 
-    Victory_Condition victory_condition;
+        std::uint32_t winning_leader;
 
-    std::uint32_t winning_leader;
+        Game_Over ();
 
-    Game_Over();
+        void reset();
 
-    void reset();
+        void update(Victory_Condition new_victory_condition, std::uint32_t new_winning_leader);
 
-    void update(Victory_Condition new_victory_condition,std::uint32_t new_winning_leader);
-
-    bool is_over() const;
+        bool is_over() const;
 };
 
-class Game_City_Distance{
-public:
+class Game_City_Distance {
+    public:
+        std::uint32_t index;
 
-    std::uint32_t index;
+        std::uint64_t distance;
 
-    std::uint64_t distance;
+        Game_City_Distance (std::uint32_t new_index, std::uint64_t new_distance);
 
-    Game_City_Distance(std::uint32_t new_index,std::uint64_t new_distance);
-
-    bool operator<=(const Game_City_Distance& game_city_distance) const;
+        bool operator<= (const Game_City_Distance& game_city_distance) const;
 };
 
-class Game{
-public:
-
-    struct tile_compare{
-        bool operator()(const Coords<std::uint32_t>& a,const Coords<std::uint32_t>& b) const{
-            if(a.x!=b.x){
-                return a.x<b.x;
+class Game {
+    public:
+        struct tile_compare {
+            bool operator() (const Coords<std::uint32_t>& a, const Coords<std::uint32_t>& b) const {
+                if (a.x != b.x) {
+                    return a.x < b.x;
+                } else {
+                    return a.y < b.y;
+                }
             }
-            else{
-                return a.y<b.y;
-            }
-        }
-    };
+        };
 
-private:
+    private:
+        static Game_Order::Type order;
 
-    static Game_Order::Type order;
+        static std::vector<Game_Order> server_game_orders;
+        static std::vector<Game_Order> client_game_orders;
 
-    static std::vector<Game_Order> server_game_orders;
-    static std::vector<Game_Order> client_game_orders;
+        static Game_Selection selection;
 
-    static Game_Selection selection;
+        static std::vector<Region> regions;
+        static std::vector<std::vector<Chunk>> chunks;
+        static std::vector<Leader> leaders;
+        static std::vector<Civilization> civilizations;
+        static std::vector<City> cities;
+        static std::vector<Person> people;
+        static std::map<Coords<std::uint32_t>, Tile, tile_compare> tiles;
 
-    static std::vector<Region> regions;
-    static std::vector<std::vector<Chunk>> chunks;
-    static std::vector<Leader> leaders;
-    static std::vector<Civilization> civilizations;
-    static std::vector<City> cities;
-    static std::vector<Person> people;
-    static std::map<Coords<std::uint32_t>,Tile,tile_compare> tiles;
+        static std::queue<std::uint32_t> dead_cities;
+        static std::queue<std::uint32_t> dead_people;
 
-    static std::queue<std::uint32_t> dead_cities;
-    static std::queue<std::uint32_t> dead_people;
+        static Quadtree<std::int32_t, std::uint32_t> quadtree;
 
-    static Quadtree<std::int32_t,std::uint32_t> quadtree;
+        static Minimap minimap;
 
-    static Minimap minimap;
+        static Game_Over game_over;
 
-    static Game_Over game_over;
+        static void add_remove_objects();
 
-    static void add_remove_objects();
+        static void generate_minimap();
+        static void update_minimap();
+        static void clear_minimap();
 
-    static void generate_minimap();
-    static void update_minimap();
-    static void clear_minimap();
+    public:
+        static bool started;
 
-public:
+        // Keeps track of the current logic update frame
+        // Valid values: 0 to UPDATE_RATE-1
+        static std::uint32_t frame;
 
-    static bool started;
+        static std::string edge_scroll_state;
+        static double edge_scroll_speed;
+        static bool camera_drag_main;
+        static bool camera_drag_minimap;
 
-    //Keeps track of the current logic update frame
-    //Valid values: 0 to UPDATE_RATE-1
-    static std::uint32_t frame;
+        static std::uint32_t option_rng_seed;
 
-    static std::string edge_scroll_state;
-    static double edge_scroll_speed;
-    static bool camera_drag_main;
-    static bool camera_drag_minimap;
+        // chunks
+        static std::uint32_t option_world_width;
+        static std::uint32_t option_world_height;
 
-    static std::uint32_t option_rng_seed;
+        static std::uint32_t option_region_min;
+        static std::uint32_t option_region_max;
+        static std::uint32_t option_initial_tile_growth;
 
-    //chunks
-    static std::uint32_t option_world_width;
-    static std::uint32_t option_world_height;
+        static bool option_vc_conquest;
 
-    static std::uint32_t option_region_min;
-    static std::uint32_t option_region_max;
-    static std::uint32_t option_initial_tile_growth;
+        static std::uint32_t option_max_leaders;
 
-    static bool option_vc_conquest;
+        static RNG rng;
 
-    static std::uint32_t option_max_leaders;
+        static Calendar calendar;
 
-    static RNG rng;
+        static std::vector<City> new_cities;
+        static std::vector<Person> new_people;
+        static std::map<Coords<std::uint32_t>, Tile, tile_compare> new_tiles;
 
-    static Calendar calendar;
+        static void clear_world();
+        static void setup_leaders();
+        static void generate_world();
 
-    static std::vector<City> new_cities;
-    static std::vector<Person> new_people;
-    static std::map<Coords<std::uint32_t>,Tile,tile_compare> new_tiles;
+        static std::uint32_t get_people_count();
+        static std::uint32_t get_city_count();
 
-    static void clear_world();
-    static void setup_leaders();
-    static void generate_world();
+        static const std::map<Coords<std::uint32_t>, Tile, tile_compare>& get_tiles();
 
-    static std::uint32_t get_people_count();
-    static std::uint32_t get_city_count();
+        static const Region& get_region(std::uint32_t index);
+        static const Chunk& get_chunk(const Coords<std::uint32_t>& coords);
+        static const Leader& get_leader(std::uint32_t index);
+        static const Civilization& get_civilization(std::uint32_t index);
+        static const City& get_city(std::uint32_t index);
+        static const Person& get_person(std::uint32_t index);
+        static const Tile& get_tile(const Coords<std::uint32_t>& coords);
 
-    static const std::map<Coords<std::uint32_t>,Tile,tile_compare>& get_tiles();
+        static std::uint32_t get_leader_count();
+        static void add_leader(bool player_controlled, std::uint32_t parent_player, const Color& color,
+                               const std::vector<Leader::Diplomacy_State>& diplomacy_states);
 
-    static const Region& get_region(std::uint32_t index);
-    static const Chunk& get_chunk(const Coords<std::uint32_t>& coords);
-    static const Leader& get_leader(std::uint32_t index);
-    static const Civilization& get_civilization(std::uint32_t index);
-    static const City& get_city(std::uint32_t index);
-    static const Person& get_person(std::uint32_t index);
-    static const Tile& get_tile(const Coords<std::uint32_t>& coords);
+        // Returns the index for the leader associated with the passed player number,
+        // or -1 if the passed player number is invalid
+        static std::int32_t get_player_leader(int player_number);
 
-    static std::uint32_t get_leader_count();
-    static void add_leader(bool player_controlled,std::uint32_t parent_player,const Color& color,const std::vector<Leader::Diplomacy_State>& diplomacy_states);
+        // Returns the index for our leader,
+        // or -1 if our leader could not be determined
+        static std::int32_t get_our_leader();
 
-    //Returns the index for the leader associated with the passed player number,
-    //or -1 if the passed player number is invalid
-    static std::int32_t get_player_leader(int player_number);
+        static Game_Over get_game_over();
+        static bool is_game_over();
 
-    //Returns the index for our leader,
-    //or -1 if our leader could not be determined
-    static std::int32_t get_our_leader();
+        // pixels
+        static std::int32_t get_world_width();
+        static std::int32_t get_world_height();
 
-    static Game_Over get_game_over();
-    static bool is_game_over();
+        // tiles
+        static std::uint32_t get_world_width_tiles();
+        static std::uint32_t get_world_height_tiles();
 
-    //pixels
-    static std::int32_t get_world_width();
-    static std::int32_t get_world_height();
+        static bool tile_exists(const Coords<std::uint32_t>& tile_coords);
+        static bool tile_coords_are_valid(Tile::Type type, const Coords<std::uint32_t>& tile_coords);
+        static void kill_tile(const Coords<std::uint32_t>& tile_coords);
 
-    //tiles
-    static std::uint32_t get_world_width_tiles();
-    static std::uint32_t get_world_height_tiles();
+        static std::uint32_t add_civilization_item(std::uint32_t index, Inventory::Item_Type item_type,
+                                                   std::uint32_t amount);
+        static void remove_civilization_item(std::uint32_t index, Inventory::Item_Type item_type, std::uint32_t amount);
+        static void set_civilization_unfinished_building_flag(std::uint32_t index, Coords<std::uint32_t> tile_coords,
+                                                              bool new_flag);
+        static void clear_civilization_unfinished_buildings(std::uint32_t index);
+        static void defeat_civilization(std::uint32_t index);
 
-    static bool tile_exists(const Coords<std::uint32_t>& tile_coords);
-    static bool tile_coords_are_valid(Tile::Type type,const Coords<std::uint32_t>& tile_coords);
-    static void kill_tile(const Coords<std::uint32_t>& tile_coords);
+        static void damage_person(std::uint32_t index, std::int16_t attack);
+        static void damage_tile(const Coords<std::uint32_t>& tile_coords, std::int16_t attack);
 
-    static std::uint32_t add_civilization_item(std::uint32_t index,Inventory::Item_Type item_type,std::uint32_t amount);
-    static void remove_civilization_item(std::uint32_t index,Inventory::Item_Type item_type,std::uint32_t amount);
-    static void set_civilization_unfinished_building_flag(std::uint32_t index,Coords<std::uint32_t> tile_coords,bool new_flag);
-    static void clear_civilization_unfinished_buildings(std::uint32_t index);
-    static void defeat_civilization(std::uint32_t index);
+        static void repair_tile(const Coords<std::uint32_t>& tile_coords);
 
-    static void damage_person(std::uint32_t index,std::int16_t attack);
-    static void damage_tile(const Coords<std::uint32_t>& tile_coords,std::int16_t attack);
+        static void handle_city_capture(const Coords<std::uint32_t>& tile_coords,
+                                        std::uint32_t capturing_civilization_index);
+        static void repopulate_city(std::uint32_t city_index);
+        static void abandon_city(std::uint32_t city_index);
 
-    static void repair_tile(const Coords<std::uint32_t>& tile_coords);
+        // Returns a vector of size 1 containing the nearest city data if a city was found
+        // If no city was found, returns an empty vector
+        static std::vector<Game_City_Distance> get_nearest_city(const Coords<std::int32_t>& coords);
+        // pixels^2
+        static uint64_t distance_to_nearest_city(const Coords<std::int32_t>& coords);
 
-    static void handle_city_capture(const Coords<std::uint32_t>& tile_coords,std::uint32_t capturing_civilization_index);
-    static void repopulate_city(std::uint32_t city_index);
-    static void abandon_city(std::uint32_t city_index);
+        static Coords<std::int32_t> get_mouse_coords_pixels();
+        static Coords<std::uint32_t> get_mouse_coords_tiles();
 
-    //Returns a vector of size 1 containing the nearest city data if a city was found
-    //If no city was found, returns an empty vector
-    static std::vector<Game_City_Distance> get_nearest_city(const Coords<std::int32_t>& coords);
-    //pixels^2
-    static uint64_t distance_to_nearest_city(const Coords<std::int32_t>& coords);
+        static Game_Selection get_selection();
+        static void set_selection(Game_Selection::Type type, std::uint32_t index);
+        static void set_selection(Game_Selection::Type type, const Coords<std::uint32_t>& tile_coords);
+        static void toggle_selection_follow();
+        static void clear_selection();
+        static void open_selection_window();
+        static void close_selection_windows();
 
-    static Coords<std::int32_t> get_mouse_coords_pixels();
-    static Coords<std::uint32_t> get_mouse_coords_tiles();
+        static Game_Order::Type get_order();
+        static bool has_order();
+        static void set_order(Game_Order::Type new_order);
+        static void clear_order();
+        static void issue_order(const Game_Order& new_order);
 
-    static Game_Selection get_selection();
-    static void set_selection(Game_Selection::Type type,std::uint32_t index);
-    static void set_selection(Game_Selection::Type type,const Coords<std::uint32_t>& tile_coords);
-    static void toggle_selection_follow();
-    static void clear_selection();
-    static void open_selection_window();
-    static void close_selection_windows();
+        static std::vector<Game_Order> get_server_game_orders();
+        static void add_server_game_order(const Game_Order& new_order);
+        static void clear_server_game_orders();
 
-    static Game_Order::Type get_order();
-    static bool has_order();
-    static void set_order(Game_Order::Type new_order);
-    static void clear_order();
-    static void issue_order(const Game_Order& new_order);
+        static std::vector<Game_Order> get_client_game_orders();
+        static void add_client_game_order(const Game_Order& new_order);
+        static void clear_client_game_orders();
+        static void execute_client_game_orders();
 
-    static std::vector<Game_Order> get_server_game_orders();
-    static void add_server_game_order(const Game_Order& new_order);
-    static void clear_server_game_orders();
+        static bool is_mouse_over_minimap();
+        static void center_camera_on_minimap_position();
 
-    static std::vector<Game_Order> get_client_game_orders();
-    static void add_client_game_order(const Game_Order& new_order);
-    static void clear_client_game_orders();
-    static void execute_client_game_orders();
+        static void tick();
+        static void ai();
+        static void movement();
+        static void events();
+        static void animate();
+        static void render();
 
-    static bool is_mouse_over_minimap();
-    static void center_camera_on_minimap_position();
+        static void render_to_textures();
 
-    static void tick();
-    static void ai();
-    static void movement();
-    static void events();
-    static void animate();
-    static void render();
+        static void update_background();
+        static void render_background();
 
-    static void render_to_textures();
+        static std::uint32_t get_checksum();
 
-    static void update_background();
-    static void render_background();
-
-    static std::uint32_t get_checksum();
-
-    static bool move_input_state(std::string direction);
-    static bool edge_scroll_input_state(std::string direction);
+        static bool move_input_state(std::string direction);
+        static bool edge_scroll_input_state(std::string direction);
 };
 
 #endif

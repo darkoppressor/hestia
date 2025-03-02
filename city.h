@@ -15,87 +15,85 @@
 #include <vector>
 #include <string>
 
-class City{
-private:
+class City {
+    private:
+        // When a city is abandoned, exists is set to false
+        bool exists;
 
-    //When a city is abandoned, exists is set to false
-    bool exists;
+        std::uint32_t parent_civilization;
+        Coords<std::uint32_t> tile;
 
-    std::uint32_t parent_civilization;
+        std::vector<std::uint32_t> people;
 
-    Coords<std::uint32_t> tile;
+        std::uint32_t breeding_counter;
+        std::uint32_t captured_counter;
 
-    std::vector<std::uint32_t> people;
+        std::uint32_t gather_zone_wheat;
+        std::uint32_t gather_zone_tree;
 
-    std::uint32_t breeding_counter;
-    std::uint32_t captured_counter;
+    public:
+        City ();
+        City (std::uint32_t new_parent);
 
-    std::uint32_t gather_zone_wheat;
-    std::uint32_t gather_zone_tree;
+        void add_checksum_data(std::vector<std::uint32_t>& data) const;
 
-public:
+        bool get_exists() const;
+        void set_exists(bool new_exists);
 
-    City();
-    City(std::uint32_t new_parent);
+        std::uint32_t get_parent_civilization() const;
+        void set_parent_civilization(std::uint32_t new_parent);
 
-    void add_checksum_data(std::vector<std::uint32_t>& data) const;
+        Coords<std::uint32_t> get_tile() const;
+        void set_tile(const Coords<std::uint32_t>& new_tile);
 
-    bool get_exists() const;
-    void set_exists(bool new_exists);
+        const std::vector<std::uint32_t>& get_people() const;
 
-    std::uint32_t get_parent_civilization() const;
-    void set_parent_civilization(std::uint32_t new_parent);
+        void add_person(std::uint32_t person);
+        void remove_person(std::uint32_t person);
 
-    Coords<std::uint32_t> get_tile() const;
-    void set_tile(const Coords<std::uint32_t>& new_tile);
+        // pixels
+        std::int32_t get_size() const;
 
-    const std::vector<std::uint32_t>& get_people() const;
-    void add_person(std::uint32_t person);
-    void remove_person(std::uint32_t person);
+        // pixels
+        std::int32_t get_x() const;
+        std::int32_t get_y() const;
 
-    //pixels
-    std::int32_t get_size() const;
+        // pixels
+        std::int32_t get_center_x() const;
+        std::int32_t get_center_y() const;
 
-    //pixels
-    std::int32_t get_x() const;
-    std::int32_t get_y() const;
+        std::uint32_t get_region() const;
 
-    //pixels
-    std::int32_t get_center_x() const;
-    std::int32_t get_center_y() const;
+        // chunks
+        std::uint32_t get_chunk_x() const;
+        std::uint32_t get_chunk_y() const;
 
-    std::uint32_t get_region() const;
+        // tiles
+        std::uint32_t get_tile_x() const;
+        std::uint32_t get_tile_y() const;
 
-    //chunks
-    std::uint32_t get_chunk_x() const;
-    std::uint32_t get_chunk_y() const;
+        Collision_Rect<std::int32_t> get_spawn_zone() const;
 
-    //tiles
-    std::uint32_t get_tile_x() const;
-    std::uint32_t get_tile_y() const;
+        std::uint32_t get_population() const;
+        bool has_maximum_population() const;
+        std::uint32_t get_excess_population() const;
+        bool has_excess_population() const;
 
-    Collision_Rect<std::int32_t> get_spawn_zone() const;
+        bool needs_repair() const;
+        std::uint32_t repair_count_needed() const;
 
-    std::uint32_t get_population() const;
-    bool has_maximum_population() const;
-    std::uint32_t get_excess_population() const;
-    bool has_excess_population() const;
+        bool was_recently_captured() const;
+        void set_just_captured();
 
-    bool needs_repair() const;
-    std::uint32_t repair_count_needed() const;
+        void breed(std::uint32_t index, RNG& rng);
 
-    bool was_recently_captured() const;
-    void set_just_captured();
+        void capture_cooldown();
 
-    void breed(std::uint32_t index,RNG& rng);
+        std::uint32_t get_gather_zone_tile_count(Tile::Type tile_type) const;
+        bool allowed_to_update_gather_zone(std::uint32_t frame, std::uint32_t index) const;
+        void update_gather_zone(std::uint32_t frame, std::uint32_t index);
 
-    void capture_cooldown();
-
-    std::uint32_t get_gather_zone_tile_count(Tile::Type tile_type) const;
-    bool allowed_to_update_gather_zone(std::uint32_t frame,std::uint32_t index) const;
-    void update_gather_zone(std::uint32_t frame,std::uint32_t index);
-
-    void write_info_string(std::string& text) const;
+        void write_info_string(std::string& text) const;
 };
 
 #endif

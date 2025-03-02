@@ -9,64 +9,60 @@
 
 using namespace std;
 
-Calendar::Calendar(){
+Calendar::Calendar () {
     reset();
 }
 
-void Calendar::reset(){
-    frame=0;
-    day=0;
-    week=0;
-    month=0;
-    year=0;
+void Calendar::reset () {
+    frame = 0;
+    day = 0;
+    week = 0;
+    month = 0;
+    year = 0;
 }
 
-uint32_t Calendar::get_day() const{
+uint32_t Calendar::get_day () const {
     return day;
 }
 
-uint32_t Calendar::get_week() const{
+uint32_t Calendar::get_week () const {
     return week;
 }
 
-uint32_t Calendar::get_month() const{
+uint32_t Calendar::get_month () const {
     return month;
 }
 
-uint64_t Calendar::get_year() const{
+uint64_t Calendar::get_year () const {
     return year;
 }
 
-Calendar::Change Calendar::increment(){
-    if(++frame==Engine::UPDATE_RATE*Game_Constants::DAY_LENGTH){
-        frame=0;
+Calendar::Change Calendar::increment () {
+    if (++frame == Engine::UPDATE_RATE* Game_Constants::DAY_LENGTH) {
+        frame = 0;
 
-        if(++day==6){
-            day=0;
+        if (++day == 6) {
+            day = 0;
 
-            if(++week==5){
-                week=0;
+            if (++week == 5) {
+                week = 0;
 
-                if(++month==12){
-                    month=0;
+                if (++month == 12) {
+                    month = 0;
 
                     year++;
 
                     return Change::YEAR;
-                }
-                else{
+                } else {
                     return Change::MONTH;
                 }
-            }
-            else{
+            } else {
                 return Change::WEEK;
             }
-        }
-        else{
+        } else {
             return Change::DAY;
         }
-    }
-    else{
+    } else {
         return Change::NONE;
     }
 }
