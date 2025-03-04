@@ -15,7 +15,31 @@ have a number of people living in them. Players give high-level strategic orders
 then make these strategic decisions a reality using low-level individual AI. Because of this somewhat unique in-game
 perspective, the game takes some ideas from turn-based strategy games.
 
-## Updating the version
+## For players
+
+[System requirements](docs/systemRequirements.md)
+[Changelog](docs/changelog.md)
+
+## For developers
+
+[To do](development/toDo.md)
+
+[Ideas](development/design/ideas.md)
+[Old ideas](development/design/oldIdeas.md)
+[Game](development/design/game.md)
+[Areas](development/design/areas.md)
+[Armies](development/design/armies.md)
+[Civilizations](development/design/civilizations.md)
+[Leaders](development/design/leaders.md)
+[People](development/design/people.md)
+[Settlements](development/design/settlements.md)
+[Tiles](development/design/tiles.md)
+[World](development/design/world.md)
+[World generation](development/design/worldGeneration.md)
+[Technical](development/design/technical.md)
+[Victory conditions](development/design/undecided/victoryConditions.md)
+
+### Updating the version
 
     ~/build-server/cheese-engine/tools/version <PROJECT-DIRECTORY> <VERSION-COMPONENT> [STATUS]
     ~/build-server/cheese-engine/tools/build-date <PROJECT-DIRECTORY>
@@ -35,3 +59,5 @@ This game's source code is licensed under the MIT License. See [LICENSE.md](docs
 
 This game's data is not under the same license as the source code. See [contentLicense.md](docs/contentLicense.md) for
 game data licensing details.
+
+For third party licenses for dependencies, see [the thirdPartyLicenses directory](docs/thirdPartyLicenses).
