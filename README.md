@@ -17,27 +17,27 @@ perspective, the game takes some ideas from turn-based strategy games.
 
 ## For players
 
-[System requirements](docs/systemRequirements.md)
-[Changelog](docs/changelog.md)
+* [System requirements](docs/systemRequirements.md)
+* [Changelog](docs/changelog.md)
 
 ## For developers
 
-[To do](development/toDo.md)
+* [To do](development/toDo.md)
 
-[Ideas](development/design/ideas.md)
-[Old ideas](development/design/oldIdeas.md)
-[Game](development/design/game.md)
-[Areas](development/design/areas.md)
-[Armies](development/design/armies.md)
-[Civilizations](development/design/civilizations.md)
-[Leaders](development/design/leaders.md)
-[People](development/design/people.md)
-[Settlements](development/design/settlements.md)
-[Tiles](development/design/tiles.md)
-[World](development/design/world.md)
-[World generation](development/design/worldGeneration.md)
-[Technical](development/design/technical.md)
-[Victory conditions](development/design/undecided/victoryConditions.md)
+* [Ideas](development/design/ideas.md)
+* [Old ideas](development/design/oldIdeas.md)
+* [Game](development/design/game.md)
+* [Areas](development/design/areas.md)
+* [Armies](development/design/armies.md)
+* [Civilizations](development/design/civilizations.md)
+* [Leaders](development/design/leaders.md)
+* [People](development/design/people.md)
+* [Settlements](development/design/settlements.md)
+* [Tiles](development/design/tiles.md)
+* [World](development/design/world.md)
+* [World generation](development/design/worldGeneration.md)
+* [Technical](development/design/technical.md)
+* [Victory conditions](development/design/undecided/victoryConditions.md)
 
 ### Updating the version
 
@@ -46,7 +46,7 @@ perspective, the game takes some ideas from turn-based strategy games.
 
 In version.cpp:
 
-        Update the version series in Engine_Version::populate_version_series to include the new version
+    Update the version series in Engine_Version::populate_version_series to include the new version
 
 When an updated version has been pushed to main, tag the commit locally and remotely:
 
