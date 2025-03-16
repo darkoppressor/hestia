@@ -3,7 +3,7 @@
 #ifndef network_game_h
 #define network_game_h
 
-#include "game_order.h"
+#include "../game/game_order.h"
 
 #include <network/network_message_identifiers.h>
 
