@@ -25,6 +25,7 @@ perspective, the game takes some ideas from turn-based strategy games.
 * [To do](development/toDo.md)
 
 * [Ideas](development/design/ideas.md)
+* [New ideas](development/design/newIdeas.md)
 * [Old ideas](development/design/oldIdeas.md)
 * [Game](development/design/game.md)
 * [Areas](development/design/areas.md)
