@@ -9,16 +9,16 @@
 		location:2,36
 		text:Repopulate
 		event:repopulate_city
-		sound_moused:moused_1
-		sound_click:click_1
+		sound_moused:ui/moused_1
+		sound_click:ui/click_1
 	</button>
 
 	<button>
 		location:125,36
 		text:Abandon
 		event:abandon_city
-		sound_moused:moused_1
-		sound_click:click_1
+		sound_moused:ui/moused_1
+		sound_click:ui/click_1
 	</button>
 
 	<info>
